@@ -24,10 +24,5 @@ Route::middleware('auth:api')->post('logout','LoginControllerAPI@logout');
 
 Route::middleware('auth:api')->get('teste', function () {
     return response()->json(['msg'=>'Só um teste'], 200);
-<<<<<<< HEAD
 });
-=======
->>>>>>> parent of 571722d... passportInstall
-=======
-});
->>>>>>> 571722d... passportInstall
+
