@@ -1844,6 +1844,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+<<<<<<< HEAD
 //
 //
 //
@@ -1964,6 +1965,20 @@ __webpack_require__.r(__webpack_exports__);
     }*/
 
   }
+=======
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      title: 'login',
+      showSuccess: true,
+      showFailure: true,
+      successMessage: 'Login Successfull',
+      failMessage: 'Login Unsuccessfull'
+    };
+  },
+  methods: {},
+  mounted: function mounted() {}
+>>>>>>> master
 });
 
 /***/ }),
@@ -19316,6 +19331,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+<<<<<<< HEAD
   return _c("div", [
     _c("div", { staticClass: "jumbotron" }, [
       _c("h1", { attrs: { align: "center" } }, [_vm._v(_vm._s(_vm.title))])
@@ -19427,12 +19443,16 @@ var render = function() {
       ])
     ])
   ])
+=======
+  return _vm._m(0)
+>>>>>>> master
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+<<<<<<< HEAD
     return _c("span", { staticClass: "input-group-addon" }, [
       _c("i", { staticClass: "fa fa-paper-plane" })
     ])
@@ -19444,6 +19464,9 @@ var staticRenderFns = [
     return _c("span", { staticClass: "input-group-addon" }, [
       _c("i", { staticClass: "fa fa-lock" })
     ])
+=======
+    return _c("div", [_c("h1", [_vm._v(" Hello World ")])])
+>>>>>>> master
   }
 ]
 render._withStripped = true
