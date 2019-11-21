@@ -12,11 +12,6 @@ define('CLIENT_SECRET', env('PASSPORT_SECRET'));
 class LoginControllerAPI extends Controller
 {
 
-    public function index()
-    {
-        return view('login.index');
-    }
-
     public function login(Request $request){
         $http = new \GuzzleHttp\Client;
             $response = $http->post(YOUR_SERVER_URL.'/oauth/token', [
