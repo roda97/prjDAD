@@ -84,7 +84,7 @@
                     Virtual Wallet
                 </div>
                 <div class="links">
-                <router-link to="/login">Login</router-link>    
+                    <a href="{{ route('login') }}">Login</a>   
                 </div>
             </div>
         </div>
