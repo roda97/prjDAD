@@ -1844,7 +1844,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-<<<<<<< HEAD
 //
 //
 //
@@ -1886,99 +1885,18 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    login: function login() {
-      this.showMessage = false;
-      axios.post('api/login') //, this.user)
-      .then(function (response) {
-        console.log(response); //this.$store.commit('setToken',response.data.access_token);
-        //return axios.get('api/users');
-      })
-      /*
-      .then(response => {
-        this.$store.commit('setUser',response.data.data);
-        this.typeofmsg = "alert-success";
-        this.message = "User authenticated correctly";
-        this.showMessage = true;
-          //Escutar tipos de mensagens
-         this.$socket.emit('user_enter', response.data.data);
-       // this.$socket.emit('user_enter_type', response.data.data);
-        })*/
-      ["catch"](function (error) {
-        //this.$store.commit('clearUserAndToken');
-        //this.typeofmsg = "alert-danger";
-        //this.message = "Invalid credentials";
-        //this.showMessage = true;
-        console.log(error);
-      });
+    login: function login() {//this.showMessage = false;
+
+      /*axios.post('api/login')//, this.user)
+          .then(response => {
+              console.log(response)
+              //return axios.get('api/users');
+          })
+          .catch(error => {
+              console.log(error);
+          })*/
     }
-    /*},
-    state: { 
-        token: "",
-        user: null, 
-        //departments: []       
-    },  
-    mutations: { 
-        clearUserAndToken: (state) => {
-            state.user = null;
-            state.token = "";
-            sessionStorage.removeItem('user');
-            sessionStorage.removeItem('token');
-            axios.defaults.headers.common.Authorization = undefined;
-        },
-        clearUser: (state) => {
-            state.user = null;
-            sessionStorage.removeItem('user');
-        },
-        clearToken: (state) => {
-            state.token = "";
-            sessionStorage.removeItem('token');
-            axios.defaults.headers.common.Authorization = undefined;
-        },
-        setUser: (state, user) => {
-            state.user =  user;
-            sessionStorage.setItem('user', JSON.stringify(user));
-        },
-        setToken: (state, token) => {
-            state.token= token;
-            sessionStorage.setItem('token', token);
-            axios.defaults.headers.common.Authorization = "Bearer " + token;
-        },
-        loadTokenAndUserFromSession: (state) => {
-            state.token = "";
-            state.user = null;
-            let token = sessionStorage.getItem('token');
-            let user = sessionStorage.getItem('user');
-            if (token) {
-                state.token = token;
-                axios.defaults.headers.common.Authorization = "Bearer " + token;
-            }
-            if (user) {
-                state.user = JSON.parse(user);
-            }
-        },*/
-
-    /*loadDepartments: (state) => {
-        axios.get('api/departments')
-                .then(response => {
-                    state.departments = response.data.data; 
-                });
-    }*/
-
   }
-=======
-/* harmony default export */ __webpack_exports__["default"] = ({
-  data: function data() {
-    return {
-      title: 'login',
-      showSuccess: true,
-      showFailure: true,
-      successMessage: 'Login Successfull',
-      failMessage: 'Login Unsuccessfull'
-    };
-  },
-  methods: {},
-  mounted: function mounted() {}
->>>>>>> master
 });
 
 /***/ }),
@@ -19331,7 +19249,6 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-<<<<<<< HEAD
   return _c("div", [
     _c("div", { staticClass: "jumbotron" }, [
       _c("h1", { attrs: { align: "center" } }, [_vm._v(_vm._s(_vm.title))])
@@ -19443,16 +19360,12 @@ var render = function() {
       ])
     ])
   ])
-=======
-  return _vm._m(0)
->>>>>>> master
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-<<<<<<< HEAD
     return _c("span", { staticClass: "input-group-addon" }, [
       _c("i", { staticClass: "fa fa-paper-plane" })
     ])
@@ -19464,9 +19377,6 @@ var staticRenderFns = [
     return _c("span", { staticClass: "input-group-addon" }, [
       _c("i", { staticClass: "fa fa-lock" })
     ])
-=======
-    return _c("div", [_c("h1", [_vm._v(" Hello World ")])])
->>>>>>> master
   }
 ]
 render._withStripped = true
