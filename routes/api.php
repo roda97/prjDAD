@@ -19,7 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 //auth
 //Route::post('login', 'LoginControllerAPI@login')->name('login');
-Route::post('register', 'AuthControllerAPI@register')->name('register');
+//Route::post('register', 'AuthControllerAPI@register')->name('register');
+
+Route::get('users', 'UserControllerAPI@index');
 
 #------ Passport
 Route::post('login', 'LoginControllerAPI@login')->name('login');
