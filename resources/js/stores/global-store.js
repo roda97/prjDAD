@@ -9,7 +9,7 @@ export default new Vuex.Store({
     state: {
         token: "",
         user: null,
-        departments: []
+        //departments: []
     },
     mutations: {
         clearUserAndToken: state => {
