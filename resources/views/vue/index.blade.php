@@ -12,7 +12,7 @@
 <router-link to="/logout" v-show="this.$store.state.user">Logout</router-link> - 
 <!-- estas duas linhas de cima, criam-me as hiperligações que me aparecem no projeto -->
 
-<!--<router-view></router-view>  como eu não queria que aparece os users em todas as paginas, uso este comando para passar a usar as rotas -->
+<router-view></router-view> <!-- como eu não queria que aparece os users em todas as paginas, uso este comando para passar a usar as rotas -->
 
 @endsection
 @section('pagescript')

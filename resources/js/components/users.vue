@@ -75,7 +75,9 @@ export default {
         },
         getUsers: function(){
             axios.get('api/users')
-                .then(response=>{this.users = response.data.data;});
+                .then(response=>{
+                    console.log(response)
+                    this.users = response.data.data;});
         }
         /*childMessage: function(message) {
             this.showSuccess = true;

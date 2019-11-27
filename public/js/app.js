@@ -2087,9 +2087,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['users'],
   data: function data() {
@@ -2208,6 +2205,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this4 = this;
 
       axios.get('api/users').then(function (response) {
+        console.log(response);
         _this4.users = response.data.data;
       });
     }
@@ -20249,10 +20247,6 @@ var render = function() {
             _vm._v(" "),
             _c("td", [_vm._v(_vm._s(user.email))]),
             _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(user.age))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(user.department))]),
-            _vm._v(" "),
             _c("td", [
               _c(
                 "a",
@@ -20299,10 +20293,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Name")]),
         _vm._v(" "),
         _c("th", [_vm._v("Email")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Age")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Department")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")])
       ])
@@ -36545,23 +36535,23 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   routes: routes //equivale a routes:routes
 
 });
-/*router.beforeEach((to, from, next) => {
-    if (to.name == "logout" ) {
-        if (!store.state.user) {
-            next("/login");
-            return;
-        }
+router.beforeEach(function (to, from, next) {
+  if (to.name == "logout") {
+    if (!_stores_global_store__WEBPACK_IMPORTED_MODULE_2__["default"].state.user) {
+      next("/login");
+      return;
     }
-    next();
-});*/
+  }
 
+  next();
+});
 var app = new Vue({
   el: '#app',
   router: router,
   store: _stores_global_store__WEBPACK_IMPORTED_MODULE_2__["default"],
   created: function created() {
-    console.log("-----"); //console.log(this.$store.state.user);
-    //this.$store.commit("loadDepartments");
+    console.log("-----");
+    console.log(this.$store.state.user); //this.$store.commit("loadDepartments");
 
     this.$store.commit("loadTokenAndUserFromSession");
     console.log(this.$store.state.user);

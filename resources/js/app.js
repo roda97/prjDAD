@@ -34,7 +34,7 @@ const router = new VueRouter({
     routes //equivale a routes:routes
 })
 
-/*router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
     if (to.name == "logout" ) {
         if (!store.state.user) {
             next("/login");
@@ -42,7 +42,7 @@ const router = new VueRouter({
         }
     }
     next();
-});*/
+});
 
 const app = new Vue({
     el: '#app',
@@ -50,7 +50,7 @@ const app = new Vue({
     store,
     created() {
         console.log("-----");
-        //console.log(this.$store.state.user);
+        console.log(this.$store.state.user);
         //this.$store.commit("loadDepartments");
         this.$store.commit("loadTokenAndUserFromSession");
         console.log(this.$store.state.user);
