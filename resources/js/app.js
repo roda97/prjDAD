@@ -14,16 +14,18 @@ Vue.use(Toasted, {
 
 import store from './stores/global-store'
 
+import Home from './components/home'
 import User from './components/users'
 import Login from './components/login'
 import Logout from './components/logout'
 
+const home = Vue.component("home", Home);
 const user = Vue.component("users", User);
 const login = Vue.component("login", Login);
 const logout = Vue.component("logout", Logout);
 
 const routes = [
-    { path: "/", redirect: "/users" },
+    { path: "/", component: Home, name: "home" },
     { path: "/users", component: User },
     { path: "/login", component: Login, name: "login" },
     { path: "/logout", component: Logout, name: "logout" }

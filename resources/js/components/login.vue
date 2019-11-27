@@ -60,7 +60,7 @@ export default {
                 .post("api/login", this.user)
                 .then(response => {
                     this.$store.commit("setToken", response.data.access_token);
-                    return axios.get("api/users/me");
+                    return axios.get("api/users");
                 })
                 .then(response => {
                     this.$store.commit("setUser", response.data.data);
