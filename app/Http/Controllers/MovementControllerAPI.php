@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Movimento;
+use App\Movement;
 use Illuminate\Http\Request;
 
-class MovimentoControllerAPI extends Controller
+use App\Http\Resources\Movement as MovementResource;
+
+class MovementControllerAPI extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->has('page')) {
+            return MovementResource::collection(Movement::paginate(5));
+        } else {
+            return MovementResource::collection(Movement::all());
+        }
     }
 
     /**
@@ -41,10 +47,10 @@ class MovimentoControllerAPI extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Movimento  $movimento
+     * @param  \App\Movement  $movement
      * @return \Illuminate\Http\Response
      */
-    public function show(Movimento $movimento)
+    public function show(Movement $movement)
     {
         //
     }
@@ -52,10 +58,10 @@ class MovimentoControllerAPI extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Movimento  $movimento
+     * @param  \App\Movement  $movement
      * @return \Illuminate\Http\Response
      */
-    public function edit(Movimento $movimento)
+    public function edit(Movement $movement)
     {
         //
     }
@@ -64,10 +70,10 @@ class MovimentoControllerAPI extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Movimento  $movimento
+     * @param  \App\Movement  $movement
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Movimento $movimento)
+    public function update(Request $request, Movement $movement)
     {
         //
     }
@@ -75,11 +81,12 @@ class MovimentoControllerAPI extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Movimento  $movimento
+     * @param  \App\Movement  $movement
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Movimento $movimento)
+    public function destroy(Movement $movement)
     {
         //
     }
 }
+

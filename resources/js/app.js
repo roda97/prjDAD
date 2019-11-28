@@ -18,6 +18,7 @@ import Home from './components/home'
 import User from './components/users'
 import Login from './components/login'
 import Logout from './components/logout'
+import Movimento from './components/movements'
 
 const home = Vue.component("home", Home);
 const user = Vue.component("users", User);
@@ -25,10 +26,11 @@ const login = Vue.component("login", Login);
 const logout = Vue.component("logout", Logout);
 
 const routes = [
-    { path: "/", component: Home, name: "home" },
+    { path: "/", component: Home},
     { path: "/users", component: User },
     { path: "/login", component: Login, name: "login" },
-    { path: "/logout", component: Logout, name: "logout" }
+    { path: "/logout", component: Logout, name: "logout" },
+    { path: "/movements", component: Movimento }
 
 ]
 
