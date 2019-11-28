@@ -20,22 +20,26 @@
     </div>
 </template>
 
-<script> 
+<script>
+
 export default {
-    data:function(){
-        return{
-        title: 'List Wallets'
+    data: function() {
+        return {
+        title: 'List Wallets',
+        wallets: []
         }
     },
-    methods:{
+     methods:{
         getWallets: function(){
             axios.get('api/wallets')
-                .then(response=>{
-                    this.wallets = response.data.data;});
+                .then(response=>{this.wallets = response.data.data;});
         }
-    }
-
-};
+    },
+    mounted(){
+        this.getWallets();
+    },
+        
+    };
 </script>
 
 <style>

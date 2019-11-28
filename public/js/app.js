@@ -2316,7 +2316,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      title: 'List Wallets'
+      title: 'List Wallets',
+      wallets: []
     };
   },
   methods: {
@@ -2327,6 +2328,9 @@ __webpack_require__.r(__webpack_exports__);
         _this.wallets = response.data.data;
       });
     }
+  },
+  mounted: function mounted() {
+    this.getWallets();
   }
 });
 
@@ -36746,11 +36750,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_users__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/users */ "./resources/js/components/users.vue");
 /* harmony import */ var _components_login__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/login */ "./resources/js/components/login.vue");
 /* harmony import */ var _components_logout__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/logout */ "./resources/js/components/logout.vue");
-<<<<<<< Updated upstream
 /* harmony import */ var _components_movements__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/movements */ "./resources/js/components/movements.vue");
-=======
-/* harmony import */ var _components_wallets__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/wallets */ "./resources/js/components/wallets.vue");
->>>>>>> Stashed changes
+/* harmony import */ var _components_wallets__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/wallets */ "./resources/js/components/wallets.vue");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
@@ -36769,11 +36770,12 @@ Vue.use(vue_toasted__WEBPACK_IMPORTED_MODULE_1___default.a, {
 
 
 
+
 var home = Vue.component("home", _components_home__WEBPACK_IMPORTED_MODULE_3__["default"]);
 var user = Vue.component("users", _components_users__WEBPACK_IMPORTED_MODULE_4__["default"]);
 var login = Vue.component("login", _components_login__WEBPACK_IMPORTED_MODULE_5__["default"]);
 var logout = Vue.component("logout", _components_logout__WEBPACK_IMPORTED_MODULE_6__["default"]);
-var wallet = Vue.component("wallets", _components_wallets__WEBPACK_IMPORTED_MODULE_7__["default"]);
+var wallet = Vue.component("wallets", _components_wallets__WEBPACK_IMPORTED_MODULE_8__["default"]);
 var routes = [{
   path: "/",
   component: _components_home__WEBPACK_IMPORTED_MODULE_3__["default"]
@@ -36789,13 +36791,11 @@ var routes = [{
   component: _components_logout__WEBPACK_IMPORTED_MODULE_6__["default"],
   name: "logout"
 }, {
-<<<<<<< Updated upstream
   path: "/movements",
   component: _components_movements__WEBPACK_IMPORTED_MODULE_7__["default"]
-=======
+}, {
   path: "/wallets",
-  component: _components_wallets__WEBPACK_IMPORTED_MODULE_7__["default"]
->>>>>>> Stashed changes
+  component: _components_wallets__WEBPACK_IMPORTED_MODULE_8__["default"]
 }];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   routes: routes //equivale a routes:routes

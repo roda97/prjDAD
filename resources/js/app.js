@@ -18,11 +18,9 @@ import Home from './components/home'
 import User from './components/users'
 import Login from './components/login'
 import Logout from './components/logout'
-<<<<<<< Updated upstream
 import Movimento from './components/movements'
-=======
 import Wallet from './components/wallets'
->>>>>>> Stashed changes
+
 
 const home = Vue.component("home", Home);
 const user = Vue.component("users", User);
@@ -35,11 +33,9 @@ const routes = [
     { path: "/users", component: User },
     { path: "/login", component: Login, name: "login" },
     { path: "/logout", component: Logout, name: "logout" },
-<<<<<<< Updated upstream
-    { path: "/movements", component: Movimento }
-=======
+    { path: "/movements", component: Movimento },
     { path: "/wallets", component: Wallet}
->>>>>>> Stashed changes
+
 
 ]
 
