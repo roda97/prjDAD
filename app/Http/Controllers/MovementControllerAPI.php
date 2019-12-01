@@ -16,11 +16,14 @@ class MovementControllerAPI extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('page')) {
-            return MovementResource::collection(Movement::paginate(5));
+        //return MovementResource::collection(Movement::orderby('date'));
+        return MovementResource::collection(Movement::orderby('date')->paginate(10));
+
+        /*if ($request->has('page')) {
+            return MovementResource::collection(Movement::paginate(10));
         } else {
             return MovementResource::collection(Movement::all());
-        }
+        }*/
     }
 
     /**
@@ -41,9 +44,17 @@ class MovementControllerAPI extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /*$request->validate([
+                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+                'email' => 'required|email|unique:users,email',
+                //'age' => 'integer|between:18,75',
+                'password' => 'min:3'
+            ]);*/
+        $movement = new movement();
+        $movement->fill($request->all());
+        $movement->save();
+        return response()->json(new MovementResource($movement), 201);
     }
-
     /**
      * Display the specified resource.
      *
@@ -73,9 +84,16 @@ class MovementControllerAPI extends Controller
      * @param  \App\Movement  $movement
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Movement $movement)
+    public function update(Request $request, $id)
     {
-        //
+        /*$request->validate([
+                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+                'email' => 'required|email|unique:users,email,'.$id,
+                //'age' => 'integer|between:18,75'
+            ]);*/
+        $movement = Movement::findOrFail($id);
+        $movement->update($request->all());
+        return new MovementResource($movement);
     }
 
     /**

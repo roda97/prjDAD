@@ -86,7 +86,7 @@ export default {
     },
     components: {
         "user-list": UserList,
-        "user-edit": UserEdit
+        "edit-list": UserEdit
     },
     mounted() {
         this.getUsers();

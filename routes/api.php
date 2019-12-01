@@ -23,6 +23,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('users', 'UserControllerAPI@index');
 Route::get('movements', 'MovementControllerAPI@index');
+Route::post('movements', 'MovementControllerAPI@store');
+Route::put('movements/{id}', 'MovementControllerAPI@update');
 Route::get('wallets', 'WalletControllerAPI@index');
 
 
