@@ -4,7 +4,7 @@
             <tr>
                 <th>Name</th>
                 <th>Email</th>
-
+                <th>Balance</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -12,10 +12,9 @@
             <tr v-for="user in users"  :key="user.id" :class="{active: currentUser === user}">
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
-                <td>
+                <td>{{ user.balance }}</td>
                     <a class="btn btn-sm btn-primary" v-on:click.prevent="editUser(user)">Edit</a>
                     <a class="btn btn-sm btn-danger" v-on:click.prevent="deleteUser(user)">Delete</a>
-                </td>
             </tr>
         </tbody>
     </table>
@@ -26,7 +25,8 @@ export default {
     props:['users'],
     data:function(){
         return{
-            currentUser:null
+            currentUser:null,
+            wallets:[]
         }
     },
     methods:{

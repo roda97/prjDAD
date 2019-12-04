@@ -90,6 +90,8 @@ export default {
     },
     mounted() {
         this.getUsers();
+        axios.get('api/wallets')
+            .then(response=>{this.wallets = response.data.data; });
     }
 };
 </script>

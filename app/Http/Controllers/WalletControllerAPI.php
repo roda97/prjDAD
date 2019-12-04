@@ -88,5 +88,10 @@ class WalletControllerAPI extends Controller
     {
         //
     }
+
+    public function countWallets(){
+        $count = DB::table('wallets')->count();
+        return $count;
+    }
 }
 

@@ -6,14 +6,17 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>User Name </th>
                 <th>Email</th>
                 <th>Balance</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="wallet in wallets"  :key="wallet.id" >
-                <td>{{ wallet.email }}</td>
+                <td>{{ wallet.user_name}}</td>
+                <td>{{ wallet.email }}</td> 
                 <td>{{ wallet.balance }}</td>
+                
             </tr>
         </tbody>
     </table>
@@ -26,6 +29,7 @@ export default {
     data: function() {
         return {
         title: 'List Wallets',
+        users: [],
         wallets: []
         }
     },
@@ -37,6 +41,8 @@ export default {
     },
     mounted(){
         this.getWallets();
+        axios.get('api/users')
+            .then(response=>{this.users = response.data.data; });
     },
         
     };

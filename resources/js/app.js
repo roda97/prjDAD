@@ -12,31 +12,28 @@ Vue.use(Toasted, {
     type: "info"
 }); //VER O QUE FAZ ESTE Toasted
 
-import { BPagination } from 'bootstrap-vue'
-Vue.component('b-pagination', BPagination)
-
 import store from './stores/global-store'
 
 import Home from './components/home'
 import User from './components/users'
 import Login from './components/login'
 import Logout from './components/logout'
-import Movement from './components/movements'
+import Movimento from './components/movements'
 import Wallet from './components/wallets'
 
 
-/*const home = Vue.component("home", Home);
+const home = Vue.component("home", Home);
 const user = Vue.component("users", User);
 const login = Vue.component("login", Login);
 const logout = Vue.component("logout", Logout);
-const wallet = Vue.component("wallets", Wallet);*/
+
 
 const routes = [
     { path: "/", component: Home},
     { path: "/users", component: User },
     { path: "/login", component: Login, name: "login" },
     { path: "/logout", component: Logout, name: "logout" },
-    { path: "/movements", component: Movement },
+    { path: "/movements", component: Movimento },
     { path: "/wallets", component: Wallet}
 
 
