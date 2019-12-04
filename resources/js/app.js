@@ -49,7 +49,18 @@ router.beforeEach((to, from, next) => {
             next("/login");
             return;
         }
+    } else if((to.name == "users" )){
+        if (!store.state.user) {
+            next("/login");
+            return;
+        }
+    } else if((to.name == "movements" )){
+        if (!store.state.user) {
+            next("/login");
+            return;
+        }
     }
+
     next();
 });
 

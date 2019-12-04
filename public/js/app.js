@@ -37215,6 +37215,16 @@ router.beforeEach(function (to, from, next) {
       next("/login");
       return;
     }
+  } else if (to.name == "users") {
+    if (!_stores_global_store__WEBPACK_IMPORTED_MODULE_2__["default"].state.user) {
+      next("/login");
+      return;
+    }
+  } else if (to.name == "movements") {
+    if (!_stores_global_store__WEBPACK_IMPORTED_MODULE_2__["default"].state.user) {
+      next("/login");
+      return;
+    }
   }
 
   next();
