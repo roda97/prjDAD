@@ -16,9 +16,9 @@ class User extends Resource
     {
         
         if ($this->wallet)
-        $balance=$this->wallet->balance;
+            $balance=$this->wallet->balance;
         else
-        $balance=null;
+            $balance=null;
         return [
             'id' => $this->id,
             'name' => $this->name,
