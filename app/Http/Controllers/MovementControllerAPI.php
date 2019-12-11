@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Wallet;
 use App\Movement;
-use Illuminate\Http\Request;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\Movement as MovementResource;
 
 class MovementControllerAPI extends Controller
@@ -16,8 +19,57 @@ class MovementControllerAPI extends Controller
      */
     public function index(Request $request)
     {
-        //return MovementResource::collection(Movement::orderby('date'));
-        return MovementResource::collection(Movement::orderby('date')->paginate(10));
+        if(count($request->except('page'))){
+            $movements = Movement::query();
+      
+            if ($request->filled('id')){
+                $movements->where('id','=', $request->id);
+            }
+
+            if ($request->filled('type')){
+                $movements->where('type','=', $request->type);
+            }
+
+            if ($request->filled('category')){
+                $category = DB::table('categories')->select('id')->where('name', $request->category)->get();
+                if($category->isEmpty()){
+                    return "Category doesn't exist!";
+                }
+                $movements->where('category_id','=', $category[0]->id);
+            }
+
+            if ($request->filled('type_payment')){
+                $movements->where('type_payment','=', $request->type_payment);
+            }
+
+            if ($request->filled('email')){
+                //if ($request->transferWallet){
+                    $email = DB::table('wallets')->select('id')->where('email', $request->transferWallet->email)->get();
+                //}   
+                //else
+                //    $email=null;
+                if($email->isEmpty() ){//|| strcmp($email,null)){
+                    return "Email doesn't exist!";
+                }
+                $movements->where('email','=', $email[0]->id);
+            }
+
+            if ($request->filled('data_inf')){
+                $movements->where('date','>=',$request->data_inf);
+            }
+
+            if ($request->filled('data_sup')){
+                $movements->where('date','<=',$request->data_sup);
+            }
+
+            $movements = $movements->orderby('date','desc')->paginate(10)->appends($request->except('page'));
+        }
+        else{    
+            $movements = MovementResource::collection(Movement::orderby('date','desc')->paginate(10));
+        }
+
+        return $movements;
+        //return MovementResource::collection(Movement::orderby('date','desc')->paginate(10));
 
         /*if ($request->has('page')) {
             return MovementResource::collection(Movement::paginate(10));
@@ -105,6 +157,98 @@ class MovementControllerAPI extends Controller
     public function destroy(Movement $movement)
     {
         //
+    }
+
+    public function addCredit(Request $request) {
+
+        if($request->type_payment == 'bt'){
+            $request->validate([
+                'email' => 'required|email',
+                'value' => 'required|between:0.01,5000',
+                'type_payment' => 'required|in:c,bt,mb',
+                'iban' => 'required|regex:^[A-Z]{2}\d{23}$^',
+                'source_description' => 'required',
+            ]);
+        }else{
+            $request->validate([
+                'email' => 'required|email',
+                'value' => 'required|between:0,5000',
+                'type_payment' => 'required|in:c,bt,mb',
+            ]);
+        };     
+
+        $walletId = DB::table('wallets')->select('id')->where('email', $request->email)->get(); 
+        if($walletId->isEmpty()){
+            return response("Email isn't valid!");
+        }
+
+        $balance = DB::table('wallets')->select('balance')->where('email', $request->email)->get(); 
+
+        //comandos para alterar a balance da wallet de destino:
+        $wallet = Wallet::findOrFail($walletId[0]->id);
+        $wallet->balance = $balance[0]->balance + $request->value;
+        $wallet->save();
+
+        //data
+        $date = Carbon::now();
+       
+        $movement = new Movement();
+        $movement->fill($request->all());
+        $movement->wallet_id = $walletId[0]->id;
+        $movement->type = "i";
+        $movement->start_balance = $balance[0]->balance;
+        $movement->end_balance = $balance[0]->balance + $request->value;
+        $movement->transfer = 0;
+        $movement->date = $date->toDateTimeString();
+        $movement->save();
+
+        return new MovementResource($movement);
+    }
+
+    public function addDebit(Request $request) {
+
+        /*if($request->type_payment == 'bt'){
+            $request->validate([
+                'email' => 'required|email',
+                'value' => 'required|between:0.01,5000',
+                'type_payment' => 'required|in:c,bt,mb',
+                'iban' => 'required|regex:^[A-Z]{2}\d{23}$^',
+                'source_description' => 'required',
+            ]);
+        }else{
+            $request->validate([
+                'email' => 'required|email',
+                'value' => 'required|between:0,5000',
+                'type_payment' => 'required|in:c,bt,mb',
+            ]);
+        };     
+
+        $walletId = DB::table('wallets')->select('id')->where('email', $request->email)->get(); 
+        if($walletId->isEmpty()){
+            return response("Email isn't valid!");
+        }
+
+        $balance = DB::table('wallets')->select('balance')->where('email', $request->email)->get(); */
+
+        //comandos para alterar a balance da wallet de destino:
+        $wallet = Wallet::findOrFail($walletId[0]->id);
+        $wallet->balance = $balance[0]->balance + $request->value;
+        $wallet->save();
+
+        //data
+        $date = Carbon::now();
+       
+        $movement = new Movement();
+        $movement->fill($request->all());
+        $movement->wallet_id = $walletId[0]->id;
+        $movement->type = "e";
+        $movement->start_balance = $balance[0]->balance;
+        $movement->end_balance = $balance[0]->balance - $request->value; //VERIFICAR QUAL A CONDIÇÃO AQUI
+        //$movement->transfer = 0;
+        $movement->date = $date->toDateTimeString();
+        $movement->save();
+
+        return new MovementResource($movement);
     }
 }
 

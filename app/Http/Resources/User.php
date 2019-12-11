@@ -14,6 +14,11 @@ class User extends Resource
      */
     public function toArray($request)
     {
+        
+        if ($this->wallet)
+            $balance=$this->wallet->balance;
+        else
+            $balance=null;
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -22,7 +27,8 @@ class User extends Resource
             'photo' => $this->photo,
             'nif' => $this->nif,
             'active' => $this->active,
-            
+            'balance' => $balance
+
         ];
     }
 }

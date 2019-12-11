@@ -21,10 +21,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //Route::post('login', 'LoginControllerAPI@login')->name('login');
 //Route::post('register', 'AuthControllerAPI@register')->name('register');
 
+///users
 Route::get('users', 'UserControllerAPI@index');
-Route::get('movements', 'MovementControllerAPI@index');
+
+//movements
+//Route::post('movements', 'MovementControllerAPI@index');
 Route::post('movements', 'MovementControllerAPI@store');
 Route::put('movements/{id}', 'MovementControllerAPI@update');
+Route::post('movements/credit', 'MovementControllerAPI@addCredit');
+Route::post('movements/debit', 'MovementControllerAPI@addDebit');
+Route::post('movements/filter', 'MovementControllerAPI@index');
+
+//wallets
 Route::get('wallets', 'WalletControllerAPI@index');
 
 

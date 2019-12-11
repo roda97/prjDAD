@@ -12,13 +12,16 @@ Vue.use(Toasted, {
     type: "info"
 }); //VER O QUE FAZ ESTE Toasted
 
+import { BPagination } from 'bootstrap-vue'
+Vue.component('b-pagination', BPagination)
+
 import store from './stores/global-store'
 
 import Home from './components/home'
 import User from './components/users'
 import Login from './components/login'
 import Logout from './components/logout'
-import Movimento from './components/movements'
+import Movimento from './components/movements/movements'
 import Wallet from './components/wallets'
 
 
@@ -30,11 +33,11 @@ const logout = Vue.component("logout", Logout);
 
 const routes = [
     { path: "/", component: Home},
-    { path: "/users", component: User },
+    { path: "/users", component: User, name: "users" },
     { path: "/login", component: Login, name: "login" },
     { path: "/logout", component: Logout, name: "logout" },
-    { path: "/movements", component: Movimento },
-    { path: "/wallets", component: Wallet}
+    { path: "/movements", component: Movimento, name: "movements" },
+    { path: "/wallets", component: Wallet, name: "wallets"}
 
 
 ]
@@ -60,6 +63,18 @@ router.beforeEach((to, from, next) => {
             return;
         }
     }
+    else if((to.name == "wallets" )){
+        if (!store.state.user) {
+            next("/login");
+            return;
+        }
+    }
+    /*else if((to.name == "login" )){
+        if (store.state.user) {
+            next("/");
+            return;
+        }
+    }*/
 
     next();
 });
