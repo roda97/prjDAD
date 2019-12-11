@@ -29,12 +29,12 @@ class UserControllerAPI extends Controller
             return User::with('department')->get();;
         }*/
     }
-
-    public function show($id)
+    
+    public function show(User $user)
     {
-        return new UserResource(User::find($id));
+        return new UserResource($User);
     }
-
+    
     public function store(Request $request)
     {
         $request->validate([

@@ -2,6 +2,13 @@
 
 import Vue from "vue";
 import Vuex from "vuex";
+/*
+const LOGIN = "LOGIN";
+const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+const LOGOUT = "LOGOUT";
+const ADMIN = "ADMIN";
+const USER = "USER";
+*/
 
 Vue.use(Vuex);
 
@@ -11,7 +18,34 @@ export default new Vuex.Store({
         user: null,
         //departments: []
     },
+
+    getters: {
+        isAuthenticated: state => !state.token,
+        authStatus: state => state.status,
+      },
+
     mutations: {
+            /*
+        [LOGIN] (state) {
+            state.pending = true;
+        },
+        [LOGIN_SUCCESS] (state) {
+            state.isLoggedIn = true;
+            state.pending = false;
+        },
+        [LOGOUT](state) {
+            state.isLoggedIn = false;
+        },
+
+        [ADMIN] (state) {
+            state.isAdmin = true;
+        },
+        [USER] (state) {
+            state.isAdmin = false;
+            state.pending = false;
+        },
+            */
+
         clearUserAndToken: state => {
             state.user = null;
             state.token = "";
