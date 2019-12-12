@@ -1,6 +1,5 @@
 require('./bootstrap');
 
-window.Vue = require('vue');
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
@@ -69,12 +68,6 @@ router.beforeEach((to, from, next) => {
             return;
         }
     } else if((to.name == "wallets" )){
-        if (!store.state.user) {
-            next("/login");
-            return;
-        }
-    }
-    else if((to.name == "wallets" )){
         if (!store.state.user) {
             next("/login");
             return;
