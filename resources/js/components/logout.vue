@@ -37,9 +37,12 @@ export default {
                 .post("api/logout")
                 .then(response => {
                     this.$store.commit("clearUserAndToken");
-                    this.typeofmsg = "alert-success";
-                    this.message = "User has logged out correctly";
-                    this.showMessage = true;
+                   // this.typeofmsg = "alert-success";
+                    //this.message = "User has logged out correctly";
+                   // this.showMessage = true;
+                    this.$router.push('/');
+
+                    this.$toasted.show("User logged out correctly");
                 })
                 .catch(error => {
                     this.$store.commit("clearUserAndToken");

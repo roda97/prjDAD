@@ -22,8 +22,10 @@
                         <td>{{ movement.type }}</td>
                             <td v-if="movement.transfer_wallet_id != undefined">{{ movement.email }}</td>
                             <td v-if="movement.transfer_wallet_id == null"> - </td>
-                        <td>{{ movement.type_payment }}</td>
-                            <td v-if="movement.category_id">{{ movement.name }}</td>
+                        <!--<td v-if="movement.transfer_wallet_id != null">  - </td>-->
+                        <td v-if="movement.type_payment == null"> - </td>
+                        <td v-if="movement.type_payment != null"> {{movement.type_payment}}</td>
+                            <td v-if="movement.category_id">{{ movement.category_name }}</td>
                             <td v-if="!movement.category_id"> - </td>
                         <td>{{ movement.date }}</td>
                         <td>{{ movement.start_balance }}</td>
