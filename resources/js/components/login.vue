@@ -63,11 +63,9 @@ export default {
                     return axios.get("api/user");
                 })
                 .then(response => {
-                    this.$store.commit("setUser", response.data);
-                    this.typeofmsg = "alert-success";
-                    this.message = "User authenticated correctly";
-                    this.showMessage = true;
-                    this.$router.push('/');
+                    this.$store.commit("setUser", response.data.data);
+                    this.$router.push("/");
+                    this.$toasted.show("User authenticated correctly");
                 })
                 .catch(error => {
                     this.$store.commit("clearUserAndToken");

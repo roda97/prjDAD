@@ -29,18 +29,17 @@ class UserControllerAPI extends Controller
             return User::with('department')->get();;
         }*/
     }
-
-    public function show($id)
+    
+    public function show(User $user)
     {
-        return new UserResource(User::find($id));
+        return new UserResource($User);
     }
-
+    
     public function store(Request $request)
     {
         $request->validate([
                 'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
                 'email' => 'required|email|unique:users,email',
-                //'age' => 'integer|between:18,75',
                 'password' => 'min:3'
             ]);
         $user = new User();
