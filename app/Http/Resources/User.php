@@ -23,6 +23,7 @@ class User extends Resource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
+            'password' => $this->password,
             'type' => $this->type,
             'photo' => $this->photo,
             'nif' => $this->nif,

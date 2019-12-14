@@ -67,8 +67,8 @@ export default {
                     //this.typeofmsg = "alert-success";
                     //this.message = "User authenticated correctly";
                     //this.showMessage = true;
-                    this.$router.push('/');
 
+                    this.$router.push('/');
                     this.$toasted.show("User authenticated correctly");
                 })
                 .catch(error => {

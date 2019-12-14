@@ -1,6 +1,5 @@
 require('./bootstrap');
 
-window.Vue = require('vue');
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
@@ -19,6 +18,8 @@ import store from './stores/global-store'
 
 import Home from './components/home'
 import User from './components/users'
+import UserEdit from './components/userEdit'
+import UserRegister from './components/userRegister'
 import Login from './components/login'
 import Logout from './components/logout'
 import Movimento from './components/movements/movements'
@@ -27,6 +28,8 @@ import Wallet from './components/wallets'
 
 const home = Vue.component("home", Home);
 const user = Vue.component("users", User);
+const userEdit = Vue.component("usersEdit", UserEdit);
+const userRegister = Vue.component("usersRegister", UserRegister);
 const login = Vue.component("login", Login);
 const logout = Vue.component("logout", Logout);
 
@@ -34,6 +37,8 @@ const logout = Vue.component("logout", Logout);
 const routes = [
     { path: "/", component: Home},
     { path: "/users", component: User, name: "users" },
+    { path: "/users/:id/edit", component: UserEdit, name: "usersEdit" },
+    { path: "/users/register", component: UserRegister, name: "usersRegister" },
     { path: "/login", component: Login, name: "login" },
     { path: "/logout", component: Logout, name: "logout" },
     { path: "/movements", component: Movimento, name: "movements" },

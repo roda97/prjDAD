@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Wallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Resources\Wallet as WalletResource;
 
@@ -93,5 +94,6 @@ class WalletControllerAPI extends Controller
         $count = DB::table('wallets')->count();
         return $count;
     }
+    
 }
 

@@ -1,3 +1,29 @@
 <template>
-  <p>This is the homepage</p>
+    <div>
+        <div>
+                <h1>{{ title }}</h1>               
+        </div>
+         <h3>There are currently {{ wallets }} Virtual Wallets!</h3>
+    </div>
 </template>
+
+<script>
+    export default {
+        data: function(){
+            return{
+                title: 'Virtual Wallet!',
+                wallets: 0,
+            }
+        },
+
+        mounted() {
+            axios.get('api/home')
+                .then(response=>{
+                    this.wallets = response.data;
+                });
+        }
+    }
+</script>
+<style scoped>
+
+</style>
