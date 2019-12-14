@@ -30,12 +30,14 @@ class MovementControllerAPI extends Controller
                 $movements->where('type','=', $request->type);
             }
 
-            if ($request->filled('category')){
-                $category = DB::table('categories')->select('id')->where('name', $request->category)->get();
+            if ($request->filled('category_name')){
+                $category = DB::table('categories')->where('name', 'like' , '%'.$request->category_name.'%')->pluck('id');
+                //$category = DB::table('categories')->where('name', 'like' , '%'.$request->category_name.'%')->pluck('id'); */
+                //$category = DB::table('categories')->select('id')->where('name', $request->category_name)->get();
                 if($category->isEmpty()){
-                    return "Category doesn't exist!";
+                    return response()->json("Category doesn't exist!",402);
                 }
-                $movements->where('category_id','=', $category[0]->id);
+                $movements->whereIn('category_id', $category);
             }
 
             if ($request->filled('type_payment')){
@@ -43,15 +45,11 @@ class MovementControllerAPI extends Controller
             }
 
             if ($request->filled('email')){
-                //if ($request->transferWallet){
-                    $email = DB::table('wallets')->select('id')->where('email', $request->transferWallet->email)->get();
-                //}   
-                //else
-                //    $email=null;
-                if($email->isEmpty() ){//|| strcmp($email,null)){
-                    return "Email doesn't exist!";
+                $email = DB::table('wallets')->select('id')->where('email', $request->email)->get();
+                if($email->isEmpty() ){
+                    return response()->json("Email doesn't exist!",402); 
                 }
-                $movements->where('email','=', $email[0]->id);
+                $movements->where('transfer_wallet_id','=', $email[0]->id);
             }
 
             if ($request->filled('data_inf')){
@@ -62,7 +60,7 @@ class MovementControllerAPI extends Controller
                 $movements->where('date','<=',$request->data_sup);
             }
 
-            $movements = $movements->orderby('date','desc')->paginate(10)->appends($request->except('page'));
+            $movements = MovementResource::collection($movements->orderby('date','desc')->paginate(10));//->appends($request->except('page'));
         }
         else{    
             $movements = MovementResource::collection(Movement::orderby('date','desc')->paginate(10));
@@ -179,7 +177,7 @@ class MovementControllerAPI extends Controller
 
         $walletId = DB::table('wallets')->select('id')->where('email', $request->email)->get(); 
         if($walletId->isEmpty()){
-            return response("Email isn't valid!");
+            return response()->json(("Email doesn't exist!"), 402);
         }
 
         $balance = DB::table('wallets')->select('balance')->where('email', $request->email)->get(); 

@@ -40,6 +40,7 @@ export default {
                     this.typeofmsg = "alert-success";
                     this.message = "User has logged out correctly";
                     this.showMessage = true;
+                    this.$router.push('/');
                 })
                 .catch(error => {
                     this.$store.commit("clearUserAndToken");

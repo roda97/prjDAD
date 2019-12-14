@@ -60,13 +60,14 @@ export default {
                 .post("api/login", this.user)
                 .then(response => {
                     this.$store.commit("setToken", response.data.access_token);
-                    return axios.get("api/users");
+                    return axios.get("api/user");
                 })
                 .then(response => {
-                    this.$store.commit("setUser", response.data.data);
+                    this.$store.commit("setUser", response.data);
                     this.typeofmsg = "alert-success";
                     this.message = "User authenticated correctly";
                     this.showMessage = true;
+                    this.$router.push('/');
                 })
                 .catch(error => {
                     this.$store.commit("clearUserAndToken");

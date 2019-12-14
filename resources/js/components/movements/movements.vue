@@ -6,13 +6,11 @@
 
         <br>
 
-        <!--ESTE BOTAO DE BAIXO É SUPOSTO DESAPARECER E FICAR A FUNCIONAR COM AQUELA VERIFICAÇÃO DE SER TYPE 'o'-->
-        <a class="btn btn-primary" v-on:click.prevent="showAddCredit()">Add Credit</a>
+        <div v-show="$store.state.user.type == 'o'">
+            <a class="btn btn-primary" v-on:click.prevent="showAddCredit()">Add Credit</a>
+
         <!--VERIFICAR QUE CONFIRMAÇÃO É NECESSÁRIA NESTE BOTÃO-->
         <a class="btn btn-primary" v-on:click.prevent="showAddDebit()">Add Debit</a>
-
-        <div v-show="this.$store.state.user.type == 'o'">
-            <a class="btn btn-primary" v-on:click.prevent="showAddCredit()">Add Credit</a>
         </div>
 
         <br>
@@ -43,7 +41,7 @@
                         </select>            
                     </td> 
                     <td>
-                        <input type="text" name="category" class="form-control" placeholder="Category" v-model="search.category_id">               
+                        <input type="text" name="category" class="form-control" placeholder="Category" v-model="search.category_name">               
                     </td>
                     <td>
                         <select name="type_payment" class="form-control" v-model="search.type_payment">
@@ -86,7 +84,7 @@
 		</div>
 
         <div>
-            <b-pagination  align="left" size="md-c"  v-model="page" :limit="10" :total-rows="this.total"  :per-page="10" @input="getResults(page)"></b-pagination>
+            <b-pagination  align="left" size="md-c"  v-model="page" :limit="10" :total-rows="total"  :per-page="10" @input="getResults(page)"></b-pagination>
             <br>
         </div>
     </div>
@@ -117,10 +115,9 @@ export default {
             showDebit: false,
             movements: [],
             search:{
-                //user_id: this.$store.state.user.id,
                 id: "",
                 type: "",
-                category_id: "",
+                category_name: "",
                 type_payment: "",
                 email: "",
                 data_inf: "",
@@ -165,7 +162,7 @@ export default {
         },
         getResults(page)
         {
-            axios.post('api/movements/filter?page='+page).then(response=>{ //+ '&search=' + this.search).then(response=>{
+            axios.post('api/movements/filter?page='+page , this.search).then(response=>{
                 this.movements = response.data.data;
                 this.page = response.data.meta.current_page;
                 //this.last = response.data.meta.last_page;
@@ -176,34 +173,33 @@ export default {
                 this.showSuccess = false;
             });
         },
-         /*goToPage(page) {
-            this.api.get('/users?page=' + page + '&limit=' + this.paginator.limit
-                         + '&search=' + this.search).then(response => {
-
-                this.users = response.data;
-                this.paginator = response.paginator;
-            });
-        },*/
         addCredit: function(movement){
             this.editingMovement = false; //NÃO ESTÁ A FUNCIONAR, NÃO SEI PORQUE, mas o contrário funciona
             this.showFailure = false;
             this.showSuccess = false;
             axios.post('api/movements/credit', movement)
             .then(response => {
-                if(response.data == "Email isn't valid!"){
+                /*if(response.data == "Email isn't valid!"){
                     this.showFailure = true;
                     this.showSuccess = false;
                     this.showCredit = true;
                     this.failMessage = response.data;
-                }else{
+                }else{*/
                     this.showFailure = false;
                     this.showSuccess = true;
                     this.successMessage = "Credit movement created with success";
                     this.showCredit = false;
                     this.movements = response.data.data;
-                }
+                //}
                 //console.log(response.data)  
-            }).catch(error => {   
+            }).catch(error => { 
+                console.log(error.response.data)
+                if(error.response.data == "Email doesn't exist!"){
+                    this.showFailure = true;
+                    this.showSuccess = false;
+                    this.showCredit = true;
+                    this.failMessage = error.response.data;
+                }  
                 if(error.response.status == 422) {
                     //console.log(error);
                     this.showFailure=true;
@@ -212,7 +208,7 @@ export default {
                     //this.failMessage= "Error while creating the credit movement, please check the data values!" //Erro ao criar o movimento, insira os dados corretamente!"; 
                     ///////////////ASSIM MANDA O ERRO ESPECIFICO, MAS PERGUNTAR SE PODE FICAR ASSIM:////////////////////////////////////
                     this.failMessage=error.response.data.errors;
-                }                     
+                }                    
             })
         },
         showAddCredit: function(){
@@ -290,29 +286,42 @@ export default {
         filterMovements: function(){
             axios.post('api/movements/filter', this.search)
                 .then(response=>{
-                    if(!Object.keys(response.data.data).length){
+                    if(!Object.keys(response.data.data).length){ //if(typeof response.data == Object && !Object.keys(response.data.data).length){ //isto era se eu continuasse a mandar os erros no response
                         this.listMovements = false;
                         this.showFailure = true;
                         this.failMessage = "There are no movements with this data!";
-                    }else if(response.data == "Email doesn't exist!"){
+                    /*}else if(response.data.data == "Email doesn't exist!"){
                         this.listMovements = false;
                         this.showFailure = true;
                         this.failMessage = response.data;
-                    }else if(response.data == "Category doesn't exist!"){
+                    }else if(response.data.data == "Category doesn't exist!"){
                         this.listMovements = false;
                         this.showFailure = true;
-                        this.failMessage = response.data;
+                        this.failMessage = response.data;*/
                     }else{
                         this.listMovements = true;
                         this.showFailure = false;
                         console.log(response.data.data)
                         this.movements = response.data.data;
+                        this.page = response.data.meta.current_page;
+                        this.total = response.data.meta.total;
                     }                        
                 })
                 .catch(error => {                        
-                    console.log(error);
+                    console.log(error.response.data);
+                    if(error.response.data == "Email doesn't exist!"){
+                        this.listMovements = false;
+                        this.showFailure = true;
+                        this.failMessage = error.response.data;
+                    }
+                    if(error.response.data == "Category doesn't exist!"){
+                        this.listMovements = false;
+                        this.showFailure = true;
+                        this.failMessage = error.response.data;
+                    }
                 })
         },
+
         /*getMovements: function(){
             axios.get('api/movements')X
                 .then(response=>{this.movements = response.data.data;});
@@ -330,6 +339,11 @@ export default {
         //this.filterMovements();
         //this.getMovements();
     },
+    /*computed:{
+        isoperater(){
+            return this.$store.state.user.type == 'o'; 
+        }
+    }*/
         
     };
 </script>

@@ -1900,13 +1900,15 @@ __webpack_require__.r(__webpack_exports__);
       axios.post("api/login", this.user).then(function (response) {
         _this.$store.commit("setToken", response.data.access_token);
 
-        return axios.get("api/users");
+        return axios.get("api/user");
       }).then(function (response) {
-        _this.$store.commit("setUser", response.data.data);
+        _this.$store.commit("setUser", response.data);
 
         _this.typeofmsg = "alert-success";
         _this.message = "User authenticated correctly";
         _this.showMessage = true;
+
+        _this.$router.push('/');
       })["catch"](function (error) {
         _this.$store.commit("clearUserAndToken");
 
@@ -1972,6 +1974,8 @@ __webpack_require__.r(__webpack_exports__);
         _this.typeofmsg = "alert-success";
         _this.message = "User has logged out correctly";
         _this.showMessage = true;
+
+        _this.$router.push('/');
       })["catch"](function (error) {
         _this.$store.commit("clearUserAndToken");
 
@@ -2386,8 +2390,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 
 
@@ -2411,10 +2413,9 @@ __webpack_require__.r(__webpack_exports__);
       showDebit: false,
       movements: [],
       search: {
-        //user_id: this.$store.state.user.id,
         id: "",
         type: "",
-        category_id: "",
+        category_name: "",
         type_payment: "",
         email: "",
         data_inf: "",
@@ -2463,8 +2464,7 @@ __webpack_require__.r(__webpack_exports__);
     getResults: function getResults(page) {
       var _this2 = this;
 
-      axios.post('api/movements/filter?page=' + page).then(function (response) {
-        //+ '&search=' + this.search).then(response=>{
+      axios.post('api/movements/filter?page=' + page, this.search).then(function (response) {
         _this2.movements = response.data.data;
         _this2.page = response.data.meta.current_page; //this.last = response.data.meta.last_page;
 
@@ -2476,14 +2476,6 @@ __webpack_require__.r(__webpack_exports__);
         _this2.showSuccess = false;
       });
     },
-
-    /*goToPage(page) {
-       this.api.get('/users?page=' + page + '&limit=' + this.paginator.limit
-                    + '&search=' + this.search).then(response => {
-             this.users = response.data;
-           this.paginator = response.paginator;
-       });
-    },*/
     addCredit: function addCredit(movement) {
       var _this3 = this;
 
@@ -2492,20 +2484,28 @@ __webpack_require__.r(__webpack_exports__);
       this.showFailure = false;
       this.showSuccess = false;
       axios.post('api/movements/credit', movement).then(function (response) {
-        if (response.data == "Email isn't valid!") {
+        /*if(response.data == "Email isn't valid!"){
+            this.showFailure = true;
+            this.showSuccess = false;
+            this.showCredit = true;
+            this.failMessage = response.data;
+        }else{*/
+        _this3.showFailure = false;
+        _this3.showSuccess = true;
+        _this3.successMessage = "Credit movement created with success";
+        _this3.showCredit = false;
+        _this3.movements = response.data.data; //}
+        //console.log(response.data)  
+      })["catch"](function (error) {
+        console.log(error.response.data);
+
+        if (error.response.data == "Email doesn't exist!") {
           _this3.showFailure = true;
           _this3.showSuccess = false;
           _this3.showCredit = true;
-          _this3.failMessage = response.data;
-        } else {
-          _this3.showFailure = false;
-          _this3.showSuccess = true;
-          _this3.successMessage = "Credit movement created with success";
-          _this3.showCredit = false;
-          _this3.movements = response.data.data;
-        } //console.log(response.data)  
+          _this3.failMessage = error.response.data;
+        }
 
-      })["catch"](function (error) {
         if (error.response.status == 422) {
           //console.log(error);
           _this3.showFailure = true;
@@ -2595,25 +2595,40 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.post('api/movements/filter', this.search).then(function (response) {
         if (!Object.keys(response.data.data).length) {
+          //if(typeof response.data == Object && !Object.keys(response.data.data).length){ //isto era se eu continuasse a mandar os erros no response
           _this5.listMovements = false;
           _this5.showFailure = true;
           _this5.failMessage = "There are no movements with this data!";
-        } else if (response.data == "Email doesn't exist!") {
-          _this5.listMovements = false;
-          _this5.showFailure = true;
-          _this5.failMessage = response.data;
-        } else if (response.data == "Category doesn't exist!") {
-          _this5.listMovements = false;
-          _this5.showFailure = true;
-          _this5.failMessage = response.data;
+          /*}else if(response.data.data == "Email doesn't exist!"){
+              this.listMovements = false;
+              this.showFailure = true;
+              this.failMessage = response.data;
+          }else if(response.data.data == "Category doesn't exist!"){
+              this.listMovements = false;
+              this.showFailure = true;
+              this.failMessage = response.data;*/
         } else {
           _this5.listMovements = true;
           _this5.showFailure = false;
           console.log(response.data.data);
           _this5.movements = response.data.data;
+          _this5.page = response.data.meta.current_page;
+          _this5.total = response.data.meta.total;
         }
       })["catch"](function (error) {
-        console.log(error);
+        console.log(error.response.data);
+
+        if (error.response.data == "Email doesn't exist!") {
+          _this5.listMovements = false;
+          _this5.showFailure = true;
+          _this5.failMessage = error.response.data;
+        }
+
+        if (error.response.data == "Category doesn't exist!") {
+          _this5.listMovements = false;
+          _this5.showFailure = true;
+          _this5.failMessage = error.response.data;
+        }
       });
     }
     /*getMovements: function(){
@@ -2633,6 +2648,12 @@ __webpack_require__.r(__webpack_exports__);
     this.getResults(1); //this.filterMovements();
     //this.getMovements();
   }
+  /*computed:{
+      isoperater(){
+          return this.$store.state.user.type == 'o'; 
+      }
+  }*/
+
 });
 
 /***/ }),
@@ -2646,6 +2667,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
 //
 //
 //
@@ -53544,42 +53567,14 @@ var render = function() {
       _c("br"),
       _vm._v(" "),
       _c(
-        "a",
-        {
-          staticClass: "btn btn-primary",
-          on: {
-            click: function($event) {
-              $event.preventDefault()
-              return _vm.showAddCredit()
-            }
-          }
-        },
-        [_vm._v("Add Credit")]
-      ),
-      _vm._v(" "),
-      _c(
-        "a",
-        {
-          staticClass: "btn btn-primary",
-          on: {
-            click: function($event) {
-              $event.preventDefault()
-              return _vm.showAddDebit()
-            }
-          }
-        },
-        [_vm._v("Add Debit")]
-      ),
-      _vm._v(" "),
-      _c(
         "div",
         {
           directives: [
             {
               name: "show",
               rawName: "v-show",
-              value: this.$store.state.user.type == "o",
-              expression: "this.$store.state.user.type == 'o'"
+              value: _vm.$store.state.user.type == "o",
+              expression: "$store.state.user.type == 'o'"
             }
           ]
         },
@@ -53596,6 +53591,20 @@ var render = function() {
               }
             },
             [_vm._v("Add Credit")]
+          ),
+          _vm._v(" "),
+          _c(
+            "a",
+            {
+              staticClass: "btn btn-primary",
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.showAddDebit()
+                }
+              }
+            },
+            [_vm._v("Add Debit")]
           )
         ]
       ),
@@ -53685,8 +53694,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.search.category_id,
-                    expression: "search.category_id"
+                    value: _vm.search.category_name,
+                    expression: "search.category_name"
                   }
                 ],
                 staticClass: "form-control",
@@ -53695,13 +53704,13 @@ var render = function() {
                   name: "category",
                   placeholder: "Category"
                 },
-                domProps: { value: _vm.search.category_id },
+                domProps: { value: _vm.search.category_name },
                 on: {
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.$set(_vm.search, "category_id", $event.target.value)
+                    _vm.$set(_vm.search, "category_name", $event.target.value)
                   }
                 }
               })
@@ -53951,7 +53960,7 @@ var render = function() {
               align: "left",
               size: "md-c",
               limit: 10,
-              "total-rows": this.total,
+              "total-rows": _vm.total,
               "per-page": 10
             },
             on: {
@@ -54051,10 +54060,16 @@ var render = function() {
                 ? _c("td", [_vm._v(" - ")])
                 : _vm._e(),
               _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(movement.type_payment))]),
+              movement.type_payment == null
+                ? _c("td", [_vm._v(" - ")])
+                : _vm._e(),
+              _vm._v(" "),
+              movement.type_payment != null
+                ? _c("td", [_vm._v(" " + _vm._s(movement.type_payment))])
+                : _vm._e(),
               _vm._v(" "),
               movement.category_id
-                ? _c("td", [_vm._v(_vm._s(movement.name))])
+                ? _c("td", [_vm._v(_vm._s(movement.category_name))])
                 : _vm._e(),
               _vm._v(" "),
               !movement.category_id ? _c("td", [_vm._v(" - ")]) : _vm._e(),
@@ -70736,38 +70751,6 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   routes: routes //equivale a routes:routes
 
 });
-router.beforeEach(function (to, from, next) {
-  if (to.name == "logout") {
-    if (!_stores_global_store__WEBPACK_IMPORTED_MODULE_3__["default"].state.user) {
-      next("/login");
-      return;
-    }
-  } else if (to.name == "users") {
-    if (!_stores_global_store__WEBPACK_IMPORTED_MODULE_3__["default"].state.user) {
-      next("/login");
-      return;
-    }
-  } else if (to.name == "movements") {
-    if (!_stores_global_store__WEBPACK_IMPORTED_MODULE_3__["default"].state.user) {
-      next("/login");
-      return;
-    }
-  } else if (to.name == "wallets") {
-    if (!_stores_global_store__WEBPACK_IMPORTED_MODULE_3__["default"].state.user) {
-      next("/login");
-      return;
-    }
-  }
-  /*else if((to.name == "login" )){
-      if (store.state.user) {
-          next("/");
-          return;
-      }
-  }*/
-
-
-  next();
-});
 var app = new Vue({
   el: '#app',
   router: router,
@@ -70779,6 +70762,45 @@ var app = new Vue({
     this.$store.commit("loadTokenAndUserFromSession");
     console.log(this.$store.state.user);
   }
+});
+router.beforeEach(function (to, from, next) {
+  if (to.name == "logout") {
+    if (!app.$store.state.user) {
+      next("/login");
+      return;
+    }
+  }
+
+  if (to.name == "users") {
+    if (!app.$store.state.user) {
+      next("/login");
+      return;
+    }
+  }
+
+  if (to.name == "movements") {
+    if (!app.$store.state.user) {
+      next("/");
+      console.log(app.$store.state.user);
+      return;
+    }
+  }
+
+  if (to.name == "wallets") {
+    if (!app.$store.state.user) {
+      next("/login");
+      return;
+    }
+  }
+
+  if (to.name == "login") {
+    if (app.$store.state.user) {
+      next("/");
+      return;
+    }
+  }
+
+  next();
 });
 
 /***/ }),

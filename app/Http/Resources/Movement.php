@@ -19,9 +19,9 @@ class Movement extends Resource
         else
             $email=null;
         if ($this->category)
-            $name=$this->category->name;
+            $category_name=$this->category->name;
         else
-            $name=null;
+            $category_name=null;
         return [
             'id' => $this->id,
             'wallet_id' => $this->wallet_id,
@@ -41,7 +41,7 @@ class Movement extends Resource
             'end_balance' => $this->end_balance,
             'value' => $this->value,
             'email' => $email,
-            'name' => $name
+            'category_name' => $category_name
         ];
     }
 }
