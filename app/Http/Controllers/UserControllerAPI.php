@@ -9,6 +9,7 @@ use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
 use App\User;
+use App\Wallet;
 use App\StoreUserRequest;
 use Hash;
 
@@ -40,13 +41,17 @@ class UserControllerAPI extends Controller
         $request->validate([
                 'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
                 'email' => 'required|email|unique:users,email',
-                //'age' => 'integer|between:18,75',
                 'password' => 'min:3'
             ]);
         $user = new User();
         $user->fill($request->all());
         $user->password = Hash::make($user->password);
         $user->save();
+        $wallet = new Wallet();
+        $wallet->id = $user->id;
+        $wallet->balance = 0;
+        $wallet->email = $user->email;
+        $wallet->save();
         return response()->json(new UserResource($user), 201);
     }
 
@@ -55,7 +60,6 @@ class UserControllerAPI extends Controller
         $request->validate([
                 'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
                 'email' => 'required|email|unique:users,email,'.$id,
-                //'age' => 'integer|between:18,75'
             ]);
         $user = User::findOrFail($id);
         $user->update($request->all());

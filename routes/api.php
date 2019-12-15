@@ -27,11 +27,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 ///users
 Route::get('users', 'UserControllerAPI@index');
+Route::get('wallets', 'WalletControllerAPI@index');
 
 //movements
 //Route::post('movements', 'MovementControllerAPI@index');
 #------ Users
 Route::middleware('auth:api')->get('users', 'UserControllerAPI@index');
+Route::post('users/register', 'UserControllerAPI@store');
 Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->patch('users/password', 'UserControllerAPI@alterarPassword');
