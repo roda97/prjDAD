@@ -1,6 +1,5 @@
 require('./bootstrap');
 
-window.Vue = require('vue');
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
@@ -53,44 +52,6 @@ const router = new VueRouter({
     routes //equivale a routes:routes
 })
 
-router.beforeEach((to, from, next) => {
-    if (to.name == "logout" ) {
-        if (!store.state.user) {
-            next("/login");
-            return;
-        }
-    } else if((to.name == "users" )){
-        if (!store.state.user) {
-            next("/login");
-            return;
-        }
-    } else if((to.name == "movements" )){
-        if (!store.state.user) {
-            next("/login");
-            return;
-        }
-    } else if((to.name == "wallets" )){
-        if (!store.state.user) {
-            next("/login");
-            return;
-        }
-    }
-    else if((to.name == "wallets" )){
-        if (!store.state.user) {
-            next("/login");
-            return;
-        }
-    }
-    /*else if((to.name == "login" )){
-        if (store.state.user) {
-            next("/");
-            return;
-        }
-    }*/
-
-    next();
-});
-
 const app = new Vue({
     el: '#app',
     router,
@@ -98,7 +59,46 @@ const app = new Vue({
     created() {
         console.log("-----");
         console.log(this.$store.state.user);
+        //this.$store.commit("loadDepartments");
         this.$store.commit("loadTokenAndUserFromSession");
         console.log(this.$store.state.user);
     }
 });
+
+router.beforeEach((to, from, next) => {
+    if (to.name == "logout" ) {
+        if (!app.$store.state.user) {
+            next("/login");
+            return;
+        }
+    } 
+    if(to.name == "users" ){
+        if (!app.$store.state.user) {
+            next("/login");
+            return;
+        }
+    } 
+    if(to.name == "movements" ){     
+        if (!app.$store.state.user) {
+            next("/");
+            console.log(app.$store.state.user)
+            return;
+        }
+    }
+    if(to.name == "wallets" ){
+        if (!app.$store.state.user) {
+            next("/login");
+            return;
+        }
+    }
+    if(to.name == "login" ){
+        if (app.$store.state.user) {
+            next("/");
+            return;
+        }
+    }
+
+    next();
+});
+
+
