@@ -1,8 +1,9 @@
 <template>
     <div class="jumbotron">
         <h2>Register Credit</h2>
+
 	    <div class="form-group">
-	        <label for="inputEmail">Email To Credit:</label>
+	        <label for="inputEmail">Email to Credit:</label>
 	        <input
 	            type="email" class="form-control" v-model="currentMovement.email"
 	            name="email" id="inputEmail" 
@@ -10,7 +11,7 @@
 	    </div>
 
         <div class="form-group">
-	        <label for="inputValue">Value To Credit:</label>
+	        <label for="inputValue">Value to Credit:</label>
 	        <input
 	            type="text" class="form-control" v-model="currentMovement.value"
 	            name="value" id="inputValue" 
@@ -18,7 +19,7 @@
 	    </div>
 
         <div class="form-group">
-	       <label for="inputTypePayment">Type Of Payment:</label>
+	       <label for="inputTypePayment">Type of Payment:</label>
             <select name="typePayment" id="InputTypePayment" class="form-control" v-model="currentMovement.type_payment" required>
                 <option disabled selected> -- Select an option -- </option>
                 <option value="c">Cash</option>
@@ -46,7 +47,7 @@
         </div>
 
         <div class="form-group">
-	        <a class="btn btn-primary" v-on:click.prevent="addCredit(currentMovement)">Create Credit</a>
+	        <a class="btn btn-primary" v-on:click.prevent="addCredit()">Create Credit</a>
 	        <a class="btn btn-light" v-on:click.prevent="cancelCredit()">Cancel</a>
 	    </div>
 
@@ -58,13 +59,20 @@
         props:["currentMovement"],
         data: function(){
             return{
+               /* movement:{
+                    email: "",
+                    value: "",
+                    type_payment: "",
+                    iban: null,
+                    source_description: null,
+                }*/
 
             }
         },
 
         methods: {
-            addCredit: function(movement){
-                this.$emit('add-credit', movement);
+            addCredit: function(){
+                this.$emit('add-credit', this.currentMovement);
             },
 
             cancelCredit: function(){

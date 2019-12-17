@@ -14,11 +14,15 @@ class Wallet extends Resource
      */
     public function toArray($request)
     {
+        /*if ($this->user)
+            $users=$this->user;
+        else
+            $users=null;*/
         return [
             'id' => $this->id,
             'email' => $this->email,
             'balance' => $this->balance,
-            'user_name' => $this->user->name
+            'user_name' => $this->user->name,
         ];
     }
 }

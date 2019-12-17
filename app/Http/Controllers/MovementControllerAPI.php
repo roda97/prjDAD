@@ -162,7 +162,7 @@ class MovementControllerAPI extends Controller
         if($request->type_payment == 'bt'){
             $request->validate([
                 'email' => 'required|email',
-                'value' => 'required|between:0.01,5000',
+                'value' => 'required|numeric|between:0.01,5000.00',
                 'type_payment' => 'required|in:c,bt,mb',
                 'iban' => 'required|regex:^[A-Z]{2}\d{23}$^',
                 'source_description' => 'required',
@@ -170,7 +170,7 @@ class MovementControllerAPI extends Controller
         }else{
             $request->validate([
                 'email' => 'required|email',
-                'value' => 'required|between:0,5000',
+                'value' => 'required|numeric|between:0.01,5000.00',
                 'type_payment' => 'required|in:c,bt,mb',
             ]);
         };     
@@ -182,17 +182,13 @@ class MovementControllerAPI extends Controller
 
         $balance = DB::table('wallets')->select('balance')->where('email', $request->email)->get(); 
 
-        //comandos para alterar a balance da wallet de destino:
-        $wallet = Wallet::findOrFail($walletId[0]->id);
-        $wallet->balance = $balance[0]->balance + $request->value;
-        $wallet->save();
-
         //data
         $date = Carbon::now();
        
         $movement = new Movement();
         $movement->fill($request->all());
         $movement->wallet_id = $walletId[0]->id;
+        //$movement->email = $request->email;
         $movement->type = "i";
         $movement->start_balance = $balance[0]->balance;
         $movement->end_balance = $balance[0]->balance + $request->value;
@@ -200,51 +196,89 @@ class MovementControllerAPI extends Controller
         $movement->date = $date->toDateTimeString();
         $movement->save();
 
-        return new MovementResource($movement);
-    }
-
-    public function addDebit(Request $request) {
-
-        /*if($request->type_payment == 'bt'){
-            $request->validate([
-                'email' => 'required|email',
-                'value' => 'required|between:0.01,5000',
-                'type_payment' => 'required|in:c,bt,mb',
-                'iban' => 'required|regex:^[A-Z]{2}\d{23}$^',
-                'source_description' => 'required',
-            ]);
-        }else{
-            $request->validate([
-                'email' => 'required|email',
-                'value' => 'required|between:0,5000',
-                'type_payment' => 'required|in:c,bt,mb',
-            ]);
-        };     
-
-        $walletId = DB::table('wallets')->select('id')->where('email', $request->email)->get(); 
-        if($walletId->isEmpty()){
-            return response("Email isn't valid!");
-        }
-
-        $balance = DB::table('wallets')->select('balance')->where('email', $request->email)->get(); */
-
         //comandos para alterar a balance da wallet de destino:
         $wallet = Wallet::findOrFail($walletId[0]->id);
         $wallet->balance = $balance[0]->balance + $request->value;
         $wallet->save();
 
+        return new MovementResource($movement);
+    }
+
+    public function addDebit(Request $request) {
+
+        $request->validate([
+            'transfer' => 'required|in:0,1',
+            //'email' => 'required|email',
+            'value' => 'required|numeric|between:0.01,5000.00',
+            //'type_payment' => 'required|in:bt,mb',
+            'category_name' => 'required',
+            'description' => 'required'
+        ]); 
+        
+        if($request->transfer == '0'){
+            $request->validate([
+                'type_payment' => 'required|in:bt,mb'
+            ]);
+        }
+        if($request->transfer == '1'){
+            $request->validate([
+                'email' => 'required|email',
+                'source_description' => 'required'
+            ]);
+        }
+        if($request->type_payment == 'bt'){
+            $request->validate([
+                //'email' => 'required|email',
+                //'value' => 'required|numeric|between:0.01,5000.00',
+                //'type_payment' => 'required|in:bt,mb',
+                'iban' => 'required|regex:^[A-Z]{2}\d{23}$^',
+                //'source_description' => 'required',
+            ]);
+        }
+        if($request->type_payment == 'mb'){
+            $request->validate([
+                'mb_entity_code' => 'required|digits:5',
+                'mb_payment_reference' => 'required|digits:9'
+            ]);
+        }
+         
+        //FALTA VERIFICAR QUE ELE NÃO COLOCA O SEU EMAIL!!!!!!!!!!
+        /*if($request->filled('email')){
+            $walletId = DB::table('wallets')->select('id')->where('email', $request->email)->get(); 
+            if($walletId->isEmpty()){
+                return response()->json(("Email doesn't exist!"), 402);
+            }
+        }*/
+        $email = auth()->user()->email;
+        $walletId = DB::table('wallets')->select('id')->where('email', $email)->get(); 
+        //return response()->json(($walletId), 402);
+        //return response()->json(($email), 402);
+        if($walletId->isEmpty()){
+            //return response()->json(($email), 402);
+            return response()->json(("Email doesn't exist!"), 402);
+        }
+        $balance = DB::table('wallets')->select('balance')->where('email', $email)->get(); 
+
+        ///FALTA TAMBÉM A PARTE DE CRIAR AUTOMATICAMENTE O MOVIMENTO INCOME DESTE EXPENSE
+         
         //data
         $date = Carbon::now();
        
         $movement = new Movement();
         $movement->fill($request->all());
         $movement->wallet_id = $walletId[0]->id;
+        //$movement->wallet_id = auth()->wallet()->id;
         $movement->type = "e";
         $movement->start_balance = $balance[0]->balance;
         $movement->end_balance = $balance[0]->balance - $request->value; //VERIFICAR QUAL A CONDIÇÃO AQUI
-        //$movement->transfer = 0;
+        $movement->transfer; //verificar se é só assim
         $movement->date = $date->toDateTimeString();
         $movement->save();
+
+        //comandos para alterar a balance da wallet de destino:
+        $wallet = Wallet::findOrFail($walletId[0]->id);
+        $wallet->balance = $balance[0]->balance - $request->value;
+        $wallet->save();
 
         return new MovementResource($movement);
     }

@@ -13,6 +13,7 @@
                         <th>Start Balance</th>
                         <th>End Balance</th>
                         <th>Value</th>
+                        <!--<th>Photo</th>-->
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -22,7 +23,6 @@
                         <td>{{ movement.type }}</td>
                             <td v-if="movement.transfer_wallet_id != undefined">{{ movement.email }}</td>
                             <td v-if="movement.transfer_wallet_id == null"> - </td>
-                        <!--<td v-if="movement.transfer_wallet_id != null">  - </td>-->
                         <td v-if="movement.type_payment == null"> - </td>
                         <td v-if="movement.type_payment != null"> {{movement.type_payment}}</td>
                             <td v-if="movement.category_id">{{ movement.category_name }}</td>
@@ -31,6 +31,9 @@
                         <td>{{ movement.start_balance }}</td>
                         <td>{{ movement.end_balance }}</td>
                         <td>{{ movement.value }}</td>
+                        <!--ESTAS DUAS LINHAS A BAIXO DA FOTO SÃO PARA DESAPARECER, ESTÃO AQUI PARA DEBUG
+                        <td v-if="movement.user_photo == null"> - </td>
+                        <td v-if="movement.user_photo != null"> {{ movement.user_photo }}</td>-->
                         <td>
                             <a class="btn btn-sm btn-primary" v-on:click.prevent="editMovement(movement)">Edit</a>
                             <a class="btn btn-sm btn-secondary" v-on:click.prevent="movementDetails(movement)">Details</a>

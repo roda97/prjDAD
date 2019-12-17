@@ -6,11 +6,12 @@
 
         <br>
 
-        <div v-show="$store.state.user.type == 'o'">
-            <a class="btn btn-primary" v-on:click.prevent="showAddCredit()">Add Credit</a>
-
-        <!--VERIFICAR QUE CONFIRMAÇÃO É NECESSÁRIA NESTE BOTÃO-->
-        <a class="btn btn-primary" v-on:click.prevent="showAddDebit()">Add Debit</a>
+        <div>
+            <td v-show="$store.state.user.type == 'o'">
+                <a class="btn btn-primary" v-on:click.prevent="showAddCredit()">Add Credit</a>
+            </td>
+            <!-- VER SE APENAS USERS NORMAIS PODEM FAZER ISTO!!!!!!!!!!!!!!! -->
+            <td><a class="btn btn-primary" v-on:click.prevent="showAddDebit()">Add Debit</a></td>
         </div>
 
         <br>
@@ -70,8 +71,8 @@
         <movement-list v-if="listMovements" v-bind:movements="movements" v-on:edit-movement="editMovement" v-on:movement-details="movementDetails"></movement-list>
         <edit-list v-if="editingMovement"  v-bind:currentMovement="currentMovement" v-on:save-movement="saveMovement" v-on:cancel-edit="cancelEdit"></edit-list>
         <movement-credit  v-if="showCredit" v-bind:currentMovement="currentMovement" v-on:add-credit="addCredit" v-on:email-error="emailError" v-on:cancel-credit="cancelCredit"></movement-credit>
-        <movement-debit  v-if="showDebit" v-bind:currentMovement="currentMovement" v-on:add-debit="addDebit" v-on:email-error="emailError" v-on:cancel-debit="cancelDebit"></movement-debit>
-        <movement-details v-if="selectMovement" v-bind:currentMovement="currentMovement" v-on:details-canceled="cancelMovementDetails" ></movement-details>
+        <movement-debit  v-if="showDebit" v-bind:movements="movements" v-bind:currentMovement="currentMovement" v-on:add-debit="addDebit" v-on:email-error="emailError" v-on:cancel-debit="cancelDebit"></movement-debit>
+        <movement-details v-if="showDetails" v-bind:currentMovement="currentMovement" v-on:details-canceled="cancelMovementDetails" ></movement-details>
 
         <div class="alert alert-success" v-if="showSuccess">			 
 			<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
@@ -104,7 +105,7 @@ export default {
             total:1,
             title: 'List Movements',
             editingMovement: false,
-            selectMovement: false,
+            showDetails: false,
             currentMovement: {},
             showSuccess: false,
             showFailure: false,
@@ -132,9 +133,14 @@ export default {
             this.showCredit = false;
             this.showFailure = false;
             this.showSuccess = false;
+            this.showDetails = false;
+            this.showDebit = false;
         },
         saveMovement: function(movement){
-            this.editingMovement = false;            
+            this.editingMovement = false;
+            this.showDetails = false;   
+            this.showCredit = false; 
+            this.showDebit = false;        
             axios.put('api/movements/'+ movement.id, movement) 
                 .then(response=>{
                     this.showFailure = false;
@@ -159,9 +165,17 @@ export default {
             this.showSuccess = false;
             this.editingMovement = false;
             this.currentMovement = null;
+            this.showDetails = false;
+            this.showDebit = false;
+            this.showCredit = false;
         },
-        getResults(page)
-        {
+        getResults(page){
+            this.editingMovement = false;
+            this.showCredit = false;
+            this.showFailure = false;
+            this.showSuccess = false;
+            this.showDetails = false;
+            this.showDebit = false;
             axios.post('api/movements/filter?page='+page , this.search).then(response=>{
                 this.movements = response.data.data;
                 this.page = response.data.meta.current_page;
@@ -174,23 +188,17 @@ export default {
             });
         },
         addCredit: function(movement){
-            this.editingMovement = false; //NÃO ESTÁ A FUNCIONAR, NÃO SEI PORQUE, mas o contrário funciona
-            this.showFailure = false;
-            this.showSuccess = false;
+            this.editingMovement = false; 
+            this.showDetails = false;
+            this.showDebit = false;
             axios.post('api/movements/credit', movement)
             .then(response => {
-                /*if(response.data == "Email isn't valid!"){
-                    this.showFailure = true;
-                    this.showSuccess = false;
-                    this.showCredit = true;
-                    this.failMessage = response.data;
-                }else{*/
-                    this.showFailure = false;
-                    this.showSuccess = true;
-                    this.successMessage = "Credit movement created with success";
-                    this.showCredit = false;
-                    this.movements = response.data.data;
-                //}
+                console.log(response.data.data)
+                this.showFailure = false;
+                this.showSuccess = true;
+                this.successMessage = "Credit movement created with success";
+                this.showCredit = false;
+                //this.movements = response.data.data;
                 //console.log(response.data)  
             }).catch(error => { 
                 console.log(error.response.data)
@@ -201,89 +209,197 @@ export default {
                     this.failMessage = error.response.data;
                 }  
                 if(error.response.status == 422) {
-                    //console.log(error);
-                    this.showFailure=true;
-                    this.showSucess=false;
-                    //VER SE CONSIGO MANDAR O ERRO ESPECIFICO////////////////////////////////////////////////////
-                    //this.failMessage= "Error while creating the credit movement, please check the data values!" //Erro ao criar o movimento, insira os dados corretamente!"; 
-                    ///////////////ASSIM MANDA O ERRO ESPECIFICO, MAS PERGUNTAR SE PODE FICAR ASSIM:////////////////////////////////////
-                    this.failMessage=error.response.data.errors;
+                    if(error.response.data.errors.email){
+                        this.failMessage = error.response.data.errors.email[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showCredit = true;
+                    }
+                    if (error.response.data.errors.value){
+                        this.failMessage = error.response.data.errors.value[0];// + " Value must be between [0,01;5000]";
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showCredit = true;
+                    }
+                    if (error.response.data.errors.type_payment){ 
+                        this.failMessage = error.response.data.errors.type_payment[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showCredit = true;
+                    }
+                    if (error.response.data.errors.iban){
+                        this.failMessage = error.response.data.errors.iban[0]+ " IBAN must have 2 capital letters followed by 23 digits." + '\n' + " Example: PT50002700000001234567833 ";
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showCredit = true;
+                    }
+                    if (error.response.data.errors.source_description){
+                        this.failMessage = error.response.data.errors.source_description[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showCredit = true;
+                    }
+                    //this.failMessage=error.response.data.errors;
                 }                    
             })
         },
         showAddCredit: function(){
             this.currentMovement = {};
+            this.editingMovement = false;
             this.showCredit = true;
             this.showSuccess = false;
             this.showFailure = false;
+            this.showDetails = false;
+            this.showDebit = false;
         },
         cancelCredit: function(){
             this.currentMovement = {};
+            this.editingMovement = false;
             this.showCredit = false;
             this.showSuccess = false;
             this.showFailure = false;
+            this.showDetails = false;
+            this.showDebit = false;
         },
         addDebit: function(movement){
-            this.editingMovement = false; //NÃO ESTÁ A FUNCIONAR, NÃO SEI PORQUE, mas o contrário funciona
-            this.showFailure = false;
-            this.showSuccess = false;
+            this.editingMovement = false;
+            this.showCredit = false;
+            this.showDetails = false;
             axios.post('api/movements/debit', movement)
             .then(response => {
-                /*if(response.data == "Email isn't valid!"){
+                this.showFailure = false;
+                this.showSuccess = true;
+                this.successMessage = "Debit movement created with success";
+                this.showDebit = false;
+                //this.movements = response.data.data;
+                //console.log(response.data.data)  
+            }).catch(error => {                        
+                console.log(error.response.data)
+                if(error.response.data == "Email doesn't exist!"){
                     this.showFailure = true;
                     this.showSuccess = false;
-                    this.showCredit = true;
-                    this.failMessage = response.data;
-                }else{
-                    this.showFailure = false;
-                    this.showSuccess = true;
-                    this.successMessage = "Credit movement created with success";
-                    this.showCredit = false;
-                    this.movements = response.data.data;
-                }*/
-                //console.log(response.data)  
-            }).catch(error => {                        
+                    this.showDebit = true;
+                    this.failMessage = error.response.data;
+                }  
                 if(error.response.status == 422) {
-                    //console.log(error);
-                    this.showFailure=true;
-                    this.showSucess=false;
-                    //VER SE CONSIGO MANDAR O ERRO ESPECIFICO////////////////////////////////////////////////////
-                    //this.failMessage= "Error while creating the credit movement, please check the data values!" //Erro ao criar o movimento, insira os dados corretamente!"; 
-                    ///////////////ASSIM MANDA O ERRO ESPECIFICO, MAS PERGUNTAR SE PODE FICAR ASSIM:////////////////////////////////////
-                    this.failMessage=error.response.data.errors;
-                }    
+                    if(error.response.data.errors.transfer){
+                        this.failMessage = "The type of movement field is required.";
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    if (error.response.data.errors.type_payment){ 
+                        this.failMessage = error.response.data.errors.type_payment[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    if(error.response.data.errors.email){
+                        this.failMessage = error.response.data.errors.email[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    if (error.response.data.errors.source_description){
+                        this.failMessage = error.response.data.errors.source_description[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    if (error.response.data.errors.iban){
+                        this.failMessage = error.response.data.errors.iban[0]+ " IBAN must have 2 capital letters followed by 23 digits." + '\n' + " Example: PT50002700000001234567833 ";
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    if (error.response.data.errors.mb_entity_code){
+                        this.failMessage = error.response.data.errors.mb_entity_code[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    if (error.response.data.errors.mb_payment_reference){
+                        this.failMessage = error.response.data.errors.mb_payment_reference[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    if (error.response.data.errors.value){
+                        this.failMessage = error.response.data.errors.value[0]; //+ " Value must be between [0,01;5000]";
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    if (error.response.data.errors.category_name){
+                        this.failMessage = error.response.data.errors.category_name[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    if (error.response.data.errors.description){
+                        this.failMessage = error.response.data.errors.description[0];
+                        this.showFailure = true;
+                        this.showSucess= false;
+                        this.showDebit = true;
+                    }
+                    
+                    //this.failMessage=error.response.data.errors;
+                }                 
             })
         },
         showAddDebit: function(){
             this.currentMovement = {};
             this.showDebit = true;
+            this.editingMovement = false;
             this.showSuccess = false;
             this.showFailure = false;
+            this.showCredit = false;
+            this.showDetails = false;
         },
         cancelDebit: function(){
             this.currentMovement = {};
             this.showDebit = false;
+            this.editingMovement = false;
             this.showSuccess = false;
             this.showFailure = false;
+            this.showCredit = false;
+            this.showDetails = false;
         },
         emailError: function(){
             this.showSuccess = false;
             this.showFailure = true;
             this.failMessage = "Email doesn't exist!";
+            this.showDebit = false;
+            this.editingMovement = false;
+            this.showCredit = false;
+            this.showDetails = false;
         },
         movementDetails: function(movement){
             this.currentMovement = Object.assign({},movement);
-            this.selectMovement = true;
+            this.showDetails = true;
+            this.editingMovement = false;
+            this.showDebit = false;
+            this.showSuccess = false;
+            this.showFailure = false;
+            this.showCredit = false;
             //this.currentMovement = movement;
         },           
         cancelMovementDetails: function(){
             this.showFailure = false;
             this.showSuccess = false;
             this.editingMovement = false;
-            this.selectMovement = false;
+            this.showDetails = false;
             this.currentMovement = null;
+            this.showCredit = false;
+            this.showDebit = false;
         },
         filterMovements: function(){
+            this.showDetails = false;
+            this.editingMovement = false;
+            this.showDebit = false;
+            this.showSuccess = false;
+            this.showCredit = false;
+            this.showDebit = false;
             axios.post('api/movements/filter', this.search)
                 .then(response=>{
                     if(!Object.keys(response.data.data).length){ //if(typeof response.data == Object && !Object.keys(response.data.data).length){ //isto era se eu continuasse a mandar os erros no response

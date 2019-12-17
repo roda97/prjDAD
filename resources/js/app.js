@@ -1,5 +1,6 @@
 require('./bootstrap');
 
+window.Vue = require('vue');
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
@@ -79,7 +80,7 @@ router.beforeEach((to, from, next) => {
     } 
     if(to.name == "movements" ){     
         if (!app.$store.state.user) {
-            next("/");
+            next("/login");
             console.log(app.$store.state.user)
             return;
         }

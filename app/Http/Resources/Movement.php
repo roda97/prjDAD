@@ -14,10 +14,16 @@ class Movement extends Resource
      */
     public function toArray($request)
     {
-        if ($this->transferWallet)
+        if ($this->transferWallet){
             $email=$this->transferWallet->email;
-        else
+            //$wallet=$this->transferWallet;
+            $user_photo=$this->transferWallet->user->photo;
+        }
+        else{
             $email=null;
+            //$wallet=null;
+            $user_photo=null;
+        }
         if ($this->category)
             $category_name=$this->category->name;
         else
@@ -41,7 +47,9 @@ class Movement extends Resource
             'end_balance' => $this->end_balance,
             'value' => $this->value,
             'email' => $email,
-            'category_name' => $category_name
+            'category_name' => $category_name,
+            'user_photo' => $user_photo
+            //'wallet' => $wallet,
         ];
     }
 }

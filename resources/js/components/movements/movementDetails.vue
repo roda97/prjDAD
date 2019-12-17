@@ -4,14 +4,15 @@
 
         <br>
 
-        <!--<div class="form-group" v-if="currentMovement.transfer_wallet">
-            <div class="col-md-10 col-md-offset-1" v-if="currentMovement.transfer_wallet.user.photo">            
-                <td><img v-bind:src="'storage/fotos/' + currentMovement.transfer_wallet.user.photo" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
+        <div class="form-group" v-if="currentMovement.transfer_wallet_id"><strong>Photo:   </strong>
+        <!--<div class="form-group" v-if="currentMovement.wallet"><strong>Photo:   </strong>-->
+            <div class="col-md-10 col-md-offset-1" v-if="currentMovement.user_photo">            
+                <td><img v-bind:src="'storage/fotos/' + currentMovement.user_photo" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
             </div>
-            <div class="col-md-10 col-md-offset-1" v-if="!currentMovement.transfer_wallet.user.photo">            
+            <div class="col-md-10 col-md-offset-1" v-if="!currentMovement.user_photo">            
                 <td><img v-bind:src="'storage/fotos/unknown.jpg'" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
             </div>
-        </div>-->
+        </div>
 
         <div class="form-group">
 	        <label v-if="currentMovement.description"><strong>Description:   </strong>{{ currentMovement.description}}</label>
