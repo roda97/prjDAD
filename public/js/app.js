@@ -71501,6 +71501,7 @@ var userEdit = Vue.component("usersEdit", _components_userEdit__WEBPACK_IMPORTED
 var userRegister = Vue.component("usersRegister", _components_userRegister__WEBPACK_IMPORTED_MODULE_7__["default"]);
 var login = Vue.component("login", _components_login__WEBPACK_IMPORTED_MODULE_8__["default"]);
 var logout = Vue.component("logout", _components_logout__WEBPACK_IMPORTED_MODULE_9__["default"]);
+var wallet = Vue.component("wallets", _components_wallets__WEBPACK_IMPORTED_MODULE_11__["default"]);
 var routes = [{
   path: "/",
   component: _components_home__WEBPACK_IMPORTED_MODULE_4__["default"]
@@ -71577,11 +71578,17 @@ router.beforeEach(function (to, from, next) {
       next("/login");
       return;
     }
+<<<<<<< HEAD
+  } else if (to.name == "wallets") {
+    if (!_stores_global_store__WEBPACK_IMPORTED_MODULE_3__["default"].state.user) {
+      next("/login");
+=======
   }
 
   if (to.name == "login") {
     if (app.$store.state.user) {
       next("/");
+>>>>>>> master
       return;
     }
   }

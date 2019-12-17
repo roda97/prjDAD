@@ -27,6 +27,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 ///users
 Route::get('users', 'UserControllerAPI@index');
+Route::get('wallets', 'WalletControllerAPI@index');
 
 //movements
 //Route::post('movements', 'MovementControllerAPI@index');

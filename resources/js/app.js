@@ -33,6 +33,7 @@ const userEdit = Vue.component("usersEdit", UserEdit);
 const userRegister = Vue.component("usersRegister", UserRegister);
 const login = Vue.component("login", Login);
 const logout = Vue.component("logout", Logout);
+const wallet = Vue.component("wallets", Wallet);
 
 
 const routes = [
