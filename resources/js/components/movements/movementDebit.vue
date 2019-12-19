@@ -141,7 +141,7 @@
             cancelDebit: function(){
                 this.$emit('cancel-debit');
             },
-        }
+        },
        
     }
 </script>

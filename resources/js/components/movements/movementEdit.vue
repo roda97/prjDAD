@@ -1,6 +1,6 @@
 <template>
     <div class="jumbotron"  >
-        <h2>Edit Movement</h2>
+        <h2>Edit Movement {{ currentMovement.id }}</h2>
         <!--<div class="form-group">
             <label for="inputId">Id</label>
             <input
@@ -18,7 +18,7 @@
         <div class="form-group">
             <label for="inputCategoria">Categoria</label>
             <input
-                type="text" class="form-control" v-model="currentMovement.category_id"
+                type="text" class="form-control" v-model="currentMovement.category_name"
                 name="categoria" id="inputCategoria"
                 placeholder="categoria" value=""/>
         </div>

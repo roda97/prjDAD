@@ -136,13 +136,17 @@ class MovementControllerAPI extends Controller
      */
     public function update(Request $request, $id)
     {
-        /*$request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-                'email' => 'required|email|unique:users,email,'.$id,
-                //'age' => 'integer|between:18,75'
-            ]);*/
+        
         $movement = Movement::findOrFail($id);
         $movement->update($request->all());
+        $category = DB::table('categories')->select('id')->where('name', $request->category_name)->where('type', $movement->type)->get();
+        if($category->isEmpty()){
+            return response()->json("This type of movement can't have that category!", 402);
+        }
+        //return response()->json($movement->type,402);
+        $movement->category_id = $category[0]->id;
+        $movement->description = $request->description;
+        $movement->save();
         return new MovementResource($movement);
     }
 
@@ -157,7 +161,7 @@ class MovementControllerAPI extends Controller
         //
     }
 
-    public function addCredit(Request $request) {
+    public function addCredit(Request $request, Movement $movement) {
 
         if($request->type_payment == 'bt'){
             $request->validate([
@@ -241,44 +245,106 @@ class MovementControllerAPI extends Controller
                 'mb_payment_reference' => 'required|digits:9'
             ]);
         }
-         
-        //FALTA VERIFICAR QUE ELE NÃO COLOCA O SEU EMAIL!!!!!!!!!!
-        /*if($request->filled('email')){
-            $walletId = DB::table('wallets')->select('id')->where('email', $request->email)->get(); 
-            if($walletId->isEmpty()){
-                return response()->json(("Email doesn't exist!"), 402);
-            }
-        }*/
+
         $email = auth()->user()->email;
-        $walletId = DB::table('wallets')->select('id')->where('email', $email)->get(); 
-        //return response()->json(($walletId), 402);
+        $walletId = DB::table('wallets')->select('id')->where('email', $email)->get();  
+        //return response()->json(($walletEmail), 402);
         //return response()->json(($email), 402);
         if($walletId->isEmpty()){
             //return response()->json(($email), 402);
             return response()->json(("Email doesn't exist!"), 402);
         }
-        $balance = DB::table('wallets')->select('balance')->where('email', $email)->get(); 
 
-        ///FALTA TAMBÉM A PARTE DE CRIAR AUTOMATICAMENTE O MOVIMENTO INCOME DESTE EXPENSE
-         
+        if($request->filled('email')){
+            $walletId2 = DB::table('wallets')->select('id')->where('email', $request->email)->get();
+            $walletEmail = DB::table('wallets')->where('email', $request->email)->get();
+            //return response()->json(($walletEmail[0]->email), 402);
+            //return response()->json(($walletId2), 402); 
+            if($walletId2->isEmpty()){
+                return response()->json(("Email doesn't exist!"), 402);
+            }
+        }else{
+            $walletId2 = DB::table('wallets')->get();
+        }
+
+        if ($request->filled('category_name')){
+            $category = DB::table('categories')->select('id')->where('name', $request->category_name)->get();
+        }
+
+        $balance = DB::table('wallets')->select('balance')->where('email', $email)->get(); 
+ 
         //data
         $date = Carbon::now();
        
         $movement = new Movement();
         $movement->fill($request->all());
-        $movement->wallet_id = $walletId[0]->id;
-        //$movement->wallet_id = auth()->wallet()->id;
+        if($request->filled('email')){
+            if($walletEmail[0]->email != $email){
+                $movement->wallet_id = $walletId[0]->id;
+            }
+            else{
+                return response()->json(("You can't transfer for your own wallet!"), 402);
+            }
+        }else{
+            $movement->wallet_id = $walletId[0]->id;
+        }
         $movement->type = "e";
-        $movement->start_balance = $balance[0]->balance;
-        $movement->end_balance = $balance[0]->balance - $request->value; //VERIFICAR QUAL A CONDIÇÃO AQUI
-        $movement->transfer; //verificar se é só assim
+        if($request->value <= $balance[0]->balance){
+            $movement->start_balance = $balance[0]->balance;
+            $movement->end_balance = $balance[0]->balance - $request->value; 
+        }
+        else{
+            return response()->json(("You don't have enought money!"), 402);
+        }
+
         $movement->date = $date->toDateTimeString();
+        if($request->transfer == 1){
+            $movement->transfer = $request->transfer;
+            $movement->transfer_wallet_id = $walletId2[0]->id;
+            $movement->category_id = $category[0]->id;
+        }else{
+            $movement->transfer = $request->transfer;
+        }
         $movement->save();
+        //return response()->json($movement->id, 402);
 
         //comandos para alterar a balance da wallet de destino:
         $wallet = Wallet::findOrFail($walletId[0]->id);
         $wallet->balance = $balance[0]->balance - $request->value;
         $wallet->save();
+
+        //////////////CODIGO PARA FAZER O INCOME AUTOMATICAMENTE//////////////         
+        if($request->filled('email')){
+
+            $balance2 = DB::table('wallets')->select('balance')->where('email', $request->email)->get(); 
+            //return response()->json(($balance2), 402); 
+
+            //$movementI = movement Income
+            $movementI = new Movement();
+            $movementI->fill($request->all());
+            $movementI->wallet_id = $walletId2[0]->id;
+            $movementI->type = "i";
+            $movementI->start_balance = $balance2[0]->balance; 
+            $movementI->end_balance = $balance2[0]->balance + $request->value;
+            $movementI->date = $date->toDateTimeString();
+            $movementI->transfer = $request->transfer; 
+            $movementI->transfer_movement_id = $movement->id;
+            $movementI->description = null;
+            //return response()->json($movement->id, 402);
+            $movementI->transfer_wallet_id = $walletId[0]->id;
+            $movementI->save();
+
+            //atualizar o transfer_movement_id do movimento expense(debito) com o id do movimento income (credito)
+            $movement->transfer_movement_id = $movementI->id;
+            $movement->save();
+
+            //comandos para alterar a balance da wallet de destino:
+            $wallet = Wallet::findOrFail($walletId2[0]->id);
+            $wallet->balance = $balance2[0]->balance + $request->value;
+
+            $wallet->save();
+        }
+        //return $this->addCredit($wallet);
 
         return new MovementResource($movement);
     }

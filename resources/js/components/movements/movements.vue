@@ -10,8 +10,10 @@
             <td v-show="$store.state.user.type == 'o'">
                 <a class="btn btn-primary" v-on:click.prevent="showAddCredit()">Add Credit</a>
             </td>
-            <!-- VER SE APENAS USERS NORMAIS PODEM FAZER ISTO!!!!!!!!!!!!!!! -->
-            <td><a class="btn btn-primary" v-on:click.prevent="showAddDebit()">Add Debit</a></td>
+            
+            <td v-show="$store.state.user.type == 'u'">
+                <a class="btn btn-primary" v-on:click.prevent="showAddDebit()">Add Debit</a>
+            </td>
         </div>
 
         <br>
@@ -126,7 +128,7 @@ export default {
             }
         }
     },
-     methods:{
+    methods:{
         editMovement: function(movement){
             this.currentMovement = Object.assign({},movement);
             this.editingMovement = true;
@@ -157,7 +159,10 @@ export default {
                     this.editingMovement = true;
                     this.showSuccess = false;
                     this.showFailure = true;
-                    this.failMessage = "Error while editing the movement, please check the data values!"//"Erro ao editar o movimento, insira os dados corretamente!"; //VER SE CONSIGO MANDAR O ERRO ESPECIFICO
+                    if(error.response.data == "This type of movement can't have that category!"){
+                        this.failMessage = error.response.data;
+                    } 
+                    //this.failMessage = "Error while editing the movement, please check the data values!"//"Erro ao editar o movimento, insira os dados corretamente!"; //VER SE CONSIGO MANDAR O ERRO ESPECIFICO
             });
         },
         cancelEdit: function(){
@@ -202,42 +207,27 @@ export default {
                 //console.log(response.data)  
             }).catch(error => { 
                 console.log(error.response.data)
+                this.showFailure = true;
+                this.showSuccess = false;
+                this.showCredit = true;
                 if(error.response.data == "Email doesn't exist!"){
-                    this.showFailure = true;
-                    this.showSuccess = false;
-                    this.showCredit = true;
                     this.failMessage = error.response.data;
                 }  
                 if(error.response.status == 422) {
                     if(error.response.data.errors.email){
                         this.failMessage = error.response.data.errors.email[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showCredit = true;
                     }
                     if (error.response.data.errors.value){
                         this.failMessage = error.response.data.errors.value[0];// + " Value must be between [0,01;5000]";
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showCredit = true;
                     }
                     if (error.response.data.errors.type_payment){ 
                         this.failMessage = error.response.data.errors.type_payment[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showCredit = true;
                     }
                     if (error.response.data.errors.iban){
                         this.failMessage = error.response.data.errors.iban[0]+ " IBAN must have 2 capital letters followed by 23 digits." + '\n' + " Example: PT50002700000001234567833 ";
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showCredit = true;
                     }
                     if (error.response.data.errors.source_description){
                         this.failMessage = error.response.data.errors.source_description[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showCredit = true;
                     }
                     //this.failMessage=error.response.data.errors;
                 }                    
@@ -267,80 +257,62 @@ export default {
             this.showDetails = false;
             axios.post('api/movements/debit', movement)
             .then(response => {
+                //this.addCredit(movement);
+                //console.log(response.data.data); 
                 this.showFailure = false;
-                this.showSuccess = true;
-                this.successMessage = "Debit movement created with success";
+                //this.showSuccess = true;
+                //this.successMessage = "Debit movement created with success";
                 this.showDebit = false;
+                this.$toasted.show("Debit movement created with success!");
+                this.$socket.emit('updateMovements', this.currentMovement);
                 //this.movements = response.data.data;
                 //console.log(response.data.data)  
             }).catch(error => {                        
                 console.log(error.response.data)
-                if(error.response.data == "Email doesn't exist!"){
-                    this.showFailure = true;
-                    this.showSuccess = false;
-                    this.showDebit = true;
-                    this.failMessage = error.response.data;
-                }  
+                this.showFailure = true;
+                this.showSuccess = false;
+                this.showDebit = true;
+                if(error.response.status == 402){
+                    if(error.response.data == "Email doesn't exist!"){
+                        this.failMessage = error.response.data;
+                    }  
+                    if(error.response.data == "You can't transfer for your own wallet!"){
+                        this.failMessage = error.response.data;
+                    }  
+                    if(error.response.data == "You don't have enought money!"){
+                        this.failMessage = error.response.data;
+                    }  
+                }
                 if(error.response.status == 422) {
                     if(error.response.data.errors.transfer){
                         this.failMessage = "The type of movement field is required.";
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     if (error.response.data.errors.type_payment){ 
                         this.failMessage = error.response.data.errors.type_payment[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     if(error.response.data.errors.email){
                         this.failMessage = error.response.data.errors.email[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     if (error.response.data.errors.source_description){
                         this.failMessage = error.response.data.errors.source_description[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     if (error.response.data.errors.iban){
                         this.failMessage = error.response.data.errors.iban[0]+ " IBAN must have 2 capital letters followed by 23 digits." + '\n' + " Example: PT50002700000001234567833 ";
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     if (error.response.data.errors.mb_entity_code){
                         this.failMessage = error.response.data.errors.mb_entity_code[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     if (error.response.data.errors.mb_payment_reference){
                         this.failMessage = error.response.data.errors.mb_payment_reference[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     if (error.response.data.errors.value){
                         this.failMessage = error.response.data.errors.value[0]; //+ " Value must be between [0,01;5000]";
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     if (error.response.data.errors.category_name){
                         this.failMessage = error.response.data.errors.category_name[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     if (error.response.data.errors.description){
                         this.failMessage = error.response.data.errors.description[0];
-                        this.showFailure = true;
-                        this.showSucess= false;
-                        this.showDebit = true;
                     }
                     
                     //this.failMessage=error.response.data.errors;
@@ -442,6 +414,13 @@ export default {
             axios.get('api/movements')X
                 .then(response=>{this.movements = response.data.data;});
         }*/
+    },
+    sockets:{
+        updateMovements(data){ 
+            console.log(this.movements);
+            this.movements = this.movements + data;
+            this.getResults(1);
+        }
     },
     components: {
         "movement-list": MovementList,

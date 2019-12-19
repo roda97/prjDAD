@@ -77,11 +77,7 @@ export default {
   data: function() {
     return {
       title: "Register",
-<<<<<<< HEAD
       user: { name: "", email: "", password: "", nif: "", photo: ""},
-=======
-      user: { name: "", email: "", password: "", nif: "", photo: "" },
->>>>>>> master
       showSuccess: false,
       errors: [],
       successMessage: ""
@@ -105,15 +101,8 @@ export default {
       e.preventDefault();
     },*/
     registerUser: function() {
-<<<<<<< HEAD
       axios.post("api/users/register", this.user)
         .then(response => {
-=======
-      axios
-        .post("api/users/register", this.user)
-        .then(response => {
-       
->>>>>>> master
           Object.assign(this.user, response.data);
           this.$router.push('/');
           this.$toasted.show('User Created');

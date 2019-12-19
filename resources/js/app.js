@@ -10,7 +10,13 @@ Vue.use(Toasted, {
     position: "bottom-center",
     duration: 5000,
     type: "info"
-}); //VER O QUE FAZ ESTE Toasted
+}); 
+
+import VueSocketIO from 'vue-socket.io'
+Vue.use(new VueSocketIO({
+    debug: true,
+    connection: 'http://prjdad.test:8080'
+}))
 
 import { BPagination } from 'bootstrap-vue'
 Vue.component('b-pagination', BPagination)
@@ -63,6 +69,9 @@ const app = new Vue({
         //this.$store.commit("loadDepartments");
         this.$store.commit("loadTokenAndUserFromSession");
         console.log(this.$store.state.user);
+    },
+    sockets:{
+
     }
 });
 

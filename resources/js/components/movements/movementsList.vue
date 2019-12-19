@@ -35,8 +35,17 @@
                         <td v-if="movement.user_photo == null"> - </td>
                         <td v-if="movement.user_photo != null"> {{ movement.user_photo }}</td>-->
                         <td>
-                            <a class="btn btn-sm btn-primary" v-on:click.prevent="editMovement(movement)">Edit</a>
-                            <a class="btn btn-sm btn-secondary" v-on:click.prevent="movementDetails(movement)">Details</a>
+                            <div v-show="$store.state.user.id == movement.wallet_id || ">
+                                <a class="btn btn-sm btn-primary" v-on:click.prevent="editMovement(movement)">Edit</a>
+                            </div>
+
+                            <!--<div v-show="$store.state.user.id == movement.transfer_wallet_id ">
+                                <a class="btn btn-sm btn-primary" v-on:click.prevent="editMovement(movement)">Edit</a>
+                            </div>-->
+                            
+                            <div>
+                                <a class="btn btn-sm btn-secondary" v-on:click.prevent="movementDetails(movement)">Details</a>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
