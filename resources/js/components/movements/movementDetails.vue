@@ -4,7 +4,7 @@
 
         <br>
 
-        <div class="form-group" v-if="currentMovement.transfer_wallet_id"><strong>Photo:   </strong>
+        <div class="form-group"><strong>Photo:   </strong>
         <!--<div class="form-group" v-if="currentMovement.wallet"><strong>Photo:   </strong>-->
             <div class="col-md-10 col-md-offset-1" v-if="currentMovement.user_photo">            
                 <td><img v-bind:src="'storage/fotos/' + currentMovement.user_photo" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>

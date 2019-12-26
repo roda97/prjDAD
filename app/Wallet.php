@@ -31,9 +31,14 @@ class Wallet extends Model
         return $this->hasMany('App\Movement', 'transfer_wallet_id');
     }*/
 
-    public function transferMovement()//adicionei este
+    public function transferMovement()
     {
         return $this->belongsToMany(Movement::class, 'transfer_wallet_id', 'id');
+    }
+
+    public function creditMovement()
+    {
+        return $this->belongsToMany(Movement::class, 'wallet_id', 'id');
     }
 
 

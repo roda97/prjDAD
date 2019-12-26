@@ -5,7 +5,7 @@
 	    <div class="form-group">
 	        <label for="inputEmail">Email to Credit:</label>
 	        <input
-	            type="email" class="form-control" v-model="currentMovement.email"
+	            type="email" class="form-control" v-model="currentMovement.emailIncome"
 	            name="email" id="inputEmail" 
 	            placeholder="Insert email of the account to receive the money" required/>
 	    </div>

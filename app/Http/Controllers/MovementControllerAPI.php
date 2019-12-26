@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Wallet;
 use App\Movement;
+use Mail;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@ class MovementControllerAPI extends Controller
      */
     public function index(Request $request)
     {
+        $user= auth()->user()->id;
         if(count($request->except('page'))){
             $movements = Movement::query();
       
@@ -59,11 +61,14 @@ class MovementControllerAPI extends Controller
             if ($request->filled('data_sup')){
                 $movements->where('date','<=',$request->data_sup);
             }
-
-            $movements = MovementResource::collection($movements->orderby('date','desc')->paginate(10));//->appends($request->except('page'));
+            //$movements = MovementResource::collection($movements->orderby('date','desc')->paginate(10));
+            $movements = MovementResource::collection($movements->orderby('date','desc')->where(function($q) use($user){ //tenho que usar este "use($user)" para a funçao ter conhecimento do valor da mesma
+                $q->where('wallet_id', $user)
+                ->orWhere('transfer_wallet_id', $user);
+                })->paginate(10)); //este where function é o que me permite juntar as condiçoes do search e as condições daquilo a que o utilizador pode ver
         }
         else{    
-            $movements = MovementResource::collection(Movement::orderby('date','desc')->paginate(10));
+            $movements = MovementResource::collection(Movement::orderby('date','desc')->where('wallet_id', $user)->orWhere('transfer_wallet_id', $user)->paginate(10));
         }
 
         return $movements;
@@ -165,7 +170,7 @@ class MovementControllerAPI extends Controller
 
         if($request->type_payment == 'bt'){
             $request->validate([
-                'email' => 'required|email',
+                'emailIncome' => 'required|email',
                 'value' => 'required|numeric|between:0.01,5000.00',
                 'type_payment' => 'required|in:c,bt,mb',
                 'iban' => 'required|regex:^[A-Z]{2}\d{23}$^',
@@ -173,18 +178,18 @@ class MovementControllerAPI extends Controller
             ]);
         }else{
             $request->validate([
-                'email' => 'required|email',
+                'emailIncome' => 'required|email',
                 'value' => 'required|numeric|between:0.01,5000.00',
                 'type_payment' => 'required|in:c,bt,mb',
             ]);
         };     
 
-        $walletId = DB::table('wallets')->select('id')->where('email', $request->email)->get(); 
+        $walletId = DB::table('wallets')->select('id')->where('email', $request->emailIncome)->get(); 
         if($walletId->isEmpty()){
             return response()->json(("Email doesn't exist!"), 402);
         }
 
-        $balance = DB::table('wallets')->select('balance')->where('email', $request->email)->get(); 
+        $balance = DB::table('wallets')->select('balance')->where('email', $request->emailIncome)->get(); 
 
         //data
         $date = Carbon::now();
@@ -348,5 +353,38 @@ class MovementControllerAPI extends Controller
 
         return new MovementResource($movement);
     }
+
+    //public function send_reactivate_email(User $user){
+    public function send_reactivate_email($emailIncome){
+        
+        //return response()->json(($emailIncome), 402);
+        $to_name = 'Notification Email';
+        
+        //$to_email = 'luis25mateus@gmail.com';
+        $to_email = $emailIncome;
+        //$to_email = "contaahabbo@gmail.com";
+        
+        $data = array( "body" => "You received an movement in your virtual wallet!");
+        
+        Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
+        $message->to($to_email, $to_name)
+        ->subject('Notification Email');
+        $message->from('dadproject24@gmail.com','Notification Email');
+        });
+        
+        /*
+        Mail::send('emails.mail', ['name' => 'dad'], function($m){
+            $m->from('dadproject24@gmail.com', 'Projeto');
+            $m->to('luis25mateus@gmail.com');
+            });
+        */
+    }
+
+    public function getBalance($id)
+    {
+        $balance = DB::table('wallets')->select('balance')->where('id', $id)->get();
+        return $balance[0]->balance;
+    }
+
 }
 

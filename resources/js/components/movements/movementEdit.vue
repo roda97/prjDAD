@@ -15,13 +15,18 @@
                 name="tipo" id="inputTipo"
                 placeholder="Tipo" value=""/>
         </div>-->
-        <div class="form-group">
-            <label for="inputCategoria">Categoria</label>
-            <input
-                type="text" class="form-control" v-model="currentMovement.category_name"
-                name="categoria" id="inputCategoria"
-                placeholder="categoria" value=""/>
+
+        <div v-if="currentMovement.type == 'e'">
+            <div class="form-group">
+                <label for="InputCategoryName">Category name</label>
+                <select v-model="currentMovement.category_name" class="form-control" name="categoryName" id="InputCategoryName" >
+                <option disabled selected> -- Select an option -- </option>
+                <!--<option  v-for="movement in movements"  :key="movement.id" :value="movement.category_id">{{ movement.category_name }}</option>-->
+                <option  v-for="movement in category_name" :key="movement" :value="movement">{{ movement }}</option>
+                </select>
+            </div>
         </div>
+
         <div class="form-group">
             <label for="inputDescricao">Descrição</label>
             <input
@@ -44,6 +49,10 @@ export default{
     props:['currentMovement'],
     data: function(){
         return{
+            category_name:[
+                'groceries','restaurant','clothes','shoes','school','services', 'electricity', 'phone', 'fuel', 'mortgage payment', 
+                'car payment', 'entertainment', 'gadget', 'computer', 'vacation', 'hobby', 'loan repayment', 'loan', 'other expense'
+            ]
         }
     },
     methods:{

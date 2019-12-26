@@ -2,18 +2,13 @@
     <div>
         <div class="jumbotron">
             <h1>{{ title }}</h1>
+            <h3>Current balance: {{ balance }}$</h3>
         </div>
 
         <br>
 
-        <div>
-            <td v-show="$store.state.user.type == 'o'">
-                <a class="btn btn-primary" v-on:click.prevent="showAddCredit()">Add Credit</a>
-            </td>
-            
-            <td v-show="$store.state.user.type == 'u'">
-                <a class="btn btn-primary" v-on:click.prevent="showAddDebit()">Add Debit</a>
-            </td>
+        <div v-show="$store.state.user.type == 'u'">
+            <a class="btn btn-primary" v-on:click.prevent="showAddDebit()">Add Debit</a>
         </div>
 
         <br>
@@ -72,8 +67,8 @@
 
         <movement-list v-if="listMovements" v-bind:movements="movements" v-on:edit-movement="editMovement" v-on:movement-details="movementDetails"></movement-list>
         <edit-list v-if="editingMovement"  v-bind:currentMovement="currentMovement" v-on:save-movement="saveMovement" v-on:cancel-edit="cancelEdit"></edit-list>
-        <movement-credit  v-if="showCredit" v-bind:currentMovement="currentMovement" v-on:add-credit="addCredit" v-on:email-error="emailError" v-on:cancel-credit="cancelCredit"></movement-credit>
-        <movement-debit  v-if="showDebit" v-bind:movements="movements" v-bind:currentMovement="currentMovement" v-on:add-debit="addDebit" v-on:email-error="emailError" v-on:cancel-debit="cancelDebit"></movement-debit>
+        <!--<movement-credit  v-if="showCredit" v-bind:currentMovement="currentMovement" v-on:add-credit="addCredit" v-on:email-error="emailError" v-on:cancel-credit="cancelCredit"></movement-credit>-->
+        <movement-debit  v-if="showDebit" v-bind:movements="movements" v-bind:currentMovement="currentMovement" v-on:add-debit="addDebit" v-on:cancel-debit="cancelDebit"></movement-debit>
         <movement-details v-if="showDetails" v-bind:currentMovement="currentMovement" v-on:details-canceled="cancelMovementDetails" ></movement-details>
 
         <div class="alert alert-success" v-if="showSuccess">			 
@@ -96,7 +91,7 @@
 <script>
 import MovementList from "./movementsList.vue";
 import MovementEdit from "./movementEdit.vue";
-import MovementCredit from "./movementCredit.vue";
+//import MovementCredit from "./movementCredit.vue";
 import MovementDebit from "./movementDebit.vue";
 import MovementDetails from "./movementDetails.vue";
 
@@ -105,7 +100,8 @@ export default {
         return {
             page:1,
             total:1,
-            title: 'List Movements',
+            title: "Movements' List",
+            balance: '',
             editingMovement: false,
             showDetails: false,
             currentMovement: {},
@@ -114,7 +110,7 @@ export default {
             successMessage: '',
             failMessage: '',
             listMovements: true,
-            showCredit: false,
+            //showCredit: false,
             showDebit: false,
             movements: [],
             search:{
@@ -192,83 +188,25 @@ export default {
                 this.showSuccess = false;
             });
         },
-        addCredit: function(movement){
-            this.editingMovement = false; 
-            this.showDetails = false;
-            this.showDebit = false;
-            axios.post('api/movements/credit', movement)
-            .then(response => {
-                console.log(response.data.data)
-                this.showFailure = false;
-                this.showSuccess = true;
-                this.successMessage = "Credit movement created with success";
-                this.showCredit = false;
-                //this.movements = response.data.data;
-                //console.log(response.data)  
-            }).catch(error => { 
-                console.log(error.response.data)
-                this.showFailure = true;
-                this.showSuccess = false;
-                this.showCredit = true;
-                if(error.response.data == "Email doesn't exist!"){
-                    this.failMessage = error.response.data;
-                }  
-                if(error.response.status == 422) {
-                    if(error.response.data.errors.email){
-                        this.failMessage = error.response.data.errors.email[0];
-                    }
-                    if (error.response.data.errors.value){
-                        this.failMessage = error.response.data.errors.value[0];// + " Value must be between [0,01;5000]";
-                    }
-                    if (error.response.data.errors.type_payment){ 
-                        this.failMessage = error.response.data.errors.type_payment[0];
-                    }
-                    if (error.response.data.errors.iban){
-                        this.failMessage = error.response.data.errors.iban[0]+ " IBAN must have 2 capital letters followed by 23 digits." + '\n' + " Example: PT50002700000001234567833 ";
-                    }
-                    if (error.response.data.errors.source_description){
-                        this.failMessage = error.response.data.errors.source_description[0];
-                    }
-                    //this.failMessage=error.response.data.errors;
-                }                    
-            })
-        },
-        showAddCredit: function(){
-            this.currentMovement = {};
-            this.editingMovement = false;
-            this.showCredit = true;
-            this.showSuccess = false;
-            this.showFailure = false;
-            this.showDetails = false;
-            this.showDebit = false;
-        },
-        cancelCredit: function(){
-            this.currentMovement = {};
-            this.editingMovement = false;
-            this.showCredit = false;
-            this.showSuccess = false;
-            this.showFailure = false;
-            this.showDetails = false;
-            this.showDebit = false;
-        },
         addDebit: function(movement){
             this.editingMovement = false;
             this.showCredit = false;
             this.showDetails = false;
             axios.post('api/movements/debit', movement)
             .then(response => {
+                //console.log(movement);
                 //this.addCredit(movement);
-                //console.log(response.data.data); 
+                console.log(response.data.data); 
                 this.showFailure = false;
                 //this.showSuccess = true;
                 //this.successMessage = "Debit movement created with success";
                 this.showDebit = false;
                 this.$toasted.show("Debit movement created with success!");
-                this.$socket.emit('updateMovements', this.currentMovement);
+                this.$socket.emit('updateMovements', response.data.data);
                 //this.movements = response.data.data;
                 //console.log(response.data.data)  
             }).catch(error => {                        
-                console.log(error.response.data)
+                console.log(error)
                 this.showFailure = true;
                 this.showSuccess = false;
                 this.showDebit = true;
@@ -337,15 +275,6 @@ export default {
             this.showCredit = false;
             this.showDetails = false;
         },
-        emailError: function(){
-            this.showSuccess = false;
-            this.showFailure = true;
-            this.failMessage = "Email doesn't exist!";
-            this.showDebit = false;
-            this.editingMovement = false;
-            this.showCredit = false;
-            this.showDetails = false;
-        },
         movementDetails: function(movement){
             this.currentMovement = Object.assign({},movement);
             this.showDetails = true;
@@ -409,6 +338,15 @@ export default {
                     }
                 })
         },
+        getBalance: function(){
+            axios.get('api/movements/'+this.$store.state.user.id+'/balance')
+                .then(response=>{
+                    this.balance = response.data;
+                })
+                .catch(error => {                        
+                    console.log(error);
+                })
+        },
 
         /*getMovements: function(){
             axios.get('api/movements')X
@@ -417,20 +355,27 @@ export default {
     },
     sockets:{
         updateMovements(data){ 
-            console.log(this.movements);
+            //console.log(this.movements);
             this.movements = this.movements + data;
+            this.getResults(1);
+        },
+        updateIncome(data){ 
+            //console.log(data.user.emailIncome)
+            //console.log(data.auxiliar)
+            this.movements = this.movements + data.user;
             this.getResults(1);
         }
     },
     components: {
         "movement-list": MovementList,
         "edit-list": MovementEdit,
-        "movement-credit": MovementCredit,
+        //"movement-credit": MovementCredit,
         "movement-debit": MovementDebit,
         "movement-details": MovementDetails,
     },
     mounted(){
         this.getResults(1);
+        this.getBalance();
         //this.filterMovements();
         //this.getMovements();
     },

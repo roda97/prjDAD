@@ -69,9 +69,32 @@ const app = new Vue({
         //this.$store.commit("loadDepartments");
         this.$store.commit("loadTokenAndUserFromSession");
         console.log(this.$store.state.user);
+        if(this.$store.state.user){
+            this.$socket.emit('login', this.$store.state.user); //é necessário fazer isto aqui pois no caso de o utilizador dar um refresh à página, receber o valor do user e do socket e não um socket vazio
+        }
     },
     sockets:{
-
+        updateMovements(data){ 
+            //console.log(data)
+            console.log(data.user.email)
+            //console.log(data.aux)
+            if(data.aux == 0){
+                this.$toasted.show("You received an movement!");
+            }else{
+                //this.$toasted.show("Falhou!");
+                axios.put('api/movements/email/' + data.user.email);
+            }
+        },
+        updateIncome(data){ 
+            console.log(data.user.emailIncome)
+            console.log(data.aux)
+            if(data.aux == 0){
+                this.$toasted.show("You received an income movement!");
+            }else{
+                //this.$toasted.show("Falhou!");
+                axios.put('api/movements/email/' + data.user.emailIncome);
+            }
+        }
     }
 });
 

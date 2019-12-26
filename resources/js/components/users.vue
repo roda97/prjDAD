@@ -20,7 +20,7 @@ import UserEdit from "./userEdit.vue";
 export default {
     data: function() {
         return {
-        title: 'List Users',
+        title: "Users' List",
         editingUser: false,
         showSuccess: false,
         showFailure: false,
@@ -42,7 +42,7 @@ export default {
             axios.delete('api/users/'+user.id)
                 .then(response => {
                     this.showSuccess = true;
-                    this.successMessage = 'User Deleted';
+                    this.successMessage = 'Deleted User with success';
                     this.getUsers();
                 });
         },
@@ -51,7 +51,7 @@ export default {
             axios.put('api/users/'+ user.id, user) //antes estava " userthis.currentUser.id,this.currentUser " em vez de " user.id, user " mas desta forma, previne a situação de editar e na lista não alterar até dar refresh (por não ter a mesma referencia por algum motivo)
                 .then(response=>{
                     this.showSuccess = true;
-                    this.successMessage = 'User Saved';
+                    this.successMessage = 'Saved User with success';
                     // Copies response.data.data properties to this.currentUser
                     // without changing this.currentUser reference
                     Object.assign(this.currentUser, response.data.data); //alterei aqui

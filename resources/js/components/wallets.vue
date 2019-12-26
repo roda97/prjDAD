@@ -28,7 +28,7 @@
 export default {
     data: function() {
         return {
-        title: 'List Wallets',
+        title: "Wallets' List",
         users: [],
         wallets: []
         }

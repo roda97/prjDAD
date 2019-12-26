@@ -21,4 +21,27 @@
     @yield('pagescript')
 </body>
 
+<style>
+    .nav {
+        display: flex;
+        list-style: none;
+        padding: 7px 0;
+        margin: 0;
+        justify-content: inline-flex;
+        background: #e9ecef;
+        border-bottom: 1px solid lightgrey;
+        margin-bottom: 24px;
+    }
+
+    .nav a {
+        color: #636b6f;
+        padding: 0 15px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: .1rem;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+</style>
+
 </html>

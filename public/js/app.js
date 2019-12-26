@@ -1838,6 +1838,7 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _movements_movementCredit_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./movements/movementCredit.vue */ "./resources/js/components/movements/movementCredit.vue");
 //
 //
 //
@@ -1847,18 +1848,106 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       title: 'Virtual Wallet!',
-      wallets: 0
+      wallets: 0,
+      showCredit: false,
+      showFailure: false,
+      currentMovement: {}
     };
   },
+  methods: {
+    addCredit: function addCredit(movement) {
+      var _this = this;
+
+      axios.post('api/movements/credit', movement).then(function (response) {
+        //console.log(response.data.data)
+        _this.showFailure = false; //this.showSuccess = true;
+        //this.successMessage = "Credit movement created with success";
+
+        _this.showCredit = false;
+
+        _this.$toasted.show("Credit movement created with success!"); //let auxiliar = 0;
+
+
+        _this.$socket.emit('updateIncome', response.data.data); //console.log(response.data)  
+
+      })["catch"](function (error) {
+        console.log(error.response.data);
+        _this.showFailure = false; //tenho de colocar primeiro a false e depois a true para atualizar o valor das mensagens
+
+        _this.showFailure = true;
+        _this.showCredit = true;
+
+        if (error.response.data == "Email doesn't exist!") {
+          _this.failMessage = error.response.data;
+        }
+
+        if (error.response.status == 422) {
+          if (error.response.data.errors.email) {
+            _this.failMessage = error.response.data.errors.email[0];
+          }
+
+          if (error.response.data.errors.value) {
+            _this.failMessage = error.response.data.errors.value[0]; // + " Value must be between [0,01;5000]";
+          }
+
+          if (error.response.data.errors.type_payment) {
+            _this.failMessage = error.response.data.errors.type_payment[0];
+          }
+
+          if (error.response.data.errors.iban) {
+            _this.failMessage = error.response.data.errors.iban[0] + " IBAN must have 2 capital letters followed by 23 digits." + '\n' + " Example: PT50002700000001234567833 ";
+          }
+
+          if (error.response.data.errors.source_description) {
+            _this.failMessage = error.response.data.errors.source_description[0];
+          } //this.failMessage=error.response.data.errors;
+
+        }
+      });
+    },
+    showAddCredit: function showAddCredit() {
+      this.currentMovement = {};
+      this.showCredit = true;
+      this.showFailure = false;
+    },
+    cancelCredit: function cancelCredit() {
+      this.currentMovement = {};
+      this.showCredit = false;
+      this.showFailure = false;
+    }
+  },
+  components: {
+    "movement-credit": _movements_movementCredit_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     axios.get('api/home').then(function (response) {
-      _this.wallets = response.data;
+      _this2.wallets = response.data;
     });
   }
 });
@@ -1943,9 +2032,13 @@ __webpack_require__.r(__webpack_exports__);
         //this.showMessage = true;
 
 
+        console.log(response.data); //console.log(response.data.data)
+
         _this.$router.push('/');
 
         _this.$toasted.show("User authenticated correctly");
+
+        _this.$socket.emit('login', response.data);
       })["catch"](function (error) {
         _this.$store.commit("clearUserAndToken");
 
@@ -2005,6 +2098,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.showMessage = false;
+      this.$socket.emit('logout', this.$store.state.user); //tem de ser antes do axios porque eu quero saber quem o faz antes de fazer logout
+
       axios.post("api/logout").then(function (response) {
         _this.$store.commit("clearUserAndToken"); // this.typeofmsg = "alert-success";
         //this.message = "User has logged out correctly";
@@ -2382,10 +2477,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['currentMovement'],
   data: function data() {
-    return {};
+    return {
+      category_name: ['groceries', 'restaurant', 'clothes', 'shoes', 'school', 'services', 'electricity', 'phone', 'fuel', 'mortgage payment', 'car payment', 'entertainment', 'gadget', 'computer', 'vacation', 'hobby', 'loan repayment', 'loan', 'other expense']
+    };
   },
   methods: {
     saveMovement: function saveMovement() {
@@ -2412,14 +2514,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _movementsList_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./movementsList.vue */ "./resources/js/components/movements/movementsList.vue");
 /* harmony import */ var _movementEdit_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./movementEdit.vue */ "./resources/js/components/movements/movementEdit.vue");
-/* harmony import */ var _movementCredit_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./movementCredit.vue */ "./resources/js/components/movements/movementCredit.vue");
-/* harmony import */ var _movementDebit_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./movementDebit.vue */ "./resources/js/components/movements/movementDebit.vue");
-/* harmony import */ var _movementDetails_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./movementDetails.vue */ "./resources/js/components/movements/movementDetails.vue");
-//
-//
-//
-//
-//
+/* harmony import */ var _movementDebit_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./movementDebit.vue */ "./resources/js/components/movements/movementDebit.vue");
+/* harmony import */ var _movementDetails_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./movementDetails.vue */ "./resources/js/components/movements/movementDetails.vue");
 //
 //
 //
@@ -2511,7 +2607,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
-
+ //import MovementCredit from "./movementCredit.vue";
 
 
 
@@ -2520,7 +2616,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       page: 1,
       total: 1,
-      title: 'List Movements',
+      title: "Movements' List",
+      balance: '',
       editingMovement: false,
       showDetails: false,
       currentMovement: {},
@@ -2529,7 +2626,7 @@ __webpack_require__.r(__webpack_exports__);
       successMessage: '',
       failMessage: '',
       listMovements: true,
-      showCredit: false,
+      //showCredit: false,
       showDebit: false,
       movements: [],
       search: {
@@ -2614,149 +2711,85 @@ __webpack_require__.r(__webpack_exports__);
         _this2.showSuccess = false;
       });
     },
-    addCredit: function addCredit(movement) {
+    addDebit: function addDebit(movement) {
       var _this3 = this;
 
       this.editingMovement = false;
+      this.showCredit = false;
       this.showDetails = false;
-      this.showDebit = false;
-      axios.post('api/movements/credit', movement).then(function (response) {
+      axios.post('api/movements/debit', movement).then(function (response) {
+        //console.log(movement);
+        //this.addCredit(movement);
         console.log(response.data.data);
-        _this3.showFailure = false;
-        _this3.showSuccess = true;
-        _this3.successMessage = "Credit movement created with success";
-        _this3.showCredit = false; //this.movements = response.data.data;
-        //console.log(response.data)  
+        _this3.showFailure = false; //this.showSuccess = true;
+        //this.successMessage = "Debit movement created with success";
+
+        _this3.showDebit = false;
+
+        _this3.$toasted.show("Debit movement created with success!");
+
+        _this3.$socket.emit('updateMovements', response.data.data); //this.movements = response.data.data;
+        //console.log(response.data.data)  
+
       })["catch"](function (error) {
-        console.log(error.response.data);
+        console.log(error);
         _this3.showFailure = true;
         _this3.showSuccess = false;
-        _this3.showCredit = true;
+        _this3.showDebit = true;
 
-        if (error.response.data == "Email doesn't exist!") {
-          _this3.failMessage = error.response.data;
+        if (error.response.status == 402) {
+          if (error.response.data == "Email doesn't exist!") {
+            _this3.failMessage = error.response.data;
+          }
+
+          if (error.response.data == "You can't transfer for your own wallet!") {
+            _this3.failMessage = error.response.data;
+          }
+
+          if (error.response.data == "You don't have enought money!") {
+            _this3.failMessage = error.response.data;
+          }
         }
 
         if (error.response.status == 422) {
-          if (error.response.data.errors.email) {
-            _this3.failMessage = error.response.data.errors.email[0];
-          }
-
-          if (error.response.data.errors.value) {
-            _this3.failMessage = error.response.data.errors.value[0]; // + " Value must be between [0,01;5000]";
+          if (error.response.data.errors.transfer) {
+            _this3.failMessage = "The type of movement field is required.";
           }
 
           if (error.response.data.errors.type_payment) {
             _this3.failMessage = error.response.data.errors.type_payment[0];
           }
 
-          if (error.response.data.errors.iban) {
-            _this3.failMessage = error.response.data.errors.iban[0] + " IBAN must have 2 capital letters followed by 23 digits." + '\n' + " Example: PT50002700000001234567833 ";
+          if (error.response.data.errors.email) {
+            _this3.failMessage = error.response.data.errors.email[0];
           }
 
           if (error.response.data.errors.source_description) {
             _this3.failMessage = error.response.data.errors.source_description[0];
-          } //this.failMessage=error.response.data.errors;
-
-        }
-      });
-    },
-    showAddCredit: function showAddCredit() {
-      this.currentMovement = {};
-      this.editingMovement = false;
-      this.showCredit = true;
-      this.showSuccess = false;
-      this.showFailure = false;
-      this.showDetails = false;
-      this.showDebit = false;
-    },
-    cancelCredit: function cancelCredit() {
-      this.currentMovement = {};
-      this.editingMovement = false;
-      this.showCredit = false;
-      this.showSuccess = false;
-      this.showFailure = false;
-      this.showDetails = false;
-      this.showDebit = false;
-    },
-    addDebit: function addDebit(movement) {
-      var _this4 = this;
-
-      this.editingMovement = false;
-      this.showCredit = false;
-      this.showDetails = false;
-      axios.post('api/movements/debit', movement).then(function (response) {
-        //this.addCredit(movement);
-        //console.log(response.data.data); 
-        _this4.showFailure = false; //this.showSuccess = true;
-        //this.successMessage = "Debit movement created with success";
-
-        _this4.showDebit = false;
-
-        _this4.$toasted.show("Debit movement created with success!");
-
-        _this4.$socket.emit('updateMovements', _this4.currentMovement); //this.movements = response.data.data;
-        //console.log(response.data.data)  
-
-      })["catch"](function (error) {
-        console.log(error.response.data);
-        _this4.showFailure = true;
-        _this4.showSuccess = false;
-        _this4.showDebit = true;
-
-        if (error.response.status == 402) {
-          if (error.response.data == "Email doesn't exist!") {
-            _this4.failMessage = error.response.data;
-          }
-
-          if (error.response.data == "You can't transfer for your own wallet!") {
-            _this4.failMessage = error.response.data;
-          }
-
-          if (error.response.data == "You don't have enought money!") {
-            _this4.failMessage = error.response.data;
-          }
-        }
-
-        if (error.response.status == 422) {
-          if (error.response.data.errors.transfer) {
-            _this4.failMessage = "The type of movement field is required.";
-          }
-
-          if (error.response.data.errors.type_payment) {
-            _this4.failMessage = error.response.data.errors.type_payment[0];
-          }
-
-          if (error.response.data.errors.email) {
-            _this4.failMessage = error.response.data.errors.email[0];
-          }
-
-          if (error.response.data.errors.source_description) {
-            _this4.failMessage = error.response.data.errors.source_description[0];
           }
 
           if (error.response.data.errors.iban) {
-            _this4.failMessage = error.response.data.errors.iban[0] + " IBAN must have 2 capital letters followed by 23 digits." + '\n' + " Example: PT50002700000001234567833 ";
+            _this3.failMessage = error.response.data.errors.iban[0] + " IBAN must have 2 capital letters followed by 23 digits." + '\n' + " Example: PT50002700000001234567833 ";
           }
 
           if (error.response.data.errors.mb_entity_code) {
-            _this4.failMessage = error.response.data.errors.mb_entity_code[0];
+            _this3.failMessage = error.response.data.errors.mb_entity_code[0];
           }
 
           if (error.response.data.errors.mb_payment_reference) {
-            _this4.failMessage = error.response.data.errors.mb_payment_reference[0];
+            _this3.failMessage = error.response.data.errors.mb_payment_reference[0];
           }
 
           if (error.response.data.errors.value) {
-            _this4.failMessage = error.response.data.errors.value[0]; //+ " Value must be between [0,01;5000]";
+            _this3.failMessage = error.response.data.errors.value[0]; //+ " Value must be between [0,01;5000]";
           }
 
           if (error.response.data.errors.category_name) {
-            _this4.failMessage = error.response.data.errors.category_name[0];
+            _this3.failMessage = error.response.data.errors.category_name[0];
           }
 
           if (error.response.data.errors.description) {
-            _this4.failMessage = error.response.data.errors.description[0];
+            _this3.failMessage = error.response.data.errors.description[0];
           } //this.failMessage=error.response.data.errors;
 
         }
@@ -2780,15 +2813,6 @@ __webpack_require__.r(__webpack_exports__);
       this.showCredit = false;
       this.showDetails = false;
     },
-    emailError: function emailError() {
-      this.showSuccess = false;
-      this.showFailure = true;
-      this.failMessage = "Email doesn't exist!";
-      this.showDebit = false;
-      this.editingMovement = false;
-      this.showCredit = false;
-      this.showDetails = false;
-    },
     movementDetails: function movementDetails(movement) {
       this.currentMovement = Object.assign({}, movement);
       this.showDetails = true;
@@ -2808,7 +2832,7 @@ __webpack_require__.r(__webpack_exports__);
       this.showDebit = false;
     },
     filterMovements: function filterMovements() {
-      var _this5 = this;
+      var _this4 = this;
 
       this.showDetails = false;
       this.editingMovement = false;
@@ -2819,9 +2843,9 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('api/movements/filter', this.search).then(function (response) {
         if (!Object.keys(response.data.data).length) {
           //if(typeof response.data == Object && !Object.keys(response.data.data).length){ //isto era se eu continuasse a mandar os erros no response
-          _this5.listMovements = false;
-          _this5.showFailure = true;
-          _this5.failMessage = "There are no movements with this data!";
+          _this4.listMovements = false;
+          _this4.showFailure = true;
+          _this4.failMessage = "There are no movements with this data!";
           /*}else if(response.data.data == "Email doesn't exist!"){
               this.listMovements = false;
               this.showFailure = true;
@@ -2831,27 +2855,36 @@ __webpack_require__.r(__webpack_exports__);
               this.showFailure = true;
               this.failMessage = response.data;*/
         } else {
-          _this5.listMovements = true;
-          _this5.showFailure = false;
+          _this4.listMovements = true;
+          _this4.showFailure = false;
           console.log(response.data.data);
-          _this5.movements = response.data.data;
-          _this5.page = response.data.meta.current_page;
-          _this5.total = response.data.meta.total;
+          _this4.movements = response.data.data;
+          _this4.page = response.data.meta.current_page;
+          _this4.total = response.data.meta.total;
         }
       })["catch"](function (error) {
         console.log(error.response.data);
 
         if (error.response.data == "Email doesn't exist!") {
-          _this5.listMovements = false;
-          _this5.showFailure = true;
-          _this5.failMessage = error.response.data;
+          _this4.listMovements = false;
+          _this4.showFailure = true;
+          _this4.failMessage = error.response.data;
         }
 
         if (error.response.data == "Category doesn't exist!") {
-          _this5.listMovements = false;
-          _this5.showFailure = true;
-          _this5.failMessage = error.response.data;
+          _this4.listMovements = false;
+          _this4.showFailure = true;
+          _this4.failMessage = error.response.data;
         }
+      });
+    },
+    getBalance: function getBalance() {
+      var _this5 = this;
+
+      axios.get('api/movements/' + this.$store.state.user.id + '/balance').then(function (response) {
+        _this5.balance = response.data;
+      })["catch"](function (error) {
+        console.log(error);
       });
     }
     /*getMovements: function(){
@@ -2862,20 +2895,27 @@ __webpack_require__.r(__webpack_exports__);
   },
   sockets: {
     updateMovements: function updateMovements(data) {
-      console.log(this.movements);
+      //console.log(this.movements);
       this.movements = this.movements + data;
+      this.getResults(1);
+    },
+    updateIncome: function updateIncome(data) {
+      //console.log(data.user.emailIncome)
+      //console.log(data.auxiliar)
+      this.movements = this.movements + data.user;
       this.getResults(1);
     }
   },
   components: {
     "movement-list": _movementsList_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     "edit-list": _movementEdit_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
-    "movement-credit": _movementCredit_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
-    "movement-debit": _movementDebit_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    "movement-details": _movementDetails_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
+    //"movement-credit": MovementCredit,
+    "movement-debit": _movementDebit_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    "movement-details": _movementDetails_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   mounted: function mounted() {
-    this.getResults(1); //this.filterMovements();
+    this.getResults(1);
+    this.getBalance(); //this.filterMovements();
     //this.getMovements();
   }
   /*computed:{
@@ -3270,7 +3310,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      title: 'List Users',
+      title: "Users' List",
       editingUser: false,
       showSuccess: false,
       showFailure: false,
@@ -3293,7 +3333,7 @@ __webpack_require__.r(__webpack_exports__);
 
       axios["delete"]('api/users/' + user.id).then(function (response) {
         _this.showSuccess = true;
-        _this.successMessage = 'User Deleted';
+        _this.successMessage = 'Deleted User with success';
 
         _this.getUsers();
       });
@@ -3305,7 +3345,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.put('api/users/' + user.id, user) //antes estava " userthis.currentUser.id,this.currentUser " em vez de " user.id, user " mas desta forma, previne a situação de editar e na lista não alterar até dar refresh (por não ter a mesma referencia por algum motivo)
       .then(function (response) {
         _this2.showSuccess = true;
-        _this2.successMessage = 'User Saved'; // Copies response.data.data properties to this.currentUser
+        _this2.successMessage = 'Saved User with success'; // Copies response.data.data properties to this.currentUser
         // without changing this.currentUser reference
 
         Object.assign(_this2.currentUser, response.data.data); //alterei aqui
@@ -3399,7 +3439,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      title: 'List Wallets',
+      title: "Wallets' List",
       users: [],
       wallets: []
     };
@@ -52976,13 +53016,75 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("div", [_c("h1", [_vm._v(_vm._s(_vm.title))])]),
-    _vm._v(" "),
-    _c("h3", [
-      _vm._v("There are currently " + _vm._s(_vm.wallets) + " Virtual Wallets!")
-    ])
-  ])
+  return _c(
+    "div",
+    [
+      _c("div", [_c("h1", [_vm._v(_vm._s(_vm.title))])]),
+      _vm._v(" "),
+      _c("h3", [
+        _vm._v(
+          "There are currently " + _vm._s(_vm.wallets) + " Virtual Wallets!"
+        )
+      ]),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      this.$store.state.user != null
+        ? _c("div", [
+            _vm.$store.state.user.type == "o"
+              ? _c("div", [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "btn btn-primary",
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.showAddCredit()
+                        }
+                      }
+                    },
+                    [_vm._v("Add Credit")]
+                  )
+                ])
+              : _vm._e()
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _vm.showCredit
+        ? _c("movement-credit", {
+            attrs: { currentMovement: _vm.currentMovement },
+            on: {
+              "add-credit": _vm.addCredit,
+              "cancel-credit": _vm.cancelCredit
+            }
+          })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.showFailure
+        ? _c("div", { staticClass: "alert alert-danger" }, [
+            _c(
+              "button",
+              {
+                staticClass: "close-btn",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    _vm.showFailure = false
+                  }
+                }
+              },
+              [_vm._v("×")]
+            ),
+            _vm._v(" "),
+            _c("strong", [_vm._v(_vm._s(_vm.failMessage))])
+          ])
+        : _vm._e()
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -53208,8 +53310,8 @@ var render = function() {
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.currentMovement.email,
-            expression: "currentMovement.email"
+            value: _vm.currentMovement.emailIncome,
+            expression: "currentMovement.emailIncome"
           }
         ],
         staticClass: "form-control",
@@ -53220,13 +53322,13 @@ var render = function() {
           placeholder: "Insert email of the account to receive the money",
           required: ""
         },
-        domProps: { value: _vm.currentMovement.email },
+        domProps: { value: _vm.currentMovement.emailIncome },
         on: {
           input: function($event) {
             if ($event.target.composing) {
               return
             }
-            _vm.$set(_vm.currentMovement, "email", $event.target.value)
+            _vm.$set(_vm.currentMovement, "emailIncome", $event.target.value)
           }
         }
       })
@@ -53925,49 +54027,47 @@ var render = function() {
     _vm._v(" "),
     _c("br"),
     _vm._v(" "),
-    _vm.currentMovement.transfer_wallet_id
-      ? _c("div", { staticClass: "form-group" }, [
-          _c("strong", [_vm._v("Photo:   ")]),
-          _vm._v(" "),
-          _vm.currentMovement.user_photo
-            ? _c("div", { staticClass: "col-md-10 col-md-offset-1" }, [
-                _c("td", [
-                  _c("img", {
-                    staticStyle: {
-                      width: "150px",
-                      height: "150px",
-                      "border-radius": "50%",
-                      "margin-bottom": "25px",
-                      "margin-right": "25px",
-                      float: "left"
-                    },
-                    attrs: {
-                      src: "storage/fotos/" + _vm.currentMovement.user_photo
-                    }
-                  })
-                ])
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          !_vm.currentMovement.user_photo
-            ? _c("div", { staticClass: "col-md-10 col-md-offset-1" }, [
-                _c("td", [
-                  _c("img", {
-                    staticStyle: {
-                      width: "150px",
-                      height: "150px",
-                      "border-radius": "50%",
-                      "margin-bottom": "25px",
-                      "margin-right": "25px",
-                      float: "left"
-                    },
-                    attrs: { src: "storage/fotos/unknown.jpg" }
-                  })
-                ])
-              ])
-            : _vm._e()
-        ])
-      : _vm._e(),
+    _c("div", { staticClass: "form-group" }, [
+      _c("strong", [_vm._v("Photo:   ")]),
+      _vm._v(" "),
+      _vm.currentMovement.user_photo
+        ? _c("div", { staticClass: "col-md-10 col-md-offset-1" }, [
+            _c("td", [
+              _c("img", {
+                staticStyle: {
+                  width: "150px",
+                  height: "150px",
+                  "border-radius": "50%",
+                  "margin-bottom": "25px",
+                  "margin-right": "25px",
+                  float: "left"
+                },
+                attrs: {
+                  src: "storage/fotos/" + _vm.currentMovement.user_photo
+                }
+              })
+            ])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      !_vm.currentMovement.user_photo
+        ? _c("div", { staticClass: "col-md-10 col-md-offset-1" }, [
+            _c("td", [
+              _c("img", {
+                staticStyle: {
+                  width: "150px",
+                  height: "150px",
+                  "border-radius": "50%",
+                  "margin-bottom": "25px",
+                  "margin-right": "25px",
+                  float: "left"
+                },
+                attrs: { src: "storage/fotos/unknown.jpg" }
+              })
+            ])
+          ])
+        : _vm._e()
+    ]),
     _vm._v(" "),
     _c("div", { staticClass: "form-group" }, [
       _vm.currentMovement.description
@@ -54087,37 +54187,62 @@ var render = function() {
   return _c("div", { staticClass: "jumbotron" }, [
     _c("h2", [_vm._v("Edit Movement " + _vm._s(_vm.currentMovement.id))]),
     _vm._v(" "),
-    _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "inputCategoria" } }, [_vm._v("Categoria")]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.currentMovement.category_name,
-            expression: "currentMovement.category_name"
-          }
-        ],
-        staticClass: "form-control",
-        attrs: {
-          type: "text",
-          name: "categoria",
-          id: "inputCategoria",
-          placeholder: "categoria",
-          value: ""
-        },
-        domProps: { value: _vm.currentMovement.category_name },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.$set(_vm.currentMovement, "category_name", $event.target.value)
-          }
-        }
-      })
-    ]),
+    _vm.currentMovement.type == "e"
+      ? _c("div", [
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", { attrs: { for: "InputCategoryName" } }, [
+              _vm._v("Category name")
+            ]),
+            _vm._v(" "),
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.currentMovement.category_name,
+                    expression: "currentMovement.category_name"
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: { name: "categoryName", id: "InputCategoryName" },
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.$set(
+                      _vm.currentMovement,
+                      "category_name",
+                      $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                    )
+                  }
+                }
+              },
+              [
+                _c("option", { attrs: { disabled: "", selected: "" } }, [
+                  _vm._v(" -- Select an option -- ")
+                ]),
+                _vm._v(" "),
+                _vm._l(_vm.category_name, function(movement) {
+                  return _c(
+                    "option",
+                    { key: movement, domProps: { value: movement } },
+                    [_vm._v(_vm._s(movement))]
+                  )
+                })
+              ],
+              2
+            )
+          ])
+        ])
+      : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "form-group" }, [
       _c("label", { attrs: { for: "inputDescricao" } }, [_vm._v("Descrição")]),
@@ -54208,70 +54333,41 @@ var render = function() {
     "div",
     [
       _c("div", { staticClass: "jumbotron" }, [
-        _c("h1", [_vm._v(_vm._s(_vm.title))])
+        _c("h1", [_vm._v(_vm._s(_vm.title))]),
+        _vm._v(" "),
+        _c("h3", [_vm._v("Current balance: " + _vm._s(_vm.balance) + "$")])
       ]),
       _vm._v(" "),
       _c("br"),
       _vm._v(" "),
-      _c("div", [
-        _c(
-          "td",
-          {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: _vm.$store.state.user.type == "o",
-                expression: "$store.state.user.type == 'o'"
-              }
-            ]
-          },
-          [
-            _c(
-              "a",
-              {
-                staticClass: "btn btn-primary",
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.showAddCredit()
-                  }
-                }
-              },
-              [_vm._v("Add Credit")]
-            )
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.$store.state.user.type == "u",
+              expression: "$store.state.user.type == 'u'"
+            }
           ]
-        ),
-        _vm._v(" "),
-        _c(
-          "td",
-          {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: _vm.$store.state.user.type == "u",
-                expression: "$store.state.user.type == 'u'"
-              }
-            ]
-          },
-          [
-            _c(
-              "a",
-              {
-                staticClass: "btn btn-primary",
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.showAddDebit()
-                  }
+        },
+        [
+          _c(
+            "a",
+            {
+              staticClass: "btn btn-primary",
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.showAddDebit()
                 }
-              },
-              [_vm._v("Add Debit")]
-            )
-          ]
-        )
-      ]),
+              }
+            },
+            [_vm._v("Add Debit")]
+          )
+        ]
+      ),
       _vm._v(" "),
       _c("br"),
       _vm._v(" "),
@@ -54547,28 +54643,13 @@ var render = function() {
           })
         : _vm._e(),
       _vm._v(" "),
-      _vm.showCredit
-        ? _c("movement-credit", {
-            attrs: { currentMovement: _vm.currentMovement },
-            on: {
-              "add-credit": _vm.addCredit,
-              "email-error": _vm.emailError,
-              "cancel-credit": _vm.cancelCredit
-            }
-          })
-        : _vm._e(),
-      _vm._v(" "),
       _vm.showDebit
         ? _c("movement-debit", {
             attrs: {
               movements: _vm.movements,
               currentMovement: _vm.currentMovement
             },
-            on: {
-              "add-debit": _vm.addDebit,
-              "email-error": _vm.emailError,
-              "cancel-debit": _vm.cancelDebit
-            }
+            on: { "add-debit": _vm.addDebit, "cancel-debit": _vm.cancelDebit }
           })
         : _vm._e(),
       _vm._v(" "),
@@ -54695,8 +54776,146 @@ render._withStripped = true
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function () {}
-var staticRenderFns = []
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("br"),
+    _vm._v(" "),
+    _c("table", { staticClass: "table table-striped" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c(
+        "tbody",
+        _vm._l(_vm.movements, function(movement) {
+          return _c(
+            "tr",
+            {
+              key: movement.id,
+              class: { activerow: _vm.currentMovement === movement }
+            },
+            [
+              _c("td", [_vm._v(_vm._s(movement.id))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(movement.type))]),
+              _vm._v(" "),
+              movement.transfer_wallet_id != undefined
+                ? _c("td", [_vm._v(_vm._s(movement.email))])
+                : _vm._e(),
+              _vm._v(" "),
+              movement.transfer_wallet_id == null
+                ? _c("td", [_vm._v(" - ")])
+                : _vm._e(),
+              _vm._v(" "),
+              movement.type_payment == null
+                ? _c("td", [_vm._v(" - ")])
+                : _vm._e(),
+              _vm._v(" "),
+              movement.type_payment != null
+                ? _c("td", [_vm._v(" " + _vm._s(movement.type_payment))])
+                : _vm._e(),
+              _vm._v(" "),
+              movement.category_id
+                ? _c("td", [_vm._v(_vm._s(movement.category_name))])
+                : _vm._e(),
+              _vm._v(" "),
+              !movement.category_id ? _c("td", [_vm._v(" - ")]) : _vm._e(),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(movement.date))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(movement.start_balance))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(movement.end_balance))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(movement.value))]),
+              _vm._v(" "),
+              _c("td", [
+                _c(
+                  "div",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.$store.state.user.id == movement.wallet_id,
+                        expression:
+                          "$store.state.user.id == movement.wallet_id "
+                      }
+                    ]
+                  },
+                  [
+                    _c(
+                      "a",
+                      {
+                        staticClass: "btn btn-sm btn-primary",
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.editMovement(movement)
+                          }
+                        }
+                      },
+                      [_vm._v("Edit")]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c("div", [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "btn btn-sm btn-secondary",
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.movementDetails(movement)
+                        }
+                      }
+                    },
+                    [_vm._v("Details")]
+                  )
+                ])
+              ])
+            ]
+          )
+        }),
+        0
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("ID")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Type")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Transfer Email")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Type of Payment")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Category")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Start Balance")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("End Balance")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Value")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Action")])
+      ])
+    ])
+  }
+]
+render._withStripped = true
 
 
 
@@ -71459,8 +71678,35 @@ var app = new Vue({
 
     this.$store.commit("loadTokenAndUserFromSession");
     console.log(this.$store.state.user);
+
+    if (this.$store.state.user) {
+      this.$socket.emit('login', this.$store.state.user); //é necessário fazer isto aqui pois no caso de o utilizador dar um refresh à página, receber o valor do user e do socket e não um socket vazio
+    }
   },
-  sockets: {}
+  sockets: {
+    updateMovements: function updateMovements(data) {
+      //console.log(data)
+      console.log(data.user.email); //console.log(data.aux)
+
+      if (data.aux == 0) {
+        this.$toasted.show("You received an movement!");
+      } else {
+        //this.$toasted.show("Falhou!");
+        axios.put('api/movements/email/' + data.user.email);
+      }
+    },
+    updateIncome: function updateIncome(data) {
+      console.log(data.user.emailIncome);
+      console.log(data.aux);
+
+      if (data.aux == 0) {
+        this.$toasted.show("You received an income movement!");
+      } else {
+        //this.$toasted.show("Falhou!");
+        axios.put('api/movements/email/' + data.user.emailIncome);
+      }
+    }
+  }
 });
 router.beforeEach(function (to, from, next) {
   if (to.name == "logout") {

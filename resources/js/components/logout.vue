@@ -33,6 +33,7 @@ export default {
     methods: {
         logout() {
             this.showMessage = false;
+            this.$socket.emit('logout', this.$store.state.user); //tem de ser antes do axios porque eu quero saber quem o faz antes de fazer logout
             axios
                 .post("api/logout")
                 .then(response => {

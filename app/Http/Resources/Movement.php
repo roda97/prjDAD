@@ -48,7 +48,8 @@ class Movement extends Resource
             'value' => $this->value,
             'email' => $email,
             'category_name' => $category_name,
-            'user_photo' => $user_photo
+            'user_photo' => $user_photo,
+            'emailIncome' => $this->creditWallet->email
             //'wallet' => $wallet,
         ];
     }
