@@ -27,6 +27,7 @@ import Home from './components/home'
 import User from './components/users'
 import UserEdit from './components/userEdit'
 import UserRegister from './components/userRegister'
+import UserProfile from './components/userProfile'
 import Login from './components/login'
 import Logout from './components/logout'
 import Movimento from './components/movements/movements'
@@ -37,6 +38,7 @@ const home = Vue.component("home", Home);
 const user = Vue.component("users", User);
 const userEdit = Vue.component("usersEdit", UserEdit);
 const userRegister = Vue.component("usersRegister", UserRegister);
+const userProfile = Vue.component("userProfile", UserProfile);
 const login = Vue.component("login", Login);
 const logout = Vue.component("logout", Logout);
 const wallet = Vue.component("wallets", Wallet);
@@ -47,6 +49,7 @@ const routes = [
     { path: "/users", component: User, name: "users" },
     { path: "/users/:id/edit", component: UserEdit, name: "usersEdit" },
     { path: "/users/register", component: UserRegister, name: "usersRegister" },
+    { path: "/users/profile", component: UserProfile, name: "userProfile" },
     { path: "/login", component: Login, name: "login" },
     { path: "/logout", component: Logout, name: "logout" },
     { path: "/movements", component: Movimento, name: "movements" },
@@ -69,32 +72,9 @@ const app = new Vue({
         //this.$store.commit("loadDepartments");
         this.$store.commit("loadTokenAndUserFromSession");
         console.log(this.$store.state.user);
-        if(this.$store.state.user){
-            this.$socket.emit('login', this.$store.state.user); //é necessário fazer isto aqui pois no caso de o utilizador dar um refresh à página, receber o valor do user e do socket e não um socket vazio
-        }
     },
     sockets:{
-        updateMovements(data){ 
-            //console.log(data)
-            console.log(data.user.email)
-            //console.log(data.aux)
-            if(data.aux == 0){
-                this.$toasted.show("You received an movement!");
-            }else{
-                //this.$toasted.show("Falhou!");
-                axios.put('api/movements/email/' + data.user.email);
-            }
-        },
-        updateIncome(data){ 
-            console.log(data.user.emailIncome)
-            console.log(data.aux)
-            if(data.aux == 0){
-                this.$toasted.show("You received an income movement!");
-            }else{
-                //this.$toasted.show("Falhou!");
-                axios.put('api/movements/email/' + data.user.emailIncome);
-            }
-        }
+
     }
 });
 
