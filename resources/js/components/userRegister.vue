@@ -2,6 +2,16 @@
   <div class="jumbotron">
     <h2>{{title}}</h2>
 
+    <div class="alert alert-success" v-if="showSuccess">
+            <button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
+            <strong>{{ successMessage }}</strong>
+        </div>
+
+        <div class="alert alert-danger" v-if="showError">
+            <button type="button" class="close-btn" v-on:click="showError=false">&times;</button>
+            <strong>{{ successMessage }}</strong>
+        </div>
+
     
     <div class="form-group">
       <label for="inputName">Name</label>
@@ -13,6 +23,9 @@
         id="inputName"
         placeholder="Fullname"
       />
+      <div 
+          class="invalid-feedback" v-if="badName"> Invalid name.
+      </div>
     </div>
 
     <div class="form-group">
@@ -25,6 +38,9 @@
         id="inputEmail"
         placeholder="Email address"
       />
+      <div 
+          class="invalid-feedback" v-if="badEmail"> Invalid email.
+      </div>
     </div>
     
     <div class="form-group">
@@ -37,6 +53,9 @@
         id="inputPassword"
         placeholder="password"
       />
+      <div 
+          class="invalid-feedback" v-if="badPassword"> Invalid password.
+      </div>
     </div>
 
     <div class="form-group">
@@ -49,16 +68,20 @@
         id="inputNif"
         placeholder="NIF"
       />
+      <div 
+          class="invalid-feedback" v-if="badNif"> Invalid NIF.
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="inputPhoto">Photo</label>
+      <label for="inputPhoto">{{ user.photo.name }}</label>
       <input
         type="file"
         class="form-control"
         name="photo"
         id="inputPhoto"
         placeholder="upload Photo"
+        v-on:change="onImageChange"
       />
     </div>
 
@@ -79,39 +102,60 @@ export default {
   data: function() {
     return {
       title: "Register",
-      user: { name: "", email: "", password: "", nif: "", photo: ""},
+      user: { name: "", email: "", password: "", nif: "", photo:{ name: "Insert Photo", base64: "",}, },
       showSuccess: false,
+      showError: false,
       errors: [],
-      successMessage: ""
+      successMessage: "",
+      badName: false,
+      badEmail: false,
+      badPassword: false,
+      badNif: false
     };
   },
   methods: {
-      /*
-     checkForm: function (e) {
-      this.errors = [];
 
-      if (!this.user.email) {
-        this.errors.push('Email required.');
-      } else if (!this.validEmail(this.user.email)) {
-        this.errors.push('Valid email required.');
-      }
+    onImageChange: function(event){     //UPLOAD IMAGE METHODS
+      let image = event.target.files[0];
+      this.user.photo = image.name;
+      this.createImage(image);
+    },
+    createImage: function(file){
+      let reader = new FileReader();
+      reader.onload = (e) => {
+          this.user.photoBase64 = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
 
-      if (!this.errors.length) {
-        return true;
-      }
-
-      e.preventDefault();
-    },*/
     registerUser: function() {
       axios.post("api/users/register", this.user)
         .then(response => {
           Object.assign(this.user, response.data);
           this.$router.push('/');
           this.$toasted.show('User Created');
+
+         
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch(error => {
+            console.error(error)
+              if(error.response.data.errors.name){
+                this.successMessage = error.response.data.errors.name[0];
+                this.showError = true;
+              }else if(error.response.data.errors.email){
+                this.successMessage = error.response.data.errors.email[0];
+                this.showError = true;
+              }else if(error.response.data.errors.password){
+                this.successMessage = error.response.data.errors.password[0];
+                this.showError = true;
+              }else if(error.response.data.errors.nif){
+                this.successMessage = error.response.data.errors.nif[0];
+                this.showError = true;
+              }else if (error.response.data.errors.photo){
+                this.successMessage = error.response.data.errors.photo[0];
+                this.showError = true;
+                   }
+         })
     },
     cancelRegister: function(){
       axios.get('api/users/total')
@@ -119,11 +163,6 @@ export default {
         this.$router.push('/');
       })
     },
-    
-    /*validEmail: function (email) {
-      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(email);
-    }*/
   },
 
   mounted() {}

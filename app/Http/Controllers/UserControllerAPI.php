@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Provider\Image;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
 use Laravel\Passport\HasApiTokens;
@@ -47,9 +48,22 @@ class UserControllerAPI extends Controller
                 'password' => 'min:3',
                 'nif'       => 'integer|digits:9'
             ]);
+          
+        if($request->photo['base64']) {
+                $photo = $request->photo;
+                $base64_string = explode(',', $photo['base64']);
+                $imageBin = base64_decode($base64_string[1]);
+    
+                if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
+                    Storage::disk('public')->put('fotos/' . $photo['name'], $imageBin);
+                }
+        }
+        
+
         $user = new User();
         $user->fill($request->all());
         $user->password = Hash::make($user->password);
+        $user->photo = $request->photo['base64'] ? $request->photo['name'] : null;
         $user->save();
         $wallet = new Wallet();
         $wallet->id = $user->id;
