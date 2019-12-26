@@ -14,6 +14,7 @@
         placeholder="Fullname"
       />
     </div>
+
     <div class="form-group">
       <label for="inputEmail">Email</label>
       <input
@@ -25,6 +26,7 @@
         placeholder="Email address"
       />
     </div>
+    
     <div class="form-group">
       <label for="inputPassword">Password</label>
       <input
@@ -106,8 +108,6 @@ export default {
           Object.assign(this.user, response.data);
           this.$router.push('/');
           this.$toasted.show('User Created');
-
-         
         })
         .catch((error) => {
           console.log(error);

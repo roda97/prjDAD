@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
-
+use Laravel\Passport\HasApiTokens;
 use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use function GuzzleHttp\Promise\all;
+use App\Http\Controllers\Controller;
 
 use App\User;
 use App\Wallet;
@@ -41,7 +44,8 @@ class UserControllerAPI extends Controller
         $request->validate([
                 'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
                 'email' => 'required|email|unique:users,email',
-                'password' => 'min:3'
+                'password' => 'min:3',
+                'nif'       => 'integer|digits:9'
             ]);
         $user = new User();
         $user->fill($request->all());
