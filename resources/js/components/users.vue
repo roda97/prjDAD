@@ -4,7 +4,7 @@
             <h1>{{ title }}</h1>
         </div>
 
-        <user-list v-bind:users="users" v-on:edit-user="editUser" v-on:delete-user="deleteUser"></user-list> <!-- v-bind vai capturar o users que nao existia // em vez de v-on: podia ser apenas um @ -->
+        <user-list v-bind:users="users" v-on:edit-user="editUser" v-on:delete-user="deleteUser" v-on:activate-user="activateUser"></user-list> <!-- v-bind vai capturar o users que nao existia // em vez de v-on: podia ser apenas um @ -->
         <edit-list v-if="editingUser"  v-bind:currentUser="currentUser" v-on:save-user="saveUser" v-on:cancel-edit="cancelEdit"></edit-list>
 
         <div class="alert alert-success" v-if="showSuccess">
@@ -32,14 +32,15 @@ export default {
     },
     methods: {
         editUser: function(user){
-            this.currentUser = Object.assign({},user); // antes estava " this.currentUser = user " e passou a ser como está pois da antiga forma quando se editava, o nome alterava logo sem se salvar e assim evita isso
+            this.currentUser = Object.assign({},user); // antes estava " this.currentUser = user " e passou a ser como está pois da antiga forma quando se editava,
+                                                     // o nome alterava logo sem se salvar e assim evita isso
             //this.currentUser = user; // (depois das alterações feitas la em aqui (Assinaladas) passou a dar => a opção de cima não funcionou pois perdia a referencia do user e não guardada as alteraçoes efetuadas
             this.editingUser = true;
             this.showSuccess = false;
         },
           
         deleteUser: function(user){
-            axios.delete('api/users/'+user.id)
+            axios.delete('api/users/destroy/'+user.id)
                 .then(response => {
                     this.showSuccess = true;
                     this.successMessage = 'Deleted User with success';
@@ -78,7 +79,22 @@ export default {
                 .then(response=>{
                     console.log(response)
                     this.users = response.data.data;});
-        }
+        },
+
+        activateUser: function(user){
+            axios.put('api/users/activate/'+user.id)
+                .then(response => {
+                    this.showSuccess = true;
+                    if(user.active == 0){
+                        this.successMessage = ' User Active ';
+                    }else{
+                        this.successMessage = ' User Inactive';
+                    }
+                    this.getUsers();
+                });
+        },
+
+
         /*childMessage: function(message) {
             this.showSuccess = true;
             this.successMessage = message;

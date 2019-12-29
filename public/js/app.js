@@ -3040,6 +3040,33 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3081,15 +3108,78 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['user'],
   data: function data() {
-    return {};
+    var _ref;
+
+    return _ref = {
+      name: this.$store.state.user.name,
+      photo: "",
+      nif: this.$store.state.user.nif
+    }, _defineProperty(_ref, "photo", ""), _defineProperty(_ref, "password", ""), _defineProperty(_ref, "confirmpassword", ""), _defineProperty(_ref, "oldpassword", ""), _defineProperty(_ref, "showSuccess", false), _defineProperty(_ref, "showFailure", false), _defineProperty(_ref, "successMessage", ''), _defineProperty(_ref, "failMessage", ''), _ref;
   },
   methods: {
     saveProfile: function saveProfile() {
-      this.$emit('save-profile', $store.state.user);
+      var _this = this;
+
+      if (this.password == '') {
+        axios.patch('api/users/ProfilewithoutPass', {
+          'name': this.name,
+          'photo': this.photo,
+          'nif': this.nif,
+          'userId': this.$store.state.user.id
+        }).then(function (response) {
+          _this.$emit('profile-modif');
+
+          _this.$emit('profile-refresh');
+        })["catch"](function (error) {
+          console.log(error.response.data);
+        });
+      } else if (this.password == this.confirmpassword && this.password != this.oldpassword) {
+        axios.patch('api/users/ProfilewithPass', {
+          'oldpassword': this.oldpassword,
+          'name': this.name,
+          'photo': this.photo,
+          'nif': this.nif,
+          'password': this.password,
+          'userId': this.$store.state.user.id
+        }).then(function (response) {
+          if (response.data == "pass different") {
+            _this.$emit('profile-erro-pass');
+          } else _this.$emit('profile-modif');
+
+          _this.$emit('profile-refresh');
+        })["catch"](function (error) {
+          console.log(error.response.data);
+        });
+      } else {
+        if (this.password != this.confirmpassword) {
+          this.$emit('profile-erro-pass-diff');
+        } else {
+          this.$emit('profile-erro-pass-equal');
+        } //  showSuccess = false;
+        // showFailure = true;
+
+      }
     },
     cancelEdit: function cancelEdit() {
       this.$emit('cancel-edit');
+    },
+    onImageChange: function onImageChange(event) {
+      var image = event.target.files[0];
+      this.user.photo = image.name;
+      this.createImage(image);
+    },
+    createImage: function createImage(file) {
+      var _this2 = this;
+
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        _this2.user.photoBase64 = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
     }
   }
 });
@@ -3178,6 +3268,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['users'],
   data: function data() {
@@ -3194,6 +3303,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     deleteUser: function deleteUser(user) {
       this.$emit('delete-user', user);
+    },
+    activateUser: function activateUser(user) {
+      this.$emit('activate-user', user);
     }
   }
 });
@@ -3236,32 +3348,67 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       title: 'Profile',
-      user: {
-        id: this.$store.state.user.id,
-        name: this.$store.state.user.name,
-        nif: this.$store.state.user.nif,
-        photo: this.$store.state.user.photo
-      },
-      editingProfile: false
+      user: [],
+
+      /* user: { 
+                   id: this.$store.state.user.id,
+                   name: this.$store.state.user.name,
+                   nif: this.$store.state.user.nif,
+                   photo: this.$store.state.user.photo,   
+                   email: this.$store.state.user.email,
+                   type: this.$store.state.user.type
+           },*/
+      editingProfile: false,
+      showSuccess: false,
+      showFailure: false,
+      successMessage: '',
+      failMessage: ''
     };
   },
   methods: {
     profileEdit: function profileEdit(user) {
-      this.$emit('profile-edit');
-      this.editingProfile = true;
       this.currentUser = Object.assign({}, user);
-      this.showSuccess = false;
+      this.editingProfile = true;
+    },
+    profileModif: function profileModif() {
+      this.showSuccess = true;
+      this.successMessage = 'User successfully modified';
+    },
+    profileErroPass: function profileErroPass() {
+      this.showFailure = true;
+      this.failMessage = 'Wrong Old Password';
+    },
+    profileErroPassEqual: function profileErroPassEqual() {
+      this.showFailure = true;
+      this.failMessage = 'New Password and Old Password are same';
+    },
+    profileErroPassDiff: function profileErroPassDiff() {
+      this.showFailure = true;
+      this.failMessage = 'Password and confirm password are different';
+    },
+    profileRefresh: function profileRefresh(user) {
+      axios.get('api/users/profile', this.user).then(function (response) {
+        console.log("sucesso");
+      });
     },
     saveUser: function saveUser() {
       var _this = this;
 
       this.editingUser = false;
-      axios.put('api/users/' + this.user.id, this.user).then(function (response) {
+      axios.patch('api/users/' + this.user.id, this.user).then(function (response) {
         _this.showSuccess = true;
         _this.successMessage = 'User Saved';
         Object.assign(_this.user, response.data.data);
@@ -3278,6 +3425,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   components: {
     'profile-edit': _profileEdit__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  mounted: function mounted() {
+    this.profileRefresh();
   }
 });
 
@@ -3419,7 +3569,7 @@ __webpack_require__.r(__webpack_exports__);
     onImageChange: function onImageChange(event) {
       //UPLOAD IMAGE METHODS
       var image = event.target.files[0];
-      this.user.photo = image.name;
+      this.user.photo.name = image.name;
       this.createImage(image);
     },
     createImage: function createImage(file) {
@@ -3428,7 +3578,7 @@ __webpack_require__.r(__webpack_exports__);
       var reader = new FileReader();
 
       reader.onload = function (e) {
-        _this.user.photoBase64 = e.target.result;
+        _this.user.photo.base64 = e.target.result;
       };
 
       reader.readAsDataURL(file);
@@ -3519,7 +3669,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     editUser: function editUser(user) {
-      this.currentUser = Object.assign({}, user); // antes estava " this.currentUser = user " e passou a ser como está pois da antiga forma quando se editava, o nome alterava logo sem se salvar e assim evita isso
+      this.currentUser = Object.assign({}, user); // antes estava " this.currentUser = user " e passou a ser como está pois da antiga forma quando se editava,
+      // o nome alterava logo sem se salvar e assim evita isso
       //this.currentUser = user; // (depois das alterações feitas la em aqui (Assinaladas) passou a dar => a opção de cima não funcionou pois perdia a referencia do user e não guardada as alteraçoes efetuadas
 
       this.editingUser = true;
@@ -3528,7 +3679,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteUser: function deleteUser(user) {
       var _this = this;
 
-      axios["delete"]('api/users/' + user.id).then(function (response) {
+      axios["delete"]('api/users/destroy/' + user.id).then(function (response) {
         _this.showSuccess = true;
         _this.successMessage = 'Deleted User with success';
 
@@ -3576,6 +3727,21 @@ __webpack_require__.r(__webpack_exports__);
         console.log(response);
         _this4.users = response.data.data;
       });
+    },
+    activateUser: function activateUser(user) {
+      var _this5 = this;
+
+      axios.put('api/users/activate/' + user.id).then(function (response) {
+        _this5.showSuccess = true;
+
+        if (user.active == 0) {
+          _this5.successMessage = ' User Active ';
+        } else {
+          _this5.successMessage = ' User Inactive';
+        }
+
+        _this5.getUsers();
+      });
     }
     /*childMessage: function(message) {
         this.showSuccess = true;
@@ -3588,11 +3754,11 @@ __webpack_require__.r(__webpack_exports__);
     "edit-list": _userEdit_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   mounted: function mounted() {
-    var _this5 = this;
+    var _this6 = this;
 
     this.getUsers();
     axios.get('api/wallets').then(function (response) {
-      _this5.wallets = response.data.data;
+      _this6.wallets = response.data.data;
     });
   }
 });
@@ -55145,8 +55311,8 @@ var render = function() {
             {
               name: "model",
               rawName: "v-model",
-              value: _vm.$store.state.user.name,
-              expression: "$store.state.user.name"
+              value: _vm.name,
+              expression: "name"
             }
           ],
           staticClass: "form-control",
@@ -55157,13 +55323,13 @@ var render = function() {
             placeholder: "Fullname",
             value: ""
           },
-          domProps: { value: _vm.$store.state.user.name },
+          domProps: { value: _vm.name },
           on: {
             input: function($event) {
               if ($event.target.composing) {
                 return
               }
-              _vm.$set(_vm.$store.state.user, "name", $event.target.value)
+              _vm.name = $event.target.value
             }
           }
         })
@@ -55173,93 +55339,148 @@ var render = function() {
         _c("label", { attrs: { for: "inputPhoto" } }, [_vm._v("Photo")]),
         _vm._v(" "),
         _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.$store.state.user.photo,
-              expression: "$store.state.user.photo"
-            }
-          ],
           staticClass: "form-control",
           attrs: {
-            type: "text",
+            type: "file",
             name: "photo",
             id: "inputPhoto",
-            placeholder: "Photo",
-            value: ""
+            placeholder: "upload Photo"
           },
-          domProps: { value: _vm.$store.state.user.photo },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.$set(_vm.$store.state.user, "photo", $event.target.value)
-            }
-          }
+          on: { change: _vm.onImageChange }
         })
       ]),
       _vm._v(" "),
+      _vm.user.type == "u"
+        ? _c("div", { staticClass: "form-group" }, [
+            _c("label", { attrs: { for: "inputNif" } }, [_vm._v("NIF")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.nif,
+                  expression: "nif"
+                }
+              ],
+              staticClass: "form-control",
+              attrs: {
+                type: "text",
+                name: "Nif",
+                id: "inputNif",
+                placeholder: "Nif",
+                value: ""
+              },
+              domProps: { value: _vm.nif },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.nif = $event.target.value
+                }
+              }
+            })
+          ])
+        : _vm._e(),
+      _vm._v(" "),
       _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "inputPassword" } }, [_vm._v("Password")]),
+        _c("label", { attrs: { for: "inputPassword" } }, [
+          _vm._v("Old Password")
+        ]),
         _vm._v(" "),
         _c("input", {
           directives: [
             {
               name: "model",
               rawName: "v-model",
-              value: _vm.$store.state.user.password,
-              expression: "$store.state.user.password"
+              value: _vm.oldpassword,
+              expression: "oldpassword"
             }
           ],
           staticClass: "form-control",
           attrs: {
-            type: "text",
+            type: "password",
+            name: "oldpassword",
+            id: "inputOldPassword",
+            placeholder: "Password",
+            value: ""
+          },
+          domProps: { value: _vm.oldpassword },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.oldpassword = $event.target.value
+            }
+          }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", { attrs: { for: "inputPassword" } }, [
+          _vm._v("New Password")
+        ]),
+        _vm._v(" "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.password,
+              expression: "password"
+            }
+          ],
+          staticClass: "form-control",
+          attrs: {
+            type: "password",
             name: "password",
             id: "inputPassword",
             placeholder: "Password",
             value: ""
           },
-          domProps: { value: _vm.$store.state.user.password },
+          domProps: { value: _vm.password },
           on: {
             input: function($event) {
               if ($event.target.composing) {
                 return
               }
-              _vm.$set(_vm.$store.state.user, "password", $event.target.value)
+              _vm.password = $event.target.value
             }
           }
         })
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "inputNif" } }, [_vm._v("NIF")]),
+        _c("label", { attrs: { for: "inputPassword" } }, [
+          _vm._v("Confirm Password")
+        ]),
         _vm._v(" "),
         _c("input", {
           directives: [
             {
               name: "model",
               rawName: "v-model",
-              value: _vm.$store.state.user.nif,
-              expression: "$store.state.user.nif"
+              value: _vm.confirmpassword,
+              expression: "confirmpassword"
             }
           ],
           staticClass: "form-control",
           attrs: {
-            type: "text",
-            name: "Nif",
-            id: "inputNif",
-            placeholder: "Nif",
+            type: "password",
+            name: "confirmpassword",
+            id: "inputConfirmPassword",
+            placeholder: "Password",
             value: ""
           },
-          domProps: { value: _vm.$store.state.user.nif },
+          domProps: { value: _vm.confirmpassword },
           on: {
             input: function($event) {
               if ($event.target.composing) {
                 return
               }
-              _vm.$set(_vm.$store.state.user, "nif", $event.target.value)
+              _vm.confirmpassword = $event.target.value
             }
           }
         })
@@ -55293,7 +55514,47 @@ var render = function() {
           },
           [_vm._v("Cancel")]
         )
-      ])
+      ]),
+      _vm._v(" "),
+      _vm.showSuccess
+        ? _c("div", { staticClass: "alert alert-success" }, [
+            _c(
+              "button",
+              {
+                staticClass: "close-btn",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    _vm.showSuccess = false
+                  }
+                }
+              },
+              [_vm._v("×")]
+            ),
+            _vm._v(" "),
+            _c("strong", [_vm._v(_vm._s(_vm.successMessage))])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.showFailure
+        ? _c("div", { staticClass: "alert alert-danger" }, [
+            _c(
+              "button",
+              {
+                staticClass: "close-btn",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    _vm.showFailure = false
+                  }
+                }
+              },
+              [_vm._v("×")]
+            ),
+            _vm._v(" "),
+            _c("strong", [_vm._v(_vm._s(_vm.failMessage))])
+          ])
+        : _vm._e()
     ])
   ])
 }
@@ -55435,39 +55696,107 @@ var render = function() {
           "tr",
           { key: user.id, class: { active: _vm.currentUser === user } },
           [
+            user.photo
+              ? _c("td", [
+                  _c("img", {
+                    staticStyle: {
+                      width: "75px",
+                      height: "75px",
+                      "border-radius": "50%"
+                    },
+                    attrs: { src: "storage/fotos/" + user.photo }
+                  })
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            !user.photo
+              ? _c("td", [
+                  _c("img", {
+                    staticStyle: {
+                      width: "75px",
+                      height: "75px",
+                      "border-radius": "50%"
+                    },
+                    attrs: { src: "storage/fotos/unknown.jpg" }
+                  })
+                ])
+              : _vm._e(),
+            _vm._v(" "),
             _c("td", [_vm._v(_vm._s(user.name))]),
             _vm._v(" "),
             _c("td", [_vm._v(_vm._s(user.email))]),
             _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(user.balance))]),
+            user.type == "u" && user.active == 1
+              ? _c("td", [_vm._v("Active")])
+              : _vm._e(),
             _vm._v(" "),
-            _c(
-              "a",
-              {
-                staticClass: "btn btn-sm btn-primary",
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.editUser(user)
-                  }
-                }
-              },
-              [_vm._v("Edit")]
-            ),
+            user.type == "u" && user.active == 0
+              ? _c("td", [_vm._v("Inactive")])
+              : _vm._e(),
             _vm._v(" "),
-            _c(
-              "a",
-              {
-                staticClass: "btn btn-sm btn-danger",
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.deleteUser(user)
-                  }
-                }
-              },
-              [_vm._v("Delete")]
-            )
+            user.type != "u" ? _c("td") : _vm._e(),
+            _vm._v(" "),
+            user.balance > 0 ? _c("td", [_vm._v("Has Money")]) : _vm._e(),
+            _vm._v(" "),
+            user.balance == 0 ? _c("td", [_vm._v("Empty")]) : _vm._e(),
+            _vm._v(" "),
+            user.balance == null ? _c("td") : _vm._e(),
+            _vm._v(" "),
+            user.type == "u" ? _c("td", [_vm._v("Plataform User")]) : _vm._e(),
+            _vm._v(" "),
+            user.type == "o" ? _c("td", [_vm._v("Operator")]) : _vm._e(),
+            _vm._v(" "),
+            user.type == "a" ? _c("td", [_vm._v("Administrator")]) : _vm._e(),
+            _vm._v(" "),
+            user.type == "u" && user.balance != 0.0 ? _c("td") : _vm._e(),
+            _vm._v(" "),
+            user.type == "u" && user.balance == 0.0 && user.active == 1
+              ? _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-sm btn-secondary",
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.activateUser(user)
+                      }
+                    }
+                  },
+                  [_vm._v("Desactive")]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            user.type == "u" && user.balance == 0.0 && user.active == 0
+              ? _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-sm btn-primary",
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.activateUser(user)
+                      }
+                    }
+                  },
+                  [_vm._v("Active")]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            user.type == "a" || user.type == "o"
+              ? _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-sm btn-danger",
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.deleteUser(user)
+                      }
+                    }
+                  },
+                  [_vm._v("Delete")]
+                )
+              : _vm._e()
           ]
         )
       }),
@@ -55482,11 +55811,17 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th", [_vm._v("Photo")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Name")]),
         _vm._v(" "),
         _c("th", [_vm._v("Email")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Active")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Balance")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Type")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")])
       ])
@@ -55533,7 +55868,7 @@ var render = function() {
                 "margin-right": "25px",
                 float: "left"
               },
-              attrs: { src: "storage/fotos/" + _vm.$store.state.user.photo }
+              attrs: { src: "storage/fotos/" + _vm.user.photo }
             })
           ])
         ]),
@@ -55541,19 +55876,21 @@ var render = function() {
         _c("tr", [
           _c("td", [_vm._v("Name:")]),
           _vm._v(" "),
-          _c("td", [_vm._v(_vm._s(_vm.$store.state.user.name))])
+          _c("td", [_vm._v(_vm._s(this.$store.state.user.name))])
         ]),
         _vm._v(" "),
-        _c("tr", [
-          _c("td", [_vm._v("NIF:")]),
-          _vm._v(" "),
-          _c("td", [_vm._v(_vm._s(_vm.$store.state.user.nif))])
-        ]),
+        _vm.user.type == "u"
+          ? _c("tr", [
+              _c("td", [_vm._v("NIF:")]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(this.$store.state.user.nif))])
+            ])
+          : _vm._e(),
         _vm._v(" "),
         _c("tr", [
           _c("td", [_vm._v("E-Mail:")]),
           _vm._v(" "),
-          _c("td", [_vm._v(_vm._s(_vm.$store.state.user.email))])
+          _c("td", [_vm._v(_vm._s(this.$store.state.user.email))])
         ]),
         _vm._v(" "),
         _c(
@@ -55563,7 +55900,7 @@ var render = function() {
             on: {
               click: function($event) {
                 $event.preventDefault()
-                return _vm.profileEdit(_vm.$store.state.user)
+                return _vm.profileEdit(_vm.user)
               }
             }
           },
@@ -55571,10 +55908,57 @@ var render = function() {
         )
       ]),
       _vm._v(" "),
+      _vm.showSuccess
+        ? _c("div", { staticClass: "alert alert-success" }, [
+            _c(
+              "button",
+              {
+                staticClass: "close-btn",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    _vm.showSuccess = false
+                  }
+                }
+              },
+              [_vm._v("×")]
+            ),
+            _vm._v(" "),
+            _c("strong", [_vm._v(_vm._s(_vm.successMessage))])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.showFailure
+        ? _c("div", { staticClass: "alert alert-danger" }, [
+            _c(
+              "button",
+              {
+                staticClass: "close-btn",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    _vm.showFailure = false
+                  }
+                }
+              },
+              [_vm._v("×")]
+            ),
+            _vm._v(" "),
+            _c("strong", [_vm._v(_vm._s(_vm.failMessage))])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
       _vm.editingProfile
         ? _c("profile-edit", {
-            attrs: { currentUser: _vm.currentUser },
-            on: { "save-user": _vm.saveUser, "cancel-edit": _vm.cancelEdit }
+            attrs: { user: _vm.user, currentUser: _vm.currentUser },
+            on: {
+              "cancel-edit": _vm.cancelEdit,
+              "profile-refresh": _vm.profileRefresh,
+              "profile-modif": _vm.profileModif,
+              "profile-erro-pass-equal": _vm.profileErroPassEqual,
+              "profile-erro-pass-diff": _vm.profileErroPassDiff,
+              "profile-erro-pass": _vm.profileErroPass
+            }
           })
         : _vm._e()
     ],
@@ -55873,7 +56257,11 @@ var render = function() {
       _vm._v(" "),
       _c("user-list", {
         attrs: { users: _vm.users },
-        on: { "edit-user": _vm.editUser, "delete-user": _vm.deleteUser }
+        on: {
+          "edit-user": _vm.editUser,
+          "delete-user": _vm.deleteUser,
+          "activate-user": _vm.activateUser
+        }
       }),
       _vm._v(" "),
       _vm.editingUser
@@ -72217,8 +72605,35 @@ var app = new Vue({
 
     this.$store.commit("loadTokenAndUserFromSession");
     console.log(this.$store.state.user);
+
+    if (this.$store.state.user) {
+      this.$socket.emit('login', this.$store.state.user); //é necessário fazer isto aqui pois no caso de o utilizador dar um refresh à página, receber o valor do user e do socket e não um socket vazio
+    }
   },
-  sockets: {}
+  sockets: {
+    updateMovements: function updateMovements(data) {
+      //console.log(data)
+      console.log(data.user.email); //console.log(data.aux)
+
+      if (data.aux == 0) {
+        this.$toasted.show("You received an movement!");
+      } else {
+        //this.$toasted.show("Falhou!");
+        axios.put('api/movements/email/' + data.user.email);
+      }
+    },
+    updateIncome: function updateIncome(data) {
+      console.log(data.user.emailIncome);
+      console.log(data.aux);
+
+      if (data.aux == 0) {
+        this.$toasted.show("You received an income movement!");
+      } else {
+        //this.$toasted.show("Falhou!");
+        axios.put('api/movements/email/' + data.user.emailIncome);
+      }
+    }
+  }
 });
 router.beforeEach(function (to, from, next) {
   if (to.name == "logout") {

@@ -43,22 +43,21 @@ class UserControllerAPI extends Controller
     public function store(Request $request)
     {
         $request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'min:3',
-                'nif'       => 'integer|digits:9'
-            ]);
-          
+            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'min:3',
+            'nif'       => 'integer|digits:9'
+        ]);
+      
         if($request->photo['base64']) {
                 $photo = $request->photo;
                 $base64_string = explode(',', $photo['base64']);
                 $imageBin = base64_decode($base64_string[1]);
-    
                 if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
                     Storage::disk('public')->put('fotos/' . $photo['name'], $imageBin);
                 }
         }
-        
+          
 
         $user = new User();
         $user->fill($request->all());
@@ -90,6 +89,27 @@ class UserControllerAPI extends Controller
         $user->delete();
         return response()->json(null, 204);
     }
+
+    public function activateUser($id){
+        $user = User::findOrFail($id);
+        $active = DB::table('users')->select('active')->where('id', $id)->get();
+        if($active[0]->active == 0){
+            $user->active = 1;
+            $user->save();
+        }else{
+            $user = User::findOrFail($id);
+            $user->active = 0;
+            $user->save();
+            return new UserResource($user);
+        }
+        return new UserResource($user);
+    }
+
+    public function profileRefresh(Request $request)
+    {
+        return new UserResource($request->user());
+    }
+
     public function emailAvailable(Request $request)
     {
         $totalEmail = 1;
@@ -100,4 +120,56 @@ class UserControllerAPI extends Controller
         }
         return response()->json($totalEmail == 0);
     }
+
+    public function updateProfilewithPass(Request $request){
+        $id = $request->userId;
+        $user = User::findOrFail($id);    
+        $user->name = $request->name;
+        if($request->photo['base64']) {
+            $photo = $request->photo;
+            $base64_string = explode(',', $photo['base64']);
+            $imageBin = base64_decode($base64_string[1]);
+            return response()->json($imageBin,402);
+            if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
+                return response()->json($imageBin,402);
+                Storage::disk('public')->put('fotos/' . $photo['name'], $imageBin);
+            }
+            $user->photo = $request->photo['base64'] ? $request->photo['name'] : null; //<- aqui fica a foto unknwon ya
+            $user->nif = $request->nif;
+            if (Hash::check($request->oldpassword, $user->password)) {
+                $user->password = Hash::make($request->password);
+                $user->save(); 
+                return new UserResource($user);
+            }else{
+                return response("pass different"); //depois altera isto
+            }
+        }    
+    }
+
+    public function updateProfilewithoutPass(Request $request){
+        $id = $request->userId;
+        $user = User::findOrFail($id);   
+        $request->validate([
+            'name'      => 'required|regex:/^[a-zA-Zà-Ú ]+$/',
+            'nif'       => 'integer|digits:9',
+            //'photo' => 'image|mimes:jpeg,png,jpg,gif|max:1080',
+        ]);
+        $user->name = $request->name;
+        //return response()->json($request->name,402);
+        if($request->photo['base64']) {
+            $photo = $request->photo;
+            $base64_string = explode(',', $photo['base64']);
+            $imageBin = base64_decode($base64_string[1]);
+            if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
+                Storage::disk('public')->delete('fotos/' . $user->photo);
+                Storage::disk('public')->put('fotos/' . $photo['name'], $imageBin);
+            }
+            $user->photo = $request->photo['base64'] ? $request->photo['name'] : null;
+        }
+        $user->nif = $request->nif;
+        $user->save();
+        //return response()->json($user->name,402);
+        return new UserResource($user);
+    }
+
 }

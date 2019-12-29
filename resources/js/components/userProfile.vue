@@ -5,23 +5,31 @@
     </div>
     <table class="table table-striped">
            <tr>
-                <td><img v-bind:src="'storage/fotos/' + $store.state.user.photo" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
+                <td><img v-bind:src="'storage/fotos/' + user.photo" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
             </tr>
             <tr>
                 <td>Name:</td>
-                <td>{{ $store.state.user.name }}</td>
+                <td>{{ this.$store.state.user.name }}</td>
             </tr>
-             <tr>
+             <tr v-if="user.type == 'u'">
                 <td>NIF:</td>
-                <td>{{ $store.state.user.nif }}</td>
+                <td>{{ this.$store.state.user.nif}}</td>
             </tr>
             <tr>
                 <td>E-Mail:</td>
-                <td>{{ $store.state.user.email }}</td>
+                <td>{{ this.$store.state.user.email }}</td>
             </tr>
-            <a class="btn btn-sm btn-primary" v-on:click.prevent="profileEdit($store.state.user)">EditProfile</a>
+            <a class="btn btn-sm btn-primary" v-on:click.prevent="profileEdit(user)">EditProfile</a>
     </table>
-    <profile-edit v-if="editingProfile" v-bind:currentUser="currentUser" @save-user="saveUser" @cancel-edit="cancelEdit"></profile-edit>
+    <div class="alert alert-success" v-if="showSuccess">
+            <button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
+            <strong>{{ successMessage }}</strong>
+        </div>
+    <div class="alert alert-danger" v-if="showFailure">
+            <button type="button" class="close-btn" v-on:click="showFailure=false">&times;</button>
+            <strong>{{ failMessage }}</strong>
+    </div>
+    <profile-edit :user="user" v-if="editingProfile" v-bind:currentUser="currentUser" @cancel-edit="cancelEdit" @profile-refresh="profileRefresh" @profile-modif="profileModif" @profile-erro-pass-equal="profileErroPassEqual" @profile-erro-pass-diff="profileErroPassDiff" @profile-erro-pass="profileErroPass"></profile-edit>
     </div>
 </template>
 <script> 
@@ -30,26 +38,58 @@ export default {
     data:function(){
         return{
             title: 'Profile',
-            user: { 
+            user:[],
+           /* user: { 
                         id: this.$store.state.user.id,
                         name: this.$store.state.user.name,
                         nif: this.$store.state.user.nif,
                         photo: this.$store.state.user.photo,   
-                },
-            editingProfile: false
+                        email: this.$store.state.user.email,
+                        type: this.$store.state.user.type
+                },*/
+            editingProfile: false,
+            showSuccess: false,
+            showFailure: false,
+            successMessage: '',
+            failMessage: ''
         }
     },
     methods:{
          profileEdit: function(user){
-            this.$emit('profile-edit');
-            this.editingProfile = true;
             this.currentUser = Object.assign({},user);
-            this.showSuccess = false;
+            this.editingProfile = true;
+        },
+
+        profileModif: function(){
+            this.showSuccess = true;
+            this.successMessage = 'User successfully modified'
+        },
+
+        profileErroPass: function(){
+            this.showFailure = true;
+            this.failMessage = 'Wrong Old Password'
+        },
+
+        profileErroPassEqual: function(){
+            this.showFailure = true;
+            this.failMessage = 'New Password and Old Password are same'
+        },
+
+        profileErroPassDiff: function(){
+            this.showFailure = true;
+            this.failMessage = 'Password and confirm password are different'
+        },
+
+        profileRefresh: function(user){
+            axios.get('api/users/profile', this.user)
+            .then(response=>{
+                console.log("sucesso");
+                });
         },
 
         saveUser: function(){
             this.editingUser = false;            
-            axios.put('api/users/' + this.user.id, this.user)
+            axios.patch('api/users/' + this.user.id, this.user)
                 .then(response=>{
                     this.showSuccess = true;
                     this.successMessage = 'User Saved';
@@ -66,6 +106,9 @@ export default {
     },
     components:{
         'profile-edit':ProfileEdit
+    },
+    mounted() {
+        this.profileRefresh();
     }
 };
 </script>
