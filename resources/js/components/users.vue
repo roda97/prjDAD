@@ -33,8 +33,8 @@
                     <td>
                         <select name="active" class="form-control" v-model="search.active">
                             <option value='' selected> -- Status Of Platform User -- </option>
-                            <option value="1" >Active</option>
-                            <option value="0" >Inactive</option>
+                            <option value=1 >Active</option>
+                            <option value=0 >Inactive</option>
                         </select>             
                     </td>            
                     <td>
@@ -43,38 +43,8 @@
                 </tr>
             </tbody>
         </table>
+
         <br>
-<!--
-        <div class="row">
-                <div class="col-md-3">            
-                    <div class="form-group">
-                        <input type="text" name="name" class="form-control"  placeholder="Search by user name" v-model="search.name">               
-                    </div> 
-                    <div class="form-group">
-                        <select name="type" class="form-control" v-model="search.type">
-                            <option value='' selected> -- Type Of User -- </option>
-                            <option value="a" >Administrator</option>
-                            <option value="o" >Operator</option>
-                            <option value="u" >Platform User</option>
-                        </select>            
-                    </div> 
-                </div> 
-                <div class="col-md-3"> 
-                    <div class="form-group">
-                        <input type="text" name="email" class="form-control" placeholder="Search by e-mail" v-model="search.email">               
-                    </div>
-                    <div class="form-group">
-                        <select name="active" class="form-control" v-model="search.active">
-                            <option value='' selected> -- Status Of Platform User -- </option>
-                            <option value="1" >Active</option>
-                            <option value="0" >Inactive</option>
-                        </select>            
-                    </div>                
-                </div>
-                <span class="form-group-btn">
-                    <button type="submit" class="btn btn-primary" v-on:click="getResults()">Search</button>
-                </span>       
-        </div>-->
 
         <user-list v-bind:users="users" v-on:edit-user="editUser" v-on:delete-user="deleteUser" v-on:activate-user="activateUser"></user-list> <!-- v-bind vai capturar o users que nao existia // em vez de v-on: podia ser apenas um @ -->
         <edit-list v-if="editingUser"  v-bind:currentUser="currentUser" v-on:save-user="saveUser" v-on:cancel-edit="cancelEdit"></edit-list>
@@ -98,7 +68,7 @@
 </template>
 <script type="text/javascript">
 import UserList from "./userList.vue";
-import UserEdit from "./userEdit.vue";
+//import UserEdit from "./userEdit.vue";
 
 export default {
     data: function() {
@@ -136,7 +106,7 @@ export default {
                 .then(response => {
                     this.showSuccess = true;
                     this.successMessage = 'Deleted User with success';
-                    this.getUsers();
+                    this.getResults(1);
                 });
         },
         saveUser: function(user){
@@ -200,7 +170,7 @@ export default {
                     }else{
                         this.successMessage = ' User Inactive';
                     }
-                    this.getUsers();
+                    this.getResults(1);
                 });
         },
 
@@ -212,7 +182,7 @@ export default {
     },
     components: {
         "user-list": UserList,
-        "edit-list": UserEdit
+        //"edit-list": UserEdit
     },
     mounted() {
         this.getResults(1);

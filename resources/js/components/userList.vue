@@ -31,11 +31,19 @@
                 <td v-if="user.type == 'a'">Administrator</td>    
                 
                 <td v-if="user.type == 'u' && user.balance != 0.00"> </td>
-                <a class="btn btn-sm btn-secondary" v-if="user.type == 'u' && user.balance == 0.00 && user.active == 1" v-on:click.prevent="activateUser(user)">Desactive</a>
-                <a class="btn btn-sm btn-primary" v-if="user.type == 'u' && user.balance == 0.00 && user.active == 0" v-on:click.prevent="activateUser(user)">Active</a>
-                <div v-show="user.type == 'a' || user.type == 'o'">
-                    <a class="btn btn-sm btn-danger" v-if=" user.id != currentUser.id" v-on:click.prevent="deleteUser(user)">Delete</a>
-                </div>
+                <td>
+                    <div>
+                        <a class="btn btn-sm btn-primary" v-if="user.type == 'u' && user.balance == 0.00 && user.active == 1" v-on:click.prevent="activateUser(user)">Desactive</a>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-sm btn-primary" v-if="user.type == 'u' && user.balance == 0.00 && user.active == 0" v-on:click.prevent="activateUser(user)">Active</a>
+                    </div>
+
+                    <div v-show="user.type == 'a' || user.type == 'o'">
+                        <a class="btn btn-sm btn-danger" v-if=" user.id != currentUser.id" v-on:click.prevent="deleteUser(user)">Delete</a>
+                    </div>
+                </td>
             </tr>
         </tbody>
     </table>

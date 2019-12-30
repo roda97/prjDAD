@@ -1,17 +1,18 @@
 <template> 
- <div>
-    <div class="jumbotron">
-            <h1>{{ title }}</h1>
-    </div>
-    <table class="table table-striped">
-           <tr>
+    <div>
+        <div class="jumbotron">
+                <h1>{{ title }}</h1>
+        </div>
+
+        <table class="table table-striped">
+            <tr>
                 <td><img v-bind:src="'storage/fotos/' + user.photo" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
             </tr>
             <tr>
                 <td>Name:</td>
                 <td>{{ this.$store.state.user.name }}</td>
             </tr>
-             <tr v-if="user.type == 'u'">
+            <tr v-if="user.type == 'u'">
                 <td>NIF:</td>
                 <td>{{ this.$store.state.user.nif}}</td>
             </tr>
@@ -19,17 +20,23 @@
                 <td>E-Mail:</td>
                 <td>{{ this.$store.state.user.email }}</td>
             </tr>
-            <a class="btn btn-sm btn-primary" v-on:click.prevent="profileEdit(user)">EditProfile</a>
-    </table>
-    <div class="alert alert-success" v-if="showSuccess">
-            <button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
-            <strong>{{ successMessage }}</strong>
+            <br>
+
+            <a class="btn btn-sm btn-primary" v-on:click.prevent="profileEdit(user)">Edit</a>
+        </table>
+
+        <profile-edit :user="user" v-if="editingProfile" v-bind:currentUser="currentUser" @cancel-edit="cancelEdit" @profile-refresh="profileRefresh" @profile-modif="profileModif" @profile-erro-pass-equal="profileErroPassEqual" @profile-erro-pass-diff="profileErroPassDiff" @profile-erro-pass="profileErroPass"></profile-edit>
+    
+        <div class="alert alert-success" v-if="showSuccess">
+                <button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
+                <strong>{{ successMessage }}</strong>
         </div>
-    <div class="alert alert-danger" v-if="showFailure">
-            <button type="button" class="close-btn" v-on:click="showFailure=false">&times;</button>
-            <strong>{{ failMessage }}</strong>
-    </div>
-    <profile-edit :user="user" v-if="editingProfile" v-bind:currentUser="currentUser" @cancel-edit="cancelEdit" @profile-refresh="profileRefresh" @profile-modif="profileModif" @profile-erro-pass-equal="profileErroPassEqual" @profile-erro-pass-diff="profileErroPassDiff" @profile-erro-pass="profileErroPass"></profile-edit>
+
+        <div class="alert alert-danger" v-if="showFailure">
+                <button type="button" class="close-btn" v-on:click="showFailure=false">&times;</button>
+                <strong>{{ failMessage }}</strong>
+        </div>
+
     </div>
 </template>
 <script> 
@@ -56,11 +63,14 @@ export default {
     methods:{
          profileEdit: function(user){
             this.currentUser = Object.assign({},user);
+            this.showFailure = false;
+            this.showSuccess = false;
             this.editingProfile = true;
         },
 
         profileModif: function(){
             this.showSuccess = true;
+            this.editingProfile = false;
             this.successMessage = 'User successfully modified'
         },
 
@@ -80,26 +90,30 @@ export default {
         },
 
         profileRefresh: function(user){
+            this.showFailure = false;
             axios.get('api/users/profile', this.user)
             .then(response=>{
                 console.log("sucesso");
-                });
+            });
         },
 
         saveUser: function(){
-            this.editingUser = false;            
+            this.editingProfile = false;          
             axios.patch('api/users/' + this.user.id, this.user)
                 .then(response=>{
                     this.showSuccess = true;
+                    this.showFailure = false;
                     this.successMessage = 'User Saved';
                     Object.assign(this.user, response.data.data);
                     Object.assign(this.users.find(u=>u.id == response.data.data.id), response.data.data);
                     this.currentUser = null;
-                    this.editingUser = false;
+                    this.editingProfile = false;
                 });
         },
         cancelEdit: function(){
             this.editingProfile = false;
+            this.showSuccess = false;
+            this.showFailure = false;
         },
 
     },
