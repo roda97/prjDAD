@@ -32,9 +32,14 @@ Route::get('wallets', 'WalletControllerAPI@index');
 #------ Users
 Route::middleware('auth:api')->get('users', 'UserControllerAPI@index');
 Route::post('users/register', 'UserControllerAPI@store');
-Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
-Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
-Route::middleware('auth:api')->patch('users/password', 'UserControllerAPI@alterarPassword');
+Route::middleware('auth:api')->post('users/OperatorAdmin', 'UserControllerAPI@storeOperatorAdmin'); 
+Route::post('users/filter', 'UserControllerAPI@index'); 
+Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');  
+Route::middleware('auth:api')->delete('users/destroy/{id}', 'UserControllerAPI@destroy');
+Route::middleware('auth:api')->put('users/activate/{id}', 'UserControllerAPI@activateUser');
+Route::middleware('auth:api')->patch('users/ProfilewithPass', 'UserControllerAPI@updateProfilewithPass');
+Route::middleware('auth:api')->patch('users/ProfilewithoutPass', 'UserControllerAPI@updateProfilewithoutPass');
+Route::middleware('auth:api')->get('users/profile', 'UserControllerAPI@profileRefresh');
 
 //movements
 //Route::post('movements', 'MovementControllerAPI@index');

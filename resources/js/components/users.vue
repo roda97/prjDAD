@@ -4,13 +4,96 @@
             <h1>{{ title }}</h1>
         </div>
 
-        <user-list v-bind:users="users" v-on:edit-user="editUser" v-on:delete-user="deleteUser"></user-list> <!-- v-bind vai capturar o users que nao existia // em vez de v-on: podia ser apenas um @ -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody> 
+                <tr>        
+                    <td>
+                        <input type="text" name="name" class="form-control"  placeholder="Search by user name" v-model="search.name">             
+                    </td> 
+                    <td>
+                        <select name="type" class="form-control" v-model="search.type">
+                            <option value='' selected> -- Type Of User -- </option>
+                            <option value="a" >Administrator</option>
+                            <option value="o" >Operator</option>
+                            <option value="u" >Platform User</option>
+                        </select>            
+                    </td>              
+                    <td>  
+                        <input type="email" name="email" class="form-control" placeholder="Search by e-mail" v-model="search.email">             
+                    </td> 
+                    <td>
+                        <select name="active" class="form-control" v-model="search.active">
+                            <option value='' selected> -- Status Of Platform User -- </option>
+                            <option value="1" >Active</option>
+                            <option value="0" >Inactive</option>
+                        </select>             
+                    </td>            
+                    <td>
+                        <button type="submit" class="btn btn-primary" v-on:click="getResults()">Search</button>
+                    </td>       
+                </tr>
+            </tbody>
+        </table>
+        <br>
+<!--
+        <div class="row">
+                <div class="col-md-3">            
+                    <div class="form-group">
+                        <input type="text" name="name" class="form-control"  placeholder="Search by user name" v-model="search.name">               
+                    </div> 
+                    <div class="form-group">
+                        <select name="type" class="form-control" v-model="search.type">
+                            <option value='' selected> -- Type Of User -- </option>
+                            <option value="a" >Administrator</option>
+                            <option value="o" >Operator</option>
+                            <option value="u" >Platform User</option>
+                        </select>            
+                    </div> 
+                </div> 
+                <div class="col-md-3"> 
+                    <div class="form-group">
+                        <input type="text" name="email" class="form-control" placeholder="Search by e-mail" v-model="search.email">               
+                    </div>
+                    <div class="form-group">
+                        <select name="active" class="form-control" v-model="search.active">
+                            <option value='' selected> -- Status Of Platform User -- </option>
+                            <option value="1" >Active</option>
+                            <option value="0" >Inactive</option>
+                        </select>            
+                    </div>                
+                </div>
+                <span class="form-group-btn">
+                    <button type="submit" class="btn btn-primary" v-on:click="getResults()">Search</button>
+                </span>       
+        </div>-->
+
+        <user-list v-bind:users="users" v-on:edit-user="editUser" v-on:delete-user="deleteUser" v-on:activate-user="activateUser"></user-list> <!-- v-bind vai capturar o users que nao existia // em vez de v-on: podia ser apenas um @ -->
         <edit-list v-if="editingUser"  v-bind:currentUser="currentUser" v-on:save-user="saveUser" v-on:cancel-edit="cancelEdit"></edit-list>
 
         <div class="alert alert-success" v-if="showSuccess">
             <button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
             <strong>{{ successMessage }}</strong>
         </div>
+
+        <div class="alert alert-danger" v-if="showFailure">			 
+			<button type="button" class="close-btn" v-on:click="showFailure=false">&times;</button>
+			<strong>{{ failMessage }}</strong>
+		</div>
+
+        <div>
+            <b-pagination  align="left" size="md-c"  v-model="page" :limit="10" :total-rows="total"  :per-page="10" @input="getResults(page)"></b-pagination>
+            <br>
+        </div>
+
     </div>
 </template>
 <script type="text/javascript">
@@ -21,25 +104,35 @@ export default {
     data: function() {
         return {
         title: "Users' List",
+        page:1,
+        total:1,
         editingUser: false,
         showSuccess: false,
         showFailure: false,
         successMessage: '',
         failMessage: '',
         currentUser: null,
-        users: []
+        listUsers: true,
+        users: [],
+        search:{
+            name:'',
+            type:'',
+            email:'',
+            active:'',
+        }
         };
     },
     methods: {
         editUser: function(user){
-            this.currentUser = Object.assign({},user); // antes estava " this.currentUser = user " e passou a ser como está pois da antiga forma quando se editava, o nome alterava logo sem se salvar e assim evita isso
+            this.currentUser = Object.assign({},user); // antes estava " this.currentUser = user " e passou a ser como está pois da antiga forma quando se editava,
+                                                     // o nome alterava logo sem se salvar e assim evita isso
             //this.currentUser = user; // (depois das alterações feitas la em aqui (Assinaladas) passou a dar => a opção de cima não funcionou pois perdia a referencia do user e não guardada as alteraçoes efetuadas
             this.editingUser = true;
             this.showSuccess = false;
         },
           
         deleteUser: function(user){
-            axios.delete('api/users/'+user.id)
+            axios.delete('api/users/destroy/'+user.id)
                 .then(response => {
                     this.showSuccess = true;
                     this.successMessage = 'Deleted User with success';
@@ -73,12 +166,45 @@ export default {
                     this.currentUser = null;
                 });
         },
+        getResults(page){
+            this.editingUser = false;
+            this.showFailure = false;
+            this.showSuccess = false;
+            axios.post('api/users/filter?page='+page , this.search)
+              .then(response=>{
+                console.log(response.data.data)
+                this.users = response.data.data;
+                this.page = response.data.meta.current_page;
+                //this.last = response.data.meta.last_page;
+                this.total = response.data.meta.total;
+            }).catch(error=>{
+                this.failMessage = "Error, can't get the users!"//Não foi possivel ir buscar os users!'
+                this.showFailure = true;
+                this.showSuccess = false;
+            });
+        },
+
         getUsers: function(){
             axios.get('api/users')
                 .then(response=>{
                     console.log(response)
                     this.users = response.data.data;});
-        }
+        },
+
+        activateUser: function(user){
+            axios.put('api/users/activate/'+user.id)
+                .then(response => {
+                    this.showSuccess = true;
+                    if(user.active == 0){
+                        this.successMessage = ' User Active ';
+                    }else{
+                        this.successMessage = ' User Inactive';
+                    }
+                    this.getUsers();
+                });
+        },
+
+
         /*childMessage: function(message) {
             this.showSuccess = true;
             this.successMessage = message;
@@ -89,7 +215,7 @@ export default {
         "edit-list": UserEdit
     },
     mounted() {
-        this.getUsers();
+        this.getResults(1);
         axios.get('api/wallets')
             .then(response=>{this.wallets = response.data.data; });
     }

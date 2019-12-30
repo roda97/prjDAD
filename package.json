@@ -22,6 +22,7 @@
     "dependencies": {
         "bootstrap": "^4.3.1",
         "bootstrap-vue": "^2.1.0",
+        "package.json": "^2.0.1",
         "vue": "^2.6.10",
         "vue-base64-file-upload": "^1.0.4",
         "vue-plain-pagination": "^0.3.0",

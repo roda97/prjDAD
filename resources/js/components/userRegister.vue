@@ -117,15 +117,16 @@ export default {
 
     onImageChange: function(event){     //UPLOAD IMAGE METHODS
       let image = event.target.files[0];
-      this.user.photo = image.name;
+      this.user.photo.name = image.name;
       this.createImage(image);
     },
     createImage: function(file){
       let reader = new FileReader();
       reader.onload = (e) => {
-          this.user.photoBase64 = e.target.result;
+          this.user.photo.base64= e.target.result;
       };
       reader.readAsDataURL(file);
+      
     },
 
     registerUser: function() {

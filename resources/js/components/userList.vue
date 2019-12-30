@@ -2,19 +2,40 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Photo</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Active</th>
                 <th>Balance</th>
+                <th>Type</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="user in users"  :key="user.id" :class="{active: currentUser === user}">
+                <td v-if="user.photo"><img v-bind:src="'storage/fotos/' + user.photo" style="width:75px; height:75px; border-radius:50%;"></td>
+                <td v-if="!user.photo"><img v-bind:src="'storage/fotos/unknown.jpg'" style="width:75px; height:75px; border-radius:50%;"></td>
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.balance }}</td>
-                    <a class="btn btn-sm btn-primary" v-on:click.prevent="editUser(user)">Edit</a>
-                    <a class="btn btn-sm btn-danger" v-on:click.prevent="deleteUser(user)">Delete</a>
+
+                <td v-if="user.type == 'u' && user.active==1">Active</td>
+                <td v-if="user.type == 'u' && user.active==0">Inactive</td>
+                <td v-if="user.type != 'u'"> - </td>
+
+                <td v-if="user.balance > 0">Has Money</td>  
+                <td v-if="user.balance == 0">Empty</td> 
+                <td v-if="!user.balance"> - </td> 
+
+                <td v-if="user.type == 'u'">Plataform User</td>
+                <td v-if="user.type == 'o'">Operator</td>
+                <td v-if="user.type == 'a'">Administrator</td>    
+                
+                <td v-if="user.type == 'u' && user.balance != 0.00"> </td>
+                <a class="btn btn-sm btn-secondary" v-if="user.type == 'u' && user.balance == 0.00 && user.active == 1" v-on:click.prevent="activateUser(user)">Desactive</a>
+                <a class="btn btn-sm btn-primary" v-if="user.type == 'u' && user.balance == 0.00 && user.active == 0" v-on:click.prevent="activateUser(user)">Active</a>
+                <div v-show="user.type == 'a' || user.type == 'o'">
+                    <a class="btn btn-sm btn-danger" v-if=" user.id != currentUser.id" v-on:click.prevent="deleteUser(user)">Delete</a>
+                </div>
             </tr>
         </tbody>
     </table>
@@ -25,7 +46,7 @@ export default {
     props:['users'],
     data:function(){
         return{
-            currentUser:null,
+            currentUser: this.$store.state.user,
             wallets:[]
         }
     },
@@ -37,6 +58,9 @@ export default {
         deleteUser(user){
             this.$emit('delete-user', user)
         },
+        activateUser(user){
+            this.$emit('activate-user', user)
+        }
     }
 
 };

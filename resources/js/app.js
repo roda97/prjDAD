@@ -25,36 +25,35 @@ import store from './stores/global-store'
 
 import Home from './components/home'
 import User from './components/users'
-import UserEdit from './components/userEdit'
+//import UserEdit from './components/userEdit'
 import UserRegister from './components/userRegister'
+import OpAdminRegister from './components/OpAdminRegister'
 import UserProfile from './components/userProfile'
 import Login from './components/login'
 import Logout from './components/logout'
 import Movimento from './components/movements/movements'
-import Wallet from './components/wallets'
 
 
 const home = Vue.component("home", Home);
 const user = Vue.component("users", User);
-const userEdit = Vue.component("usersEdit", UserEdit);
+//const userEdit = Vue.component("usersEdit", UserEdit);
 const userRegister = Vue.component("usersRegister", UserRegister);
+const opAdminRegister = Vue.component("opAdminRegister", OpAdminRegister);
 const userProfile = Vue.component("userProfile", UserProfile);
 const login = Vue.component("login", Login);
 const logout = Vue.component("logout", Logout);
-const wallet = Vue.component("wallets", Wallet);
 
 
 const routes = [
     { path: "/", component: Home},
     { path: "/users", component: User, name: "users" },
-    { path: "/users/:id/edit", component: UserEdit, name: "usersEdit" },
+    //{ path: "/users/:id/edit", component: UserEdit, name: "usersEdit" }, 
     { path: "/users/register", component: UserRegister, name: "usersRegister" },
+    { path: "/users/opAdminRegister", component: OpAdminRegister, name: "opAdminRegister" },
     { path: "/users/profile", component: UserProfile, name: "userProfile" },
     { path: "/login", component: Login, name: "login" },
     { path: "/logout", component: Logout, name: "logout" },
     { path: "/movements", component: Movimento, name: "movements" },
-    { path: "/wallets", component: Wallet, name: "wallets"}
-
 
 ]
 
@@ -97,7 +96,7 @@ const app = new Vue({
                 //this.$toasted.show("Falhou!");
                 axios.put('api/movements/email/' + data.user.emailIncome);
             }
-        }
+        }            
     }
 });
 
@@ -114,6 +113,12 @@ router.beforeEach((to, from, next) => {
             return;
         }
     } 
+    if(to.name == "usersEdit" ){
+        if (!app.$store.state.user) {
+            next("/login");
+            return;
+        }
+    } 
     if(to.name == "movements" ){     
         if (!app.$store.state.user) {
             next("/login");
@@ -121,7 +126,13 @@ router.beforeEach((to, from, next) => {
             return;
         }
     }
-    if(to.name == "wallets" ){
+    if(to.name == "userProfile" ){
+        if (!app.$store.state.user) {
+            next("/login");
+            return;
+        }
+    }
+    if(to.name == "opAdminRegister" ){
         if (!app.$store.state.user) {
             next("/login");
             return;
