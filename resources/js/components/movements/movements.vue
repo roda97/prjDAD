@@ -355,15 +355,19 @@ export default {
     },
     sockets:{
         updateMovements(data){ 
-            //console.log(this.movements);
-            this.movements = this.movements + data;
+            console.log(data);
+            console.log(data.user);
+            //this.movements = this.movements + data;
             this.getResults(1);
+            this.getBalance();
         },
         updateIncome(data){ 
             //console.log(data.user.emailIncome)
-            //console.log(data.auxiliar)
-            this.movements = this.movements + data.user;
+            console.log(data.auxiliar)
+            console.log(data.user)
+            //this.movements = this.movements + data.user;
             this.getResults(1);
+            this.getBalance();
         }
     },
     components: {

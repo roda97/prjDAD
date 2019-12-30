@@ -2895,15 +2895,19 @@ __webpack_require__.r(__webpack_exports__);
   },
   sockets: {
     updateMovements: function updateMovements(data) {
-      //console.log(this.movements);
-      this.movements = this.movements + data;
+      console.log(data);
+      console.log(data.user); //this.movements = this.movements + data;
+
       this.getResults(1);
+      this.getBalance();
     },
     updateIncome: function updateIncome(data) {
       //console.log(data.user.emailIncome)
-      //console.log(data.auxiliar)
-      this.movements = this.movements + data.user;
+      console.log(data.auxiliar);
+      console.log(data.user); //this.movements = this.movements + data.user;
+
       this.getResults(1);
+      this.getBalance();
     }
   },
   components: {
@@ -72217,8 +72221,35 @@ var app = new Vue({
 
     this.$store.commit("loadTokenAndUserFromSession");
     console.log(this.$store.state.user);
+
+    if (this.$store.state.user) {
+      this.$socket.emit('login', this.$store.state.user); //é necessário fazer isto aqui pois no caso de o utilizador dar um refresh à página, receber o valor do user e do socket e não um socket vazio
+    }
   },
-  sockets: {}
+  sockets: {
+    updateMovements: function updateMovements(data) {
+      //console.log(data)
+      console.log(data.user.email); //console.log(data.aux)
+
+      if (data.aux == 0) {
+        this.$toasted.show("You received an movement!");
+      } else {
+        //this.$toasted.show("Falhou!");
+        axios.put('api/movements/email/' + data.user.email);
+      }
+    },
+    updateIncome: function updateIncome(data) {
+      console.log(data.user.emailIncome);
+      console.log(data.aux);
+
+      if (data.aux == 0) {
+        this.$toasted.show("You received an income movement!");
+      } else {
+        //this.$toasted.show("Falhou!");
+        axios.put('api/movements/email/' + data.user.emailIncome);
+      }
+    }
+  }
 });
 router.beforeEach(function (to, from, next) {
   if (to.name == "logout") {
