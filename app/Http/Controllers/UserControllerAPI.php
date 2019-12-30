@@ -21,18 +21,35 @@ class UserControllerAPI extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->has('page')) {
-            return UserResource::collection(User::paginate(5));
-        } else {
-            return UserResource::collection(User::all());
+        $user= auth()->user()->id;
+        if(count($request->except('page'))){
+            
+            $users = User::query();
+
+            if ($request->filled('type')){
+                $users->where('type','=', $request->type);
+            }
+            
+            if ($request->filled('name')){
+                $users = $users->where('name', 'like', '%' .$request->name . '%');
+            }
+        
+            if ($request->filled('email')){
+                $users = $users->where('email', 'like', $request->email . '%');
+            }
+
+            if ($request->filled('active')){
+                $users = $users->where('active', $request->active);
+            }
+        
+            $users = UserResource::collection($users->paginate(10));
+        
+        }else{
+            
+            $users = UserResource::collection(User::with('wallet')->select('*')->paginate(10));
         }
 
-        /*Caso não se pretenda fazer uso de Eloquent API Resources (https://laravel.com/docs/5.5/eloquent-resources), é possível implementar com esta abordagem:
-        if ($request->has('page')) {
-            return User::with('department')->paginate(5);;
-        } else {
-            return User::with('department')->get();;
-        }*/
+        return $users;
     }
     
     public function show(User $user)
@@ -70,6 +87,31 @@ class UserControllerAPI extends Controller
         $wallet->email = $user->email;
         $wallet->save();
         return response()->json(new UserResource($user), 201);
+    }
+
+    public function storeOperatorAdmin(Request $request) {
+        $request->validate([
+            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'min:3',
+            'type' => 'required|in:a,o,u'
+        ]);
+
+        $photo = $request->photo;
+        $base64_string = explode(',', $photo['base64']);
+        $imageBin = base64_decode($base64_string[1]);
+
+        if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
+            Storage::disk('public')->put('fotos/' . $photo['name'], $imageBin);
+        }    
+
+        $user = new User();
+        $user->fill($request->all());
+        $user->photo = $request->photo['base64'] ? $request->photo['name'] : null;
+        $user->password = Hash::make($user->password);
+        $user->save();
+
+        return new UserResource($user);
     }
 
     public function update(Request $request, $id)
@@ -129,12 +171,12 @@ class UserControllerAPI extends Controller
             $photo = $request->photo;
             $base64_string = explode(',', $photo['base64']);
             $imageBin = base64_decode($base64_string[1]);
-            return response()->json($imageBin,402);
+            //return response()->json($imageBin,402);
             if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
                 return response()->json($imageBin,402);
                 Storage::disk('public')->put('fotos/' . $photo['name'], $imageBin);
             }
-            $user->photo = $request->photo['base64'] ? $request->photo['name'] : null; //<- aqui fica a foto unknwon ya
+            $user->photo = $request->photo['base64'] ? $request->photo['name'] : null; 
             $user->nif = $request->nif;
             if (Hash::check($request->oldpassword, $user->password)) {
                 $user->password = Hash::make($request->password);

@@ -38,15 +38,14 @@ export default {
     data:function(){
         return{
             title: 'Profile',
-            user:[],
-           /* user: { 
+            user: { 
                         id: this.$store.state.user.id,
                         name: this.$store.state.user.name,
                         nif: this.$store.state.user.nif,
                         photo: this.$store.state.user.photo,   
                         email: this.$store.state.user.email,
                         type: this.$store.state.user.type
-                },*/
+                },
             editingProfile: false,
             showSuccess: false,
             showFailure: false,

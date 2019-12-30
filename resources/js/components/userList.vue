@@ -20,11 +20,11 @@
 
                 <td v-if="user.type == 'u' && user.active==1">Active</td>
                 <td v-if="user.type == 'u' && user.active==0">Inactive</td>
-                <td v-if="user.type != 'u'"> </td>
+                <td v-if="user.type != 'u'"> - </td>
 
                 <td v-if="user.balance > 0">Has Money</td>  
                 <td v-if="user.balance == 0">Empty</td> 
-                <td v-if="user.balance == null">  </td> 
+                <td v-if="!user.balance"> - </td> 
 
                 <td v-if="user.type == 'u'">Plataform User</td>
                 <td v-if="user.type == 'o'">Operator</td>
@@ -33,7 +33,9 @@
                 <td v-if="user.type == 'u' && user.balance != 0.00"> </td>
                 <a class="btn btn-sm btn-secondary" v-if="user.type == 'u' && user.balance == 0.00 && user.active == 1" v-on:click.prevent="activateUser(user)">Desactive</a>
                 <a class="btn btn-sm btn-primary" v-if="user.type == 'u' && user.balance == 0.00 && user.active == 0" v-on:click.prevent="activateUser(user)">Active</a>
-                <a class="btn btn-sm btn-danger" v-if="user.type == 'a' || user.type == 'o'" v-on:click.prevent="deleteUser(user)">Delete</a>
+                <div v-show="user.type == 'a' || user.type == 'o'">
+                    <a class="btn btn-sm btn-danger" v-if=" user.id != currentUser.id" v-on:click.prevent="deleteUser(user)">Delete</a>
+                </div>
             </tr>
         </tbody>
     </table>
@@ -44,7 +46,7 @@ export default {
     props:['users'],
     data:function(){
         return{
-            currentUser:null,
+            currentUser: this.$store.state.user,
             wallets:[]
         }
     },
