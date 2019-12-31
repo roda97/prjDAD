@@ -31,15 +31,15 @@ class UserControllerAPI extends Controller
             }
             
             if ($request->filled('name')){
-                $users = $users->where('name', 'like', '%' .$request->name . '%');
+                $users->where('name', 'like', '%' .$request->name . '%');
             }
         
             if ($request->filled('email')){
-                $users = $users->where('email', 'like', $request->email . '%');
+                $users->where('email', 'like', $request->email . '%');
             }
 
             if ($request->filled('active')){
-                $users = $users->where('active', $request->active);
+                $users->where('active','=', $request->active);
             }
         
             $users = UserResource::collection($users->paginate(10));

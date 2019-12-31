@@ -22,7 +22,18 @@
                 <select v-model="currentMovement.category_name" class="form-control" name="categoryName" id="InputCategoryName" >
                 <option disabled selected> -- Select an option -- </option>
                 <!--<option  v-for="movement in movements"  :key="movement.id" :value="movement.category_id">{{ movement.category_name }}</option>-->
-                <option  v-for="movement in category_name" :key="movement" :value="movement">{{ movement }}</option>
+                <option  v-for="movement in category_name_e" :key="movement" :value="movement">{{ movement }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div v-if="currentMovement.type == 'i'">
+            <div class="form-group">
+                <label for="InputCategoryName">Category name</label>
+                <select v-model="currentMovement.category_name" class="form-control" name="categoryName" id="InputCategoryName" >
+                <option disabled selected> -- Select an option -- </option>
+                <!--<option  v-for="movement in movements"  :key="movement.id" :value="movement.category_id">{{ movement.category_name }}</option>-->
+                <option  v-for="movement in category_name_i" :key="movement" :value="movement">{{ movement }}</option>
                 </select>
             </div>
         </div>
@@ -49,9 +60,13 @@ export default{
     props:['currentMovement'],
     data: function(){
         return{
-            category_name:[
+            category_name_e:[
                 'groceries','restaurant','clothes','shoes','school','services', 'electricity', 'phone', 'fuel', 'mortgage payment', 
                 'car payment', 'entertainment', 'gadget', 'computer', 'vacation', 'hobby', 'loan repayment', 'loan', 'other expense'
+            ],
+            category_name_i:[
+                'salary', 'bonus', 'royalties', 'interests', 'gifts', 
+                'dividends', 'sales', 'loan repayment', 'loan', 'other expense'
             ]
         }
     },

@@ -354,7 +354,6 @@ class MovementControllerAPI extends Controller
         return new MovementResource($movement);
     }
 
-    //public function send_reactivate_email(User $user){
     public function send_reactivate_email($emailIncome){
         
         //return response()->json(($emailIncome), 402);
@@ -367,9 +366,9 @@ class MovementControllerAPI extends Controller
         $data = array( "body" => "You received an movement in your virtual wallet!");
         
         Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
-        $message->to($to_email, $to_name)
-        ->subject('Notification Email');
-        $message->from('dadproject24@gmail.com','Notification Email');
+            $message->to($to_email, $to_name)
+            ->subject('Notification Email');
+            $message->from('dadproject24@gmail.com','Notification Email');
         });
         
         /*

@@ -35,7 +35,8 @@
                         <td v-if="movement.user_photo == null"> - </td>
                         <td v-if="movement.user_photo != null"> {{ movement.user_photo }}</td>-->
                         <td>
-                            <div v-show="$store.state.user.id == movement.wallet_id ">
+                            <!--<div v-show="$store.state.user.id == movement.wallet_id ">-->
+                            <div>
                                 <a class="btn btn-sm btn-primary" v-on:click.prevent="editMovement(movement)">Edit</a>
                             </div>
 
@@ -50,16 +51,6 @@
                     </tr>
                 </tbody>
         </table>
-
-        <!--<div class="alert alert-success" v-if="showSuccess">			 
-			<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
-			<strong>{{ successMessage }}</strong>
-		</div>
-
-        <div class="alert alert-danger" v-if="showFailure">			 
-			<button type="button" class="close-btn" v-on:click="showFailure=false">&times;</button>
-			<strong>{{ failMessage }}</strong>
-		</div>-->
     </div>    
 </template>
 
@@ -70,8 +61,6 @@ export default {
     data: function() {
         return {
             currentMovement: null,
-            //showSuccess: false,
-            //showFailure: false,
 
         }
     },
