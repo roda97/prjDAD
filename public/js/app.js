@@ -3577,6 +3577,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     cancelEdit: function cancelEdit() {
       this.editingProfile = false;
+      this.showSuccess = false;
+      this.showFailure = false;
     }
   },
   components: {
@@ -56268,6 +56270,20 @@ var render = function() {
           [_vm._v("Edit")]
         )
       ]),
+      _vm._v(" "),
+      _vm.editingProfile
+        ? _c("profile-edit", {
+            attrs: { user: _vm.user, currentUser: _vm.currentUser },
+            on: {
+              "cancel-edit": _vm.cancelEdit,
+              "profile-refresh": _vm.profileRefresh,
+              "profile-modif": _vm.profileModif,
+              "profile-erro-pass-equal": _vm.profileErroPassEqual,
+              "profile-erro-pass-diff": _vm.profileErroPassDiff,
+              "profile-erro-pass": _vm.profileErroPass
+            }
+          })
+        : _vm._e(),
       _vm._v(" "),
       _vm.showSuccess
         ? _c("div", { staticClass: "alert alert-success" }, [
