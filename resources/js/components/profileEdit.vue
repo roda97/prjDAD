@@ -77,10 +77,9 @@ export default {
     props: ['user'],
     data:function(){
         return{
-            name:this.$store.state.user.name,
+            name:this.user.name,
             photo:"",
-            nif:this.$store.state.user.nif,
-            photo:"",
+            nif:this.user.nif,
             password:"",
             confirmpassword:"",
             oldpassword:"",
@@ -97,11 +96,11 @@ export default {
                     'name': this.name,
                     'photo': this.photo,
                     'nif':this.nif,
-                    'userId': this.$store.state.user.id,
+                    'userId': this.user.id,
                 }) 
                 .then(response=>{	
+                    this.$store.commit('setUser', response.data.data);
                     this.$emit('profile-modif');
-                    this.$emit('profile-refresh');	
                 })
                 .catch(error =>{
                     console.log(error.response.data);
@@ -113,17 +112,20 @@ export default {
                     'photo': this.photo,
                     'nif':this.nif,
                     'password': this.password,
-                    'userId': this.$store.state.user.id,
+                    'userId': this.user.id,
                 }) 
                 .then(response=>{	
-                    if(response.data == "pass different"){
-                        this.$emit('profile-erro-pass');
-                    }else
-                    this.$emit('profile-modif');
-                    this.$emit('profile-refresh');		                	
+                    if(response.data == "Old Password is incorrect !")
+                        {
+                            this.$emit('profile-erro-pass-equal');
+                        }
+                    else{
+                    this.$store.commit('setUser', response.data.data);
+                    this.$emit('profile-modif');		  
+                        }            
                 })
                 .catch(error =>{
-                    console.log(error.response.data); 
+                   // console.log(error.response.data); 
                 })
             }
             else {

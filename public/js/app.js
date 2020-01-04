@@ -3238,8 +3238,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -3317,13 +3315,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['user'],
   data: function data() {
-    var _ref;
-
-    return _ref = {
-      name: this.$store.state.user.name,
+    return {
+      name: this.user.name,
       photo: "",
-      nif: this.$store.state.user.nif
-    }, _defineProperty(_ref, "photo", ""), _defineProperty(_ref, "password", ""), _defineProperty(_ref, "confirmpassword", ""), _defineProperty(_ref, "oldpassword", ""), _defineProperty(_ref, "successMessage", ''), _defineProperty(_ref, "failMessage", ''), _ref;
+      nif: this.user.nif,
+      password: "",
+      confirmpassword: "",
+      oldpassword: "",
+      //showSuccess: false,
+      //showFailure: false,
+      successMessage: '',
+      failMessage: ''
+    };
   },
   methods: {
     saveProfile: function saveProfile() {
@@ -3334,11 +3337,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           'name': this.name,
           'photo': this.photo,
           'nif': this.nif,
-          'userId': this.$store.state.user.id
+          'userId': this.user.id
         }).then(function (response) {
-          _this.$emit('profile-modif');
+          _this.$store.commit('setUser', response.data.data);
 
-          _this.$emit('profile-refresh');
+          _this.$emit('profile-modif');
         })["catch"](function (error) {
           console.log(error.response.data);
         });
@@ -3349,15 +3352,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           'photo': this.photo,
           'nif': this.nif,
           'password': this.password,
-          'userId': this.$store.state.user.id
+          'userId': this.user.id
         }).then(function (response) {
-          if (response.data == "pass different") {
-            _this.$emit('profile-erro-pass');
-          } else _this.$emit('profile-modif');
+          if (response.data == "Old Password is incorrect !") {
+            _this.$emit('profile-erro-pass-equal');
+          } else {
+            _this.$store.commit('setUser', response.data.data);
 
-          _this.$emit('profile-refresh');
-        })["catch"](function (error) {
-          console.log(error.response.data);
+            _this.$emit('profile-modif');
+          }
+        })["catch"](function (error) {// console.log(error.response.data); 
         });
       } else {
         if (this.password != this.confirmpassword) {
@@ -3571,40 +3575,14 @@ __webpack_require__.r(__webpack_exports__);
       this.showFailure = true;
       this.failMessage = 'Password and confirm password are different';
     },
-    profileRefresh: function profileRefresh(user) {
-      this.showFailure = false;
-      axios.get('api/users/profile', this.user).then(function (response) {
-        console.log("sucesso");
-      });
-    },
-    saveUser: function saveUser() {
-      var _this = this;
-
-      this.editingProfile = false;
-      axios.patch('api/users/' + this.user.id, this.user).then(function (response) {
-        _this.showSuccess = true;
-        _this.showFailure = false;
-        _this.successMessage = 'User Saved';
-        Object.assign(_this.user, response.data.data);
-        Object.assign(_this.users.find(function (u) {
-          return u.id == response.data.data.id;
-        }), response.data.data);
-        _this.currentUser = null;
-        _this.editingProfile = false;
-      });
-    },
     cancelEdit: function cancelEdit() {
       this.editingProfile = false;
-      this.showSuccess = false;
-      this.showFailure = false;
     }
   },
   components: {
     'profile-edit': _profileEdit__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  mounted: function mounted() {
-    this.profileRefresh();
-  }
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -56257,21 +56235,21 @@ var render = function() {
         _c("tr", [
           _c("td", [_vm._v("Name:")]),
           _vm._v(" "),
-          _c("td", [_vm._v(_vm._s(this.$store.state.user.name))])
+          _c("td", [_vm._v(_vm._s(this.user.name))])
         ]),
         _vm._v(" "),
         _vm.user.type == "u"
           ? _c("tr", [
               _c("td", [_vm._v("NIF:")]),
               _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(this.$store.state.user.nif))])
+              _c("td", [_vm._v(_vm._s(this.user.nif))])
             ])
           : _vm._e(),
         _vm._v(" "),
         _c("tr", [
           _c("td", [_vm._v("E-Mail:")]),
           _vm._v(" "),
-          _c("td", [_vm._v(_vm._s(this.$store.state.user.email))])
+          _c("td", [_vm._v(_vm._s(this.user.email))])
         ]),
         _vm._v(" "),
         _c("br"),
@@ -56290,20 +56268,6 @@ var render = function() {
           [_vm._v("Edit")]
         )
       ]),
-      _vm._v(" "),
-      _vm.editingProfile
-        ? _c("profile-edit", {
-            attrs: { user: _vm.user, currentUser: _vm.currentUser },
-            on: {
-              "cancel-edit": _vm.cancelEdit,
-              "profile-refresh": _vm.profileRefresh,
-              "profile-modif": _vm.profileModif,
-              "profile-erro-pass-equal": _vm.profileErroPassEqual,
-              "profile-erro-pass-diff": _vm.profileErroPassDiff,
-              "profile-erro-pass": _vm.profileErroPass
-            }
-          })
-        : _vm._e(),
       _vm._v(" "),
       _vm.showSuccess
         ? _c("div", { staticClass: "alert alert-success" }, [
@@ -56343,6 +56307,19 @@ var render = function() {
             _vm._v(" "),
             _c("strong", [_vm._v(_vm._s(_vm.failMessage))])
           ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.editingProfile
+        ? _c("profile-edit", {
+            attrs: { user: _vm.user, currentUser: _vm.currentUser },
+            on: {
+              "cancel-edit": _vm.cancelEdit,
+              "profile-modif": _vm.profileModif,
+              "profile-erro-pass-equal": _vm.profileErroPassEqual,
+              "profile-erro-pass-diff": _vm.profileErroPassDiff,
+              "profile-erro-pass": _vm.profileErroPass
+            }
+          })
         : _vm._e()
     ],
     1

@@ -167,25 +167,25 @@ class UserControllerAPI extends Controller
         $id = $request->userId;
         $user = User::findOrFail($id);    
         $user->name = $request->name;
-        if($request->photo['base64']) {
-            $photo = $request->photo;
-            $base64_string = explode(',', $photo['base64']);
-            $imageBin = base64_decode($base64_string[1]);
+        //if($request->photo['base64']) {
+        $photo = $request->photo;
+            //$base64_string = explode(',', $photo['base64']);
+           // $imageBin = base64_decode($base64_string[1]);
             //return response()->json($imageBin,402);
-            if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
+            /*if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
                 return response()->json($imageBin,402);
                 Storage::disk('public')->put('fotos/' . $photo['name'], $imageBin);
-            }
+            }*/
             $user->photo = $request->photo['base64'] ? $request->photo['name'] : null; 
             $user->nif = $request->nif;
             if (Hash::check($request->oldpassword, $user->password)) {
+              //  console.log("Password Igual");
                 $user->password = Hash::make($request->password);
                 $user->save(); 
                 return new UserResource($user);
-            }else{
-                return response("pass different"); //depois altera isto
             }
-        }    
+            //console.log("Password Diffe");
+            return response('Old Password is incorrect !');    
     }
 
     public function updateProfilewithoutPass(Request $request){
@@ -193,7 +193,7 @@ class UserControllerAPI extends Controller
         $user = User::findOrFail($id);   
         $request->validate([
             'name'      => 'required|regex:/^[a-zA-Zà-Ú ]+$/',
-            'nif'       => 'integer|digits:9',
+           // 'nif'       => 'integer|digits:9',
             //'photo' => 'image|mimes:jpeg,png,jpg,gif|max:1080',
         ]);
         $user->name = $request->name;

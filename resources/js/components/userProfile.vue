@@ -10,22 +10,20 @@
             </tr>
             <tr>
                 <td>Name:</td>
-                <td>{{ this.$store.state.user.name }}</td>
+                <td>{{ this.user.name }}</td>
             </tr>
             <tr v-if="user.type == 'u'">
                 <td>NIF:</td>
-                <td>{{ this.$store.state.user.nif}}</td>
+                <td>{{ this.user.nif}}</td>
             </tr>
             <tr>
                 <td>E-Mail:</td>
-                <td>{{ this.$store.state.user.email }}</td>
+                <td>{{ this.user.email }}</td>
             </tr>
             <br>
 
             <a class="btn btn-sm btn-primary" v-on:click.prevent="profileEdit(user)">Edit</a>
         </table>
-
-        <profile-edit :user="user" v-if="editingProfile" v-bind:currentUser="currentUser" @cancel-edit="cancelEdit" @profile-refresh="profileRefresh" @profile-modif="profileModif" @profile-erro-pass-equal="profileErroPassEqual" @profile-erro-pass-diff="profileErroPassDiff" @profile-erro-pass="profileErroPass"></profile-edit>
     
         <div class="alert alert-success" v-if="showSuccess">
                 <button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
@@ -36,6 +34,8 @@
                 <button type="button" class="close-btn" v-on:click="showFailure=false">&times;</button>
                 <strong>{{ failMessage }}</strong>
         </div>
+
+        <profile-edit :user="user" v-if="editingProfile" v-bind:currentUser="currentUser" @cancel-edit="cancelEdit" @profile-modif="profileModif" @profile-erro-pass-equal="profileErroPassEqual" @profile-erro-pass-diff="profileErroPassDiff" @profile-erro-pass="profileErroPass"></profile-edit>
 
     </div>
 </template>
@@ -89,39 +89,16 @@ export default {
             this.failMessage = 'Password and confirm password are different'
         },
 
-        profileRefresh: function(user){
-            this.showFailure = false;
-            axios.get('api/users/profile', this.user)
-            .then(response=>{
-                console.log("sucesso");
-            });
-        },
-
-        saveUser: function(){
-            this.editingProfile = false;          
-            axios.patch('api/users/' + this.user.id, this.user)
-                .then(response=>{
-                    this.showSuccess = true;
-                    this.showFailure = false;
-                    this.successMessage = 'User Saved';
-                    Object.assign(this.user, response.data.data);
-                    Object.assign(this.users.find(u=>u.id == response.data.data.id), response.data.data);
-                    this.currentUser = null;
-                    this.editingProfile = false;
-                });
-        },
         cancelEdit: function(){
             this.editingProfile = false;
-            this.showSuccess = false;
-            this.showFailure = false;
         },
 
+        
     },
     components:{
         'profile-edit':ProfileEdit
     },
     mounted() {
-        this.profileRefresh();
     }
 };
 </script>
