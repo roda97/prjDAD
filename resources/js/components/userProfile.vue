@@ -91,8 +91,6 @@ export default {
 
         cancelEdit: function(){
             this.editingProfile = false;
-            this.showSuccess = false;
-            this.showFailure = false;
         },
 
         
