@@ -61,7 +61,7 @@ export default {
         }
     },
     methods:{
-         profileEdit: function(user){
+        profileEdit: function(user){
             this.currentUser = Object.assign({},user);
             this.showFailure = false;
             this.showSuccess = false;
@@ -88,7 +88,6 @@ export default {
             this.showFailure = true;
             this.failMessage = 'Password and confirm password are different'
         },
-
         cancelEdit: function(){
             this.editingProfile = false;
         },
