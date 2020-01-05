@@ -32,6 +32,7 @@ import UserProfile from './components/userProfile'
 import Login from './components/login'
 import Logout from './components/logout'
 import Movimento from './components/movements/movements'
+import MovementStatistics from './components/movements/movementsStatistics'
 
 
 const home = Vue.component("home", Home);
@@ -42,6 +43,7 @@ const opAdminRegister = Vue.component("opAdminRegister", OpAdminRegister);
 const userProfile = Vue.component("userProfile", UserProfile);
 const login = Vue.component("login", Login);
 const logout = Vue.component("logout", Logout);
+const movementsStatistics = Vue.component("movementsStatistics", MovementStatistics);
 
 
 const routes = [
@@ -54,6 +56,7 @@ const routes = [
     { path: "/login", component: Login, name: "login" },
     { path: "/logout", component: Logout, name: "logout" },
     { path: "/movements", component: Movimento, name: "movements" },
+    { path: "/movementsStatistics", component: MovementStatistics, name: "movementsStatistics" },
 
 ]
 
@@ -120,6 +123,13 @@ router.beforeEach((to, from, next) => {
         }
     } 
     if(to.name == "movements" ){     
+        if (!app.$store.state.user) {
+            next("/login");
+            console.log(app.$store.state.user)
+            return;
+        }
+    }
+    if(to.name == "movementsStatistics" ){     
         if (!app.$store.state.user) {
             next("/login");
             console.log(app.$store.state.user)
