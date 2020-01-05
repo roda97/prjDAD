@@ -61,7 +61,7 @@ export default {
         }
     },
     methods:{
-         profileEdit: function(user){
+        profileEdit: function(user){
             this.currentUser = Object.assign({},user);
             this.showFailure = false;
             this.showSuccess = false;
@@ -86,8 +86,6 @@ export default {
         },
         cancelEdit: function(){
             this.editingProfile = false;
-            this.showSuccess = false;
-            this.showFailure = false;
         },
         
     },

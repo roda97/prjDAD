@@ -385,5 +385,32 @@ class MovementControllerAPI extends Controller
         return $balance[0]->balance;
     }
 
+    //////////////////////ESTATÍSTICAS - US14//////////////////////
+
+    public function getTotalsMovements($id){
+        $incomes = MovementResource::collection(Movement::select('value')->where('wallet_id', $id)->where('type','i')->get());
+        $expenses = MovementResource::collection(Movement::select('value')->where('wallet_id', $id)->where('type','e')->get());
+
+        $totalIncome = 0;
+        $totalExpense= 0;
+
+        for($i=0; $i < sizeof($incomes); $i++){
+            $totalIncome += $incomes[$i]->value; 
+        }
+
+        for($i=0; $i < sizeof($expenses); $i++){
+            $totalExpense += $expenses[$i]->value; 
+        }
+
+        $totals[0] = number_format((float)$totalIncome, 2, '.', '');
+        $totals[1] = number_format((float)$totalExpense, 2, '.', '');
+        
+        return $totals;
+    }
+
 }
+
+
+
+
 

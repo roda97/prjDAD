@@ -50,6 +50,7 @@ Route::post('movements/credit', 'MovementControllerAPI@addCredit');
 Route::post('movements/debit', 'MovementControllerAPI@addDebit');
 Route::post('movements/filter', 'MovementControllerAPI@index');
 Route::get('movements/{id}/balance', 'MovementControllerAPI@getBalance');
+Route::get('movements/stats/totals/{id}', 'MovementControllerAPI@getTotalsMovements');
 
 //wallets
 Route::get('wallets', 'WalletControllerAPI@index');

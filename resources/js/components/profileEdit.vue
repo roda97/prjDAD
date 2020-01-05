@@ -123,6 +123,7 @@ export default {
                     this.$store.commit('setUser', response.data.data);
                     this.$emit('profile-modif');		  
                         }            
+
                 })
                 .catch(error =>{
                    // console.log(error.response.data); 
