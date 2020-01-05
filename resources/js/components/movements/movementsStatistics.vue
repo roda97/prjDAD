@@ -3,7 +3,6 @@
 
         <div v-if="statsIncExpe" class="container">
             <h4>Total Income/Expenses (€):</h4>
-            <canvas id="myChart" width="600" height="400"></canvas>
             <totals-income-expense :chartData="chartData1"/>
         </div>   
 

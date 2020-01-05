@@ -31,7 +31,7 @@ Route::get('wallets', 'WalletControllerAPI@index');
 
 #------ Users
 Route::middleware('auth:api')->get('users', 'UserControllerAPI@index');
-Route::post('users/register', 'UserControllerAPI@store');
+Route::post('users/newAccount', 'UserControllerAPI@store');
 Route::middleware('auth:api')->post('users/OperatorAdmin', 'UserControllerAPI@storeOperatorAdmin'); 
 Route::post('users/filter', 'UserControllerAPI@index'); 
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');  
@@ -51,6 +51,7 @@ Route::post('movements/debit', 'MovementControllerAPI@addDebit');
 Route::post('movements/filter', 'MovementControllerAPI@index');
 Route::get('movements/{id}/balance', 'MovementControllerAPI@getBalance');
 Route::get('movements/stats/totals/{id}', 'MovementControllerAPI@getTotalsMovements');
+Route::get('movements/stats/all', 'MovementControllerAPI@getAllMovements');
 
 //wallets
 Route::get('wallets', 'WalletControllerAPI@index');

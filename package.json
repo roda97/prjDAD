@@ -28,6 +28,7 @@
         "vue": "^2.6.10",
         "vue-base64-file-upload": "^1.0.4",
         "vue-chartjs": "^3.5.0",
+        "vue-css-donut-chart": "^1.2.0",
         "vue-plain-pagination": "^0.3.0",
         "vue-router": "^3.1.3",
         "vue-socket.io": "^3.0.7",

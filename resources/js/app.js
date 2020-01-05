@@ -52,8 +52,8 @@ const routes = [
     { path: "/", component: Home},
     { path: "/users", component: User, name: "users" },
     //{ path: "/users/:id/edit", component: UserEdit, name: "usersEdit" }, 
-    { path: "/users/register", component: UserRegister, name: "usersRegister" },
-    { path: "/users/opAdminRegister", component: OpAdminRegister, name: "opAdminRegister" },
+    { path: "/users/newAccount", component: UserRegister, name: "usersRegister" },
+    { path: "/users/OperatorAdmin", component: OpAdminRegister, name: "opAdminRegister" },
     { path: "/users/profile", component: UserProfile, name: "userProfile" },
     { path: "/users/statistics", component: UserStatistics, name: "userStatistics" },
     { path: "/login", component: Login, name: "login" },
@@ -118,7 +118,13 @@ router.beforeEach((to, from, next) => {
             next("/login");
             return;
         }
-    } 
+    }
+    if(to.name == "users" ){
+        if (app.$store.state.user.type != 'a') {
+            next("/login");
+            return;
+        }
+    }  
     if(to.name == "usersEdit" ){
         if (!app.$store.state.user) {
             next("/login");
@@ -147,6 +153,12 @@ router.beforeEach((to, from, next) => {
     }
     if(to.name == "opAdminRegister" ){
         if (!app.$store.state.user) {
+            next("/login");
+            return;
+        }
+    }
+    if(to.name == "opAdminRegister" ){
+        if (app.$store.state.user.type != 'a') {
             next("/login");
             return;
         }
