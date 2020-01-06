@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Provider\Image;
-use Illuminate\Http\Request;
-use Illuminate\Contracts\Support\Jsonable;
-use Laravel\Passport\HasApiTokens;
-use App\Http\Resources\User as UserResource;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use function GuzzleHttp\Promise\all;
-use App\Http\Controllers\Controller;
-
+use Hash;
 use App\User;
 use App\Wallet;
+use App\Movement;
 use App\StoreUserRequest;
-use Hash;
+use Faker\Provider\Image;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+use Laravel\Passport\HasApiTokens;
+use App\Http\Controllers\Controller;
+use function GuzzleHttp\Promise\all;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\Support\Jsonable;
+use App\Http\Resources\User as UserResource;
 
 class UserControllerAPI extends Controller
 {
@@ -179,6 +180,8 @@ class UserControllerAPI extends Controller
                 'password' => 'min:3', 
                 //'photo'     => 'required|regex:/^.+/.((jpg)|(gif)|(png))+$/'
             ]);
+        }
+
         $user->name = $request->name;
         
             $user->nif = $request->nif;
@@ -200,19 +203,18 @@ class UserControllerAPI extends Controller
                 $user->save(); 
                 return new UserResource($user);
             }
-            //console.log("Password Diffe");
             return response()->json('Old Password is incorrect !', 402);    
     }
-}
+
 
     public function updateProfilewithoutPass(Request $request){
         $id = $request->userId;
         $user = User::findOrFail($id);   
         if($user->type == "u"){
             $request->validate([
-                'name'      => 'required|regex:/^[a-zA-Zà-Ú]+$/',
+                'name'      => 'required|regex:/^[a-zA-Zà-Ú ]+$/',
                 'nif'       => 'integer|digits:9',   
-                'photo'     => 'required|regex:/^.+\.((jpg)|(gif)|(png))$/' 
+             //   'photo'     => 'required|regex:/^.+\.((jpg)|(gif)|(png))$/' 
             ]);   
         }else{
             //return response()->json($request->photo,402);
@@ -238,6 +240,30 @@ class UserControllerAPI extends Controller
         $user->save();
         //return response()->json($user->name,402);
         return new UserResource($user);
+    }
+
+    public function getAllUsersInatives(){
+        $inative = UserResource::collection(User::where('type','u')->where('active','1')->get());
+        $active = UserResource::collection(User::where('type','u')->where('active','0')->get());
+
+        $totalInative = sizeof($inative);
+        $totalActive= sizeof($active);
+
+
+        $total[0] = $totalInative;
+        $total[1] = $totalActive;
+        
+        return $total;
+    }
+
+    public function getAllMovements(){
+        $totalIncome = Movement::where('type','i')->count();
+        $totalExpense = Movement::where('type','e')->count();
+
+        $totals[0] = $totalIncome;
+        $totals[1] = $totalExpense;
+        
+        return $totals;
     }
 
 }

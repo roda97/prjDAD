@@ -3844,6 +3844,41 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/statsInative.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/statsInative.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  "extends": vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Bar"],
+  props: ['chartData'],
+  mounted: function mounted() {
+    this.renderChart({
+      labels: ['Total Inative/Active'],
+      datasets: [{
+        label: 'Total Inactive',
+        backgroundColor: '#483D8B',
+        data: [this.chartData[1]]
+      }, {
+        label: 'Total Active',
+        backgroundColor: '#4169E1',
+        data: [this.chartData[0]]
+      }]
+    }, {
+      responsive: true,
+      maintainAspectRatio: false
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/statsLinearChart.vue?vue&type=script&lang=js&":
 /*!***************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/statsLinearChart.vue?vue&type=script&lang=js& ***!
@@ -4103,31 +4138,26 @@ __webpack_require__.r(__webpack_exports__);
     },
     cancelEdit: function cancelEdit() {
       this.editingProfile = false;
-<<<<<<< Updated upstream
-=======
-      this.showSuccess = false;
-      this.showFailure = false;
     },
     erroname: function erroname() {
       this.showFailure = true;
       this.showSuccess = false;
-      this.failMessage = "Invalide Name!";
+      this.failMessage = "The name format is invalid.";
     },
     erropass: function erropass() {
       this.showFailure = true;
       this.showSuccess = false;
-      this.failMessage = "Invalide Password! ";
+      this.failMessage = "The password must be at least 3 characters.";
     },
     erronif: function erronif() {
       this.showFailure = true;
       this.showSuccess = false;
-      this.failMessage = "Invalide Nif!";
+      this.failMessage = "The nif must be 9 digits.";
     },
     erroimage: function erroimage() {
       this.showFailure = true;
       this.showSuccess = false;
       this.failMessage = "Invalide Image!";
->>>>>>> Stashed changes
     }
   },
   components: {
@@ -4342,7 +4372,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _statsTotalExpInc_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./statsTotalExpInc.vue */ "./resources/js/components/statsTotalExpInc.vue");
 /* harmony import */ var _statsLinearChart_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./statsLinearChart.vue */ "./resources/js/components/statsLinearChart.vue");
-/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+/* harmony import */ var _statsInative_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./statsInative.vue */ "./resources/js/components/statsInative.vue");
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
 //
 //
 //
@@ -4354,6 +4385,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -4362,26 +4400,39 @@ __webpack_require__.r(__webpack_exports__);
     return {
       userID: this.$store.state.user.id,
       chartData1: null,
-      statsTotalExpInc: false
+      chartData2: null,
+      statsTotalExpInc: false,
+      statsInative: false
     };
   },
   methods: {
     getAllMovements: function getAllMovements() {
       var _this = this;
 
-      axios.get('api/movements/stats/all').then(function (response) {
+      axios.get('api/users/stats/all').then(function (response) {
         console.log(response.data);
         _this.chartData1 = response.data;
         _this.statsTotalExpInc = true;
+      });
+    },
+    getAllUsersInatives: function getAllUsersInatives() {
+      var _this2 = this;
+
+      axios.get('api/users/statsInative').then(function (response) {
+        console.log(response.data);
+        _this2.chartData2 = response.data;
+        _this2.statsInative = true;
       });
     }
   },
   mounted: function mounted() {
     this.getAllMovements();
+    this.getAllUsersInatives();
   },
   components: {
     'all-income-expense': _statsTotalExpInc_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    'stats-line-chart': _statsLinearChart_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+    'stats-line-chart': _statsLinearChart_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    'stats-inative': _statsInative_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   }
 });
 
@@ -91404,6 +91455,21 @@ var render = function() {
           ],
           1
         )
+      : _vm._e(),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm.statsInative
+      ? _c(
+          "div",
+          { staticClass: "container" },
+          [
+            _c("h4", [_vm._v("Total Users Inative/Active:")]),
+            _vm._v(" "),
+            _c("stats-inative", { attrs: { chartData: _vm.chartData2 } })
+          ],
+          1
+        )
       : _vm._e()
   ])
 }
@@ -107884,7 +107950,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_userRegister__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/userRegister */ "./resources/js/components/userRegister.vue");
 /* harmony import */ var _components_OpAdminRegister__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/OpAdminRegister */ "./resources/js/components/OpAdminRegister.vue");
 /* harmony import */ var _components_userProfile__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/userProfile */ "./resources/js/components/userProfile.vue");
-/* harmony import */ var _components_userStatistics__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./components/userStatistics */ "./resources/js/components/userStatistics.vue");
+/* harmony import */ var _components_userStatistics__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/userStatistics */ "./resources/js/components/userStatistics.vue");
 /* harmony import */ var _components_login__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/login */ "./resources/js/components/login.vue");
 /* harmony import */ var _components_logout__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./components/logout */ "./resources/js/components/logout.vue");
 /* harmony import */ var _components_movements_movements__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./components/movements/movements */ "./resources/js/components/movements/movements.vue");
@@ -107925,7 +107991,7 @@ var user = Vue.component("users", _components_users__WEBPACK_IMPORTED_MODULE_6__
 var userRegister = Vue.component("usersRegister", _components_userRegister__WEBPACK_IMPORTED_MODULE_7__["default"]);
 var opAdminRegister = Vue.component("opAdminRegister", _components_OpAdminRegister__WEBPACK_IMPORTED_MODULE_8__["default"]);
 var userProfile = Vue.component("userProfile", _components_userProfile__WEBPACK_IMPORTED_MODULE_9__["default"]);
-var userStatistics = Vue.component("userStatistics", _components_userStatistics__WEBPACK_IMPORTED_MODULE_15__["default"]);
+var userStatistics = Vue.component("userStatistics", _components_userStatistics__WEBPACK_IMPORTED_MODULE_10__["default"]);
 var login = Vue.component("login", _components_login__WEBPACK_IMPORTED_MODULE_11__["default"]);
 var logout = Vue.component("logout", _components_logout__WEBPACK_IMPORTED_MODULE_12__["default"]);
 var movementsStatistics = Vue.component("movementsStatistics", _components_movements_movementsStatistics__WEBPACK_IMPORTED_MODULE_14__["default"]);
@@ -107951,7 +108017,7 @@ var routes = [{
   name: "userProfile"
 }, {
   path: "/users/statistics",
-  component: _components_userStatistics__WEBPACK_IMPORTED_MODULE_15__["default"],
+  component: _components_userStatistics__WEBPACK_IMPORTED_MODULE_10__["default"],
   name: "userStatistics"
 }, {
   path: "/login",
@@ -109313,6 +109379,56 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_profileEdit_vue_vue_type_template_id_ecfa5e50___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
+
+/***/ }),
+
+/***/ "./resources/js/components/statsInative.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/statsInative.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _statsInative_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./statsInative.vue?vue&type=script&lang=js& */ "./resources/js/components/statsInative.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+var render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
+  _statsInative_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"],
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/statsInative.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/statsInative.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/statsInative.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsInative_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./statsInative.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/statsInative.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsInative_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 

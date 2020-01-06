@@ -101,19 +101,19 @@ export default {
         erroname: function(){
             this.showFailure = true;
             this.showSuccess = false;
-            this.failMessage = "Invalide Name!";
+            this.failMessage = "The name format is invalid.";
         },
 
         erropass: function(){
             this.showFailure = true;
             this.showSuccess = false;
-            this.failMessage = "Invalide Password! ";
+            this.failMessage = "The password must be at least 3 characters.";
         },
 
         erronif: function(){
             this.showFailure = true;
             this.showSuccess = false;
-            this.failMessage = "Invalide Nif!";
+            this.failMessage = "The nif must be 9 digits.";
         },
 
         erroimage: function(){

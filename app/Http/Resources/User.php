@@ -29,7 +29,7 @@ class User extends Resource
             'nif' => $this->nif,
             'active' => $this->active,
             'balance' => $balance
-
+                
         ];
     }
 }

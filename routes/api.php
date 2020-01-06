@@ -40,6 +40,9 @@ Route::middleware('auth:api')->put('users/activate/{id}', 'UserControllerAPI@act
 Route::middleware('auth:api')->patch('users/ProfilewithPass', 'UserControllerAPI@updateProfilewithPass');
 Route::middleware('auth:api')->patch('users/ProfilewithoutPass', 'UserControllerAPI@updateProfilewithoutPass');
 Route::middleware('auth:api')->get('users/profile', 'UserControllerAPI@profileRefresh');
+Route::middleware('auth:api')->get('users/statsInative', 'UserControllerAPI@getAllUsersInatives');
+Route::get('users/stats/all', 'UserControllerAPI@getAllMovements');
+
 
 //movements
 //Route::post('movements', 'MovementControllerAPI@index');
@@ -56,7 +59,7 @@ Route::get('movements/stats/categoryIncome/{id}', 'MovementControllerAPI@getCate
 Route::get('movements/stats/categoryExpense/{id}', 'MovementControllerAPI@getCategoryExpense');
 Route::get('movements/stats/categoryIncomeMoney/{id}', 'MovementControllerAPI@getCategoryIncomeMoney');
 Route::get('movements/stats/categoryExpenseMoney/{id}', 'MovementControllerAPI@getCategoryExpenseMoney');
-Route::get('movements/stats/all', 'MovementControllerAPI@getAllMovements');
+
 
 
 //wallets

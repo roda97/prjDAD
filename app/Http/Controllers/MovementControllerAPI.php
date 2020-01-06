@@ -519,17 +519,5 @@ class MovementControllerAPI extends Controller
 
     }
 
-    public function getAllMovements(){
-        $incomes = MovementResource::collection(Movement::where('type','i')->get());
-        $expenses = MovementResource::collection(Movement::where('type','e')->get());
-
-        $totalIncome = sizeof($incomes);
-        $totalExpense= sizeof($expenses);
-
-
-        $totals[0] = $totalIncome;
-        $totals[1] = $totalExpense;
-        
-        return $totals;
-    }
+    
 }
