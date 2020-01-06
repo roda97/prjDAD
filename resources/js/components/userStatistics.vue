@@ -12,14 +12,18 @@
             <h4>Total Users Inative/Active:</h4>
             <stats-inative :chartData="chartData2"/>
         </div>
+
+        <div v-if="statsWallets" class="container">
+            <stats-wallets-per-year/>
+        </div>
     </div>    
 </template>
 
 <script>
 
 import StatsTotalExpInc from './statsTotalExpInc.vue';
-import StatsLinearChart from './statsLinearChart.vue';
 import StatsInative from './statsInative.vue';
+import StatsWalletsPerYear from './statsWalletsPerYear.vue';
 
 import { Bar, Line} from 'vue-chartjs';
 
@@ -31,7 +35,8 @@ export default {
             chartData1: null,
             chartData2: null,
             statsTotalExpInc: false,
-            statsInative: false
+            statsInative: false,
+            statsWallets: true
         }
 
     },
@@ -53,7 +58,6 @@ export default {
                 this.statsInative = true;
             })
         },
-
     },
     mounted(){
         this.getAllMovements();
@@ -61,8 +65,8 @@ export default {
     },
     components:{
         'all-income-expense': StatsTotalExpInc,
-        'stats-line-chart': StatsLinearChart,
-        'stats-inative' : StatsInative
+        'stats-inative' : StatsInative,
+        'stats-wallets-per-year': StatsWalletsPerYear
     }
 }
 </script>

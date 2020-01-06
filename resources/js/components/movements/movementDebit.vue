@@ -40,7 +40,7 @@
             </div>
         </div>   
 
-        <div v-if="this. this.currentMovement.transfer == '0'">
+        <div v-if="this.currentMovement.transfer == '0'">
             <div v-if="this.currentMovement.type_payment == 'bt'" > 
                 <div class="form-group">
                     <label for="inputIBAN">IBAN:</label>

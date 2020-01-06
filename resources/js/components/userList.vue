@@ -14,7 +14,7 @@
         <tbody>
             <tr v-for="user in users"  :key="user.id" :class="{active: currentUser === user}">
                 <td v-if="user.photo"><img v-bind:src="'storage/fotos/' + user.photo" style="width:75px; height:75px; border-radius:50%;"></td>
-                <td v-if="!user.photo"><img v-bind:src="'storage/fotos/unknown.jpg'" style="width:75px; height:75px; border-radius:50%;"></td>
+                <td v-if="!user.photo"><img v-bind:src="'storage/fotos/noimage.jpg'" style="width:75px; height:75px; border-radius:50%;"></td>
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
 

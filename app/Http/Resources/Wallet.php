@@ -23,6 +23,7 @@ class Wallet extends Resource
             'email' => $this->email,
             'balance' => $this->balance,
             'user_name' => $this->user->name,
+            'created_at' => $this->created_at
         ];
     }
 }

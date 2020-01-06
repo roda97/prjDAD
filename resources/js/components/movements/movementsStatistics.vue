@@ -63,7 +63,6 @@
 <script>
 
 import StatsTotalsIncExpe from './statsIncExpe.vue';
-import StatsLineChart from './statsLineChart.vue';
 import StatsTypePayment from './statsTypePayment.vue';
 import StatsCategoryIncome from './statsCategoryIncome.vue';
 import StatsCategoryExpense from './statsCategoryExpense.vue';
@@ -202,7 +201,6 @@ export default {
     },
     components:{
         'totals-income-expense': StatsTotalsIncExpe,
-        'stats-line-chart': StatsLineChart,
         'stats-type-payment': StatsTypePayment,
         'stats-category-income': StatsCategoryIncome,
         'stats-category-expense': StatsCategoryExpense,

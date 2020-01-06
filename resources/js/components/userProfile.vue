@@ -5,7 +5,10 @@
         </div>
 
         <table class="table table-striped">
-            <tr>
+            <tr v-if="user.photo == null">
+                <td><img v-bind:src="'storage/fotos/noimage.jpg'" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
+            </tr>
+            <tr v-if="user.photo != null">
                 <td><img v-bind:src="'storage/fotos/' + user.photo" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
             </tr>
             <tr>

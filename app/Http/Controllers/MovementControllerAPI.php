@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use Mail;
+use DateTime;
 use App\Wallet;
 use App\Movement;
-use Mail;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\Movement as MovementResource;
@@ -76,10 +77,26 @@ class MovementControllerAPI extends Controller
 
     public function myMovements(Request $request)
     {
+        $movements = MovementResource::collection($request->user()->wallet->movements);
+        $dates = MovementResource::collection(Movement::select('date')->where('wallet_id', $request->user()->id)->orderBy('date', 'asc')->get());
+
+        $lastYear = DateTime::createFromFormat('Y-m-d H:i:s' ,$dates[count($dates)-1]->date)->format("Y");
+        //return response()->json($lastYear,402);
+
+        if (auth()->user() &&  auth()->user()->type == "u") {
+            $movements->where('date', 'like', $lastYear . '%');
+            //return response()->json($movements,402);
+            return $movements;
+        }
+    }
+
+    /*public function myMovements(Request $request)
+    {
+        return response()->json($request->user()->wallet->movements,402);
         if (auth()->user() &&  auth()->user()->type == "u") {
             return MovementResource::collection($request->user()->wallet->movements);
         }
-    }
+    }*/
 
     /**
      * Show the form for creating a new resource.

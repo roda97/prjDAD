@@ -10,7 +10,7 @@
                 <td><img v-bind:src="'storage/fotos/' + currentMovement.user_photo" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
             </div>
             <div class="col-md-10 col-md-offset-1" v-if="!currentMovement.user_photo">            
-                <td><img v-bind:src="'storage/fotos/unknown.jpg'" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
+                <td><img v-bind:src="'storage/fotos/noimage.jpg'" style="width:150px; height:150px; border-radius:50%; margin-bottom:25px; margin-right:25px; float:left;"></td>
             </div>
         </div>
 
