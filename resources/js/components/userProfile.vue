@@ -67,19 +67,23 @@ export default {
             this.showSuccess = false;
             this.editingProfile = true;
         },
-        profileModif: function(user){
+
+        profileModif: function(){
             this.showSuccess = true;
             this.editingProfile = false;
-            this.successMessage = 'User successfully modified';
+            this.successMessage = 'User successfully modified'
         },
+
         profileErroPass: function(){
             this.showFailure = true;
             this.failMessage = 'Wrong Old Password'
         },
+
         profileErroPassEqual: function(){
             this.showFailure = true;
             this.failMessage = 'New Password and Old Password are same'
         },
+
         profileErroPassDiff: function(){
             this.showFailure = true;
             this.failMessage = 'Password and confirm password are different'
@@ -87,6 +91,7 @@ export default {
         cancelEdit: function(){
             this.editingProfile = false;
         },
+
         
     },
     components:{

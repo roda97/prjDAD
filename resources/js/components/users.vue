@@ -69,6 +69,7 @@
 <script type="text/javascript">
 import UserList from "./userList.vue";
 //import UserEdit from "./userEdit.vue";
+
 export default {
     data: function() {
         return {
@@ -152,12 +153,14 @@ export default {
                 this.showSuccess = false;
             });
         },
+
         getUsers: function(){
             axios.get('api/users')
                 .then(response=>{
                     console.log(response)
                     this.users = response.data.data;});
         },
+
         activateUser: function(user){
             axios.put('api/users/activate/'+user.id)
                 .then(response => {
@@ -170,6 +173,8 @@ export default {
                     this.getResults(1);
                 });
         },
+
+
         /*childMessage: function(message) {
             this.showSuccess = true;
             this.successMessage = message;
