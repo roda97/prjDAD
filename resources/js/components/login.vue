@@ -67,7 +67,7 @@ export default {
                     //this.typeofmsg = "alert-success";
                     //this.message = "User authenticated correctly";
                     //this.showMessage = true;
-                    console.log(response.data)
+                    //console.log(response.data)
                     //console.log(response.data.data)
                     this.$router.push('/');
                     this.$toasted.show("User authenticated correctly");
@@ -78,7 +78,7 @@ export default {
                     this.typeofmsg = "alert-danger";
                     this.message = "Invalid credentials";
                     this.showMessage = true;
-                    console.log(error);
+                    //console.log(error);
                 });
         }
     }

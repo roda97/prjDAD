@@ -39,7 +39,7 @@ export default {
         getAllMovements: function(){
             axios.get('api/users/stats/all')
             .then(response =>{
-                console.log(response.data)
+                //console.log(response.data)
                 this.chartData1 = response.data;
                 this.statsTotalExpInc = true;
             })
@@ -48,7 +48,7 @@ export default {
         getAllUsersInatives: function(){
             axios.get('api/users/statsInative')
             .then(response =>{
-                console.log(response.data)
+                //console.log(response.data)
                 this.chartData2 = response.data;
                 this.statsInative = true;
             })

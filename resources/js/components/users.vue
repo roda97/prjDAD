@@ -142,7 +142,7 @@ export default {
             this.showSuccess = false;
             axios.post('api/users/filter?page='+page , this.search)
               .then(response=>{
-                console.log(response.data.data)
+                //console.log(response.data.data)
                 this.users = response.data.data;
                 this.page = response.data.meta.current_page;
                 //this.last = response.data.meta.last_page;
@@ -157,7 +157,7 @@ export default {
         getUsers: function(){
             axios.get('api/users')
                 .then(response=>{
-                    console.log(response)
+                    //console.log(response)
                     this.users = response.data.data;});
         },
 

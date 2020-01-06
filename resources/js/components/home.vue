@@ -54,7 +54,7 @@ import MovementCredit from "./movements/movementCredit.vue";
                     this.$socket.emit('updateIncome', response.data.data);
                     //console.log(response.data)  
                 }).catch(error => { 
-                    console.log(error.response.data)
+                    //console.log(error.response.data)
                     this.showFailure = false; //tenho de colocar primeiro a false e depois a true para atualizar o valor das mensagens
                     this.showFailure = true;
                     this.showCredit = true;

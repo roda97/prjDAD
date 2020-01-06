@@ -98,13 +98,13 @@ export default {
             let image = event.target.files[0];
             this.photo = image.name;
             this.createImage(image);
-            console.log(this.photo)
+            //console.log(this.photo)
         },
         createImage: function(file){
             let reader = new FileReader();
             reader.onload = (e) => {
                 this.photoBase64 = e.target.result;
-                console.log(this.photoBase64)
+                //console.log(this.photoBase64)
             };
             reader.readAsDataURL(file);
             
@@ -144,6 +144,7 @@ export default {
                     'name': this.name,
                     'photo': this.photo,
                     'nif':this.nif,
+                    'base64':this.photoBase64,
                     'password': this.password,
                     'userId': this.user.id,
                 }) 

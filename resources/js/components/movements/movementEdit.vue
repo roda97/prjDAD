@@ -72,7 +72,7 @@ export default{
     },
     methods:{
         saveMovement(){
-            console.log(this.currentMovement)   
+            //console.log(this.currentMovement)   
             this.$emit('save-movement', this.currentMovement)
         },
         cancelEdit(){

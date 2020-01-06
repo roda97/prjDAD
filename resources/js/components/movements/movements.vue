@@ -151,7 +151,7 @@ export default {
                     this.currentMovement = null;
                     this.editingMovement = false;
                 }).catch(error => {                        
-                    console.log(error);
+                    //console.log(error);
                     this.editingMovement = true;
                     this.showSuccess = false;
                     this.showFailure = true;
@@ -196,7 +196,7 @@ export default {
             .then(response => {
                 //console.log(movement);
                 //this.addCredit(movement);
-                console.log(response.data.data); 
+                //console.log(response.data.data); 
                 this.showFailure = false;
                 //this.showSuccess = true;
                 //this.successMessage = "Debit movement created with success";
@@ -207,7 +207,7 @@ export default {
                 //this.movements = response.data.data;
                 //console.log(response.data.data)  
             }).catch(error => {                        
-                console.log(error)
+                //console.log(error)
                 this.showFailure = true;
                 this.showSuccess = false;
                 this.showDebit = true;
@@ -319,14 +319,14 @@ export default {
                     }else{
                         this.listMovements = true;
                         this.showFailure = false;
-                        console.log(response.data.data)
+                        //console.log(response.data.data)
                         this.movements = response.data.data;
                         this.page = response.data.meta.current_page;
                         this.total = response.data.meta.total;
                     }                        
                 })
                 .catch(error => {                        
-                    console.log(error.response.data);
+                    //console.log(error.response.data);
                     if(error.response.data == "Email doesn't exist!"){
                         this.listMovements = false;
                         this.showFailure = true;
@@ -345,7 +345,7 @@ export default {
                     this.balance = response.data;
                 })
                 .catch(error => {                        
-                    console.log(error);
+                    //console.log(error);
                 })
         },
 

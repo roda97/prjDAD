@@ -51,7 +51,7 @@ export default {
                     this.message =
                         "Logout incorrect. But local credentials were discarded";
                     this.showMessage = true;
-                    console.log(error);
+                    //console.log(error);
                 });
         }
     }

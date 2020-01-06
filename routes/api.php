@@ -60,8 +60,7 @@ Route::get('movements/stats/categoryExpense/{id}', 'MovementControllerAPI@getCat
 Route::get('movements/stats/categoryIncomeMoney/{id}', 'MovementControllerAPI@getCategoryIncomeMoney');
 Route::get('movements/stats/categoryExpenseMoney/{id}', 'MovementControllerAPI@getCategoryExpenseMoney');
 Route::get('movements/stats/all', 'MovementControllerAPI@getAllMovements');
-
-
+Route::middleware('auth:api')->get('movements/me', 'MovementControllerAPI@myMovements');
 
 //wallets
 Route::get('wallets', 'WalletControllerAPI@index');

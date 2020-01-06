@@ -182,27 +182,27 @@ class UserControllerAPI extends Controller
         }
 
         $user->name = $request->name;
-        
-            $user->nif = $request->nif;
+    
+        $user->nif = $request->nif;
 
-            if (!Storage::disk('public')->exists('fotos/' . $request->photo)) {
-                $photo = $request->photo;
-                $photoB64 = $request->base64;
-                $base64_string = explode(',', $photoB64);
-                $imageBin = base64_decode($base64_string[1]);
-                Storage::disk('public')->delete('fotos/' . $user->photo);
-                Storage::disk('public')->put('fotos/' . $request->photo, $imageBin);
-            }
-            $user->photo = $request->photo; 
+        if (!Storage::disk('public')->exists('fotos/' . $request->photo)) {
+            $photo = $request->photo;
+            $photoB64 = $request->base64;
+            $base64_string = explode(',', $photoB64);
+            $imageBin = base64_decode($base64_string[1]);
+            Storage::disk('public')->delete('fotos/' . $user->photo);
+            Storage::disk('public')->put('fotos/' . $request->photo, $imageBin);
+        }
+        $user->photo = $request->photo; 
 
 
-            if (Hash::check($request->oldpassword, $user->password)) {
-              //  console.log("Password Igual");
-                $user->password = Hash::make($request->password);
-                $user->save(); 
-                return new UserResource($user);
-            }
-            return response()->json('Old Password is incorrect !', 402);    
+        if (Hash::check($request->oldpassword, $user->password)) {
+            //  console.log("Password Igual");
+            $user->password = Hash::make($request->password);
+            $user->save(); 
+            return new UserResource($user);
+        }
+        return response()->json('Old Password is incorrect !', 402);    
     }
 
 

@@ -75,11 +75,11 @@ const app = new Vue({
     router,
     store,
     created() {
-        console.log("-----");
-        console.log(this.$store.state.user);
+        //console.log("-----");
+        //console.log(this.$store.state.user);
         //this.$store.commit("loadDepartments");
         this.$store.commit("loadTokenAndUserFromSession");
-        console.log(this.$store.state.user);
+        //console.log(this.$store.state.user);
         if(this.$store.state.user){
             this.$socket.emit('login', this.$store.state.user); //é necessário fazer isto aqui pois no caso de o utilizador dar um refresh à página, receber o valor do user e do socket e não um socket vazio
         }
@@ -87,7 +87,7 @@ const app = new Vue({
     sockets:{
         updateMovements(data){ 
             //console.log(data)
-            console.log(data.user.email)
+            //console.log(data.user.email)
             //console.log(data.aux)
             if(data.aux == 0){
                 this.$toasted.show("You received an movement!");
@@ -97,8 +97,8 @@ const app = new Vue({
             }
         },
         updateIncome(data){ 
-            console.log(data.user.emailIncome)
-            console.log(data.aux)
+            //console.log(data.user.emailIncome)
+            //console.log(data.aux)
             if(data.aux == 0){
                 this.$toasted.show("You received an income movement!");
             }else{
@@ -137,14 +137,14 @@ router.beforeEach((to, from, next) => {
     if(to.name == "movements" ){     
         if (!app.$store.state.user) {
             next("/login");
-            console.log(app.$store.state.user)
+            //console.log(app.$store.state.user)
             return;
         }
     }
     if(to.name == "movementsStatistics" ){     
         if (!app.$store.state.user) {
             next("/login");
-            console.log(app.$store.state.user)
+            //console.log(app.$store.state.user)
             return;
         }
     }

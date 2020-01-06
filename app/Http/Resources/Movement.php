@@ -14,7 +14,7 @@ class Movement extends Resource
      */
     public function toArray($request)
     {
-        if ($this->transferWallet){
+        if (isset($this->transferWallet)){
             $email=$this->transferWallet->email;
             //$wallet=$this->transferWallet;
             $user_photo=$this->transferWallet->user->photo;
@@ -24,7 +24,7 @@ class Movement extends Resource
             //$wallet=null;
             $user_photo=null;
         }
-        if ($this->category)
+        if (isset($this->category))
             $category_name=$this->category->name;
         else
             $category_name=null;
@@ -49,7 +49,7 @@ class Movement extends Resource
             'email' => $email,
             'category_name' => $category_name,
             'user_photo' => $user_photo,
-            'emailIncome' => $this->creditWallet->email
+            'emailIncome' => (isset($this->creditWallet))?$this->creditWallet->email:''
             //'wallet' => $wallet,
         ];
     }
