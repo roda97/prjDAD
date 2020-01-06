@@ -17,8 +17,8 @@
 
         <div v-if="statsCategoryIncome" class="container">
             <h4>Total Number of Incomes By Category:</h4>
-            <h6>There are {{this.text[0]}} uncategorized incomes with a total number of {{ this.text[1] }}
-                that are not included in the chart.</h6>
+            <h6>In a total number of {{ this.text[1] }},
+                there are {{this.text[0]}} uncategorized incomes that are not included in the chart.</h6>
             <br>
             <stats-category-income :chartData="chartData3" :labels="labels"/>
         </div>  
@@ -27,8 +27,8 @@
 
         <div v-if="statsCategoryExpense" class="container">
             <h4>Total Number of Expenses By Category:</h4>
-            <h6>There are {{this.text2[0]}} uncategorized expenses with a total number of {{ this.text2[1] }}
-                that are not included in the chart.</h6>
+            <h6>In a total number of {{ this.text2[1] }},
+                there are {{this.text2[0]}} uncategorized expenses that are not included in the chart.</h6>
             <br>
             <stats-category-expense :chartData="chartData4" :labels="labels2"/>
         </div> 
