@@ -35,7 +35,8 @@
                 <strong>{{ failMessage }}</strong>
         </div>
 
-        <profile-edit :user="user" v-if="editingProfile" v-bind:currentUser="currentUser" @cancel-edit="cancelEdit" @profile-modif="profileModif" @profile-erro-pass-equal="profileErroPassEqual" @profile-erro-pass-diff="profileErroPassDiff" @profile-erro-pass="profileErroPass"></profile-edit>
+        <profile-edit :user="user" v-if="editingProfile" @cancel-edit="cancelEdit" @profile-modif="profileModif" @profile-erro-pass-equal="profileErroPassEqual" @profile-erro-pass-diff="profileErroPassDiff" @profile-erro-pass="profileErroPass"
+         @profile-invalide-name="erroname" @profile-invalide-password="erropass" @profile-invalide-nif="erronif" @profile-invalide-image="erroimage"></profile-edit>
 
     </div>
 </template>
@@ -57,12 +58,12 @@ export default {
             showSuccess: false,
             showFailure: false,
             successMessage: '',
-            failMessage: ''
+            failMessage: '', 
+
         }
     },
     methods:{
-        profileEdit: function(user){
-            this.currentUser = Object.assign({},user);
+         profileEdit: function(user){
             this.showFailure = false;
             this.showSuccess = false;
             this.editingProfile = true;
@@ -70,34 +71,66 @@ export default {
 
         profileModif: function(){
             this.showSuccess = true;
+            this.showFailure = false;
             this.editingProfile = false;
-            this.successMessage = 'User successfully modified'
+            this.successMessage = 'User successfully modified';
+            this.user= this.$store.state.user; 
         },
 
         profileErroPass: function(){
             this.showFailure = true;
+            this.showSuccess = false;
             this.failMessage = 'Wrong Old Password'
         },
 
         profileErroPassEqual: function(){
             this.showFailure = true;
+            this.showSuccess = false;
             this.failMessage = 'New Password and Old Password are same'
         },
 
         profileErroPassDiff: function(){
             this.showFailure = true;
+            this.showSuccess = false;
             this.failMessage = 'Password and confirm password are different'
         },
         cancelEdit: function(){
             this.editingProfile = false;
         },
 
+        erroname: function(){
+            this.showFailure = true;
+            this.showSuccess = false;
+            this.failMessage = "The name format is invalid.";
+        },
+
+        erropass: function(){
+            this.showFailure = true;
+            this.showSuccess = false;
+            this.failMessage = "The password must be at least 3 characters.";
+        },
+
+        erronif: function(){
+            this.showFailure = true;
+            this.showSuccess = false;
+            this.failMessage = "The nif must be 9 digits.";
+        },
+
+        erroimage: function(){
+            this.showFailure = true;
+            this.showSuccess = false;
+            this.failMessage = "Invalide Image!";
+        },
+
+    
+            
         
     },
     components:{
         'profile-edit':ProfileEdit
     },
     mounted() {
+
     }
 };
 </script>

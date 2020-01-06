@@ -62,7 +62,7 @@ const routes = [
     { path: "/login", component: Login, name: "login" },
     { path: "/logout", component: Logout, name: "logout" },
     { path: "/movements", component: Movimento, name: "movements" },
-    { path: "/movements/statistics", component: MovementStatistics, name: "movementsStatistics" },
+    { path: "/movements/statistics", component: MovementStatistics, name: "movementsStatistics" }
 
 ]
 
