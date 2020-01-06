@@ -28,7 +28,7 @@ export default {
     },
     methods:{
         getAllMovements: function(){
-            axios.get('api/movements/stats/all')
+            axios.get('api/users/stats/all')
             .then(response =>{
                 console.log(response.data)
                 this.chartData1 = response.data;

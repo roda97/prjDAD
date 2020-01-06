@@ -4,7 +4,7 @@ import { Bar } from 'vue-chartjs'
 export default {
   extends: Bar,
 
-  props:['chartData', 'labels'],
+  props:['chartData', 'labels', 'text'],
 
     mounted () {
         this.renderChart({
@@ -14,7 +14,7 @@ export default {
                 backgroundColor: '#483D8B',
                 data: this.chartData
               },
-            ]
+            ],
         }, 
         {
             responsive: true, 

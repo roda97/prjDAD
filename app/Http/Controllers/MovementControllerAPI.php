@@ -64,7 +64,6 @@ class MovementControllerAPI extends Controller
             //$movements = MovementResource::collection($movements->orderby('date','desc')->paginate(10));
             $movements = MovementResource::collection($movements->orderby('date','desc')->where(function($q) use($user){ //tenho que usar este "use($user)" para a funçao ter conhecimento do valor da mesma
                 $q->where('wallet_id', $user);
-                //->orWhere('transfer_wallet_id', $user);
                 })->paginate(10)); //este where function é o que me permite juntar as condiçoes do search e as condições daquilo a que o utilizador pode ver
         }
         else{    
@@ -73,6 +72,13 @@ class MovementControllerAPI extends Controller
         }
 
         return $movements;
+    }
+
+    public function myMovements(Request $request)
+    {
+        if (auth()->user() &&  auth()->user()->type == "u") {
+            return MovementResource::collection($request->user()->wallet->movements);
+        }
     }
 
     /**
@@ -421,10 +427,14 @@ class MovementControllerAPI extends Controller
 
     public function getCategoryIncome($id){
         $categories = DB::table('categories')->select('name', 'id')->where('type','i')->get();
+        //outros -> quando é null (não tem categoria)
+        $outros = MovementResource::collection(Movement::where('wallet_id', $id)->where('type','i')->where('category_id', null)->get());
 
+        $countAllIncomes = 0;
         for ($i=0; $i < sizeof($categories); $i++){
             $totalIncomes[$i] = MovementResource::collection(Movement::where('wallet_id', $id)->where('category_id', $categories[$i]->id)->where('type', 'i')->get());
             $countIncomes = sizeof($totalIncomes[$i]);
+            $countAllIncomes += sizeof($totalIncomes[$i]);
             $totalCategories[$i]['category'] = $categories[$i]->name;
             $totalCategories[$i]['total'] = $countIncomes;
         }
@@ -433,9 +443,16 @@ class MovementControllerAPI extends Controller
             $labels[] = $totalCategories[$i]['category'];
             $rows[] = $totalCategories[$i]['total'];
         }
+
+        $outros = sizeof($outros);
+
+        $totals[0] = $outros;
+        $totals[1] = $countAllIncomes+$outros;
+
         $data = [
             'labels' => $labels,
-            'rows' => $rows
+            'rows' => $rows,
+            'totals' => $totals
         ];
 
         return $data;
@@ -443,10 +460,14 @@ class MovementControllerAPI extends Controller
 
     public function getCategoryExpense($id){
         $categories = DB::table('categories')->select('name', 'id')->where('type','e')->get();
+        //outros -> quando é null (não tem categoria)
+        $outros = MovementResource::collection(Movement::where('wallet_id', $id)->where('type','e')->where('category_id', null)->get());
 
+        $countAllExpenses = 0;
         for ($i=0; $i < sizeof($categories); $i++){
             $totalExpenses[$i] = MovementResource::collection(Movement::where('wallet_id', $id)->where('category_id', $categories[$i]->id)->where('type', 'e')->get());
             $countExpenses = sizeof($totalExpenses[$i]);
+            $countAllExpenses += sizeof($totalExpenses[$i]);
             $totalCategories[$i]['category'] = $categories[$i]->name;
             $totalCategories[$i]['total'] = $countExpenses;
         }
@@ -455,9 +476,16 @@ class MovementControllerAPI extends Controller
             $labels[] = $totalCategories[$i]['category'];
             $rows[] = $totalCategories[$i]['total'];
         }
+
+        $outros = sizeof($outros);
+
+        $totals[0] = $outros;
+        $totals[1] = $countAllExpenses+$outros;
+
         $data = [
             'labels' => $labels,
-            'rows' => $rows
+            'rows' => $rows,
+            'totals' => $totals
         ];
 
         return $data;
@@ -466,13 +494,20 @@ class MovementControllerAPI extends Controller
 
     public function getCategoryIncomeMoney($id){
         $categories = DB::table('categories')->select('name', 'id')->where('type','i')->get();
-
+        
+        $countAllIncomesMoney = 0;
+        $countAllOutros = 0;
         for ($i=0; $i < sizeof($categories); $i++){
             $totalIncomes[$i] = MovementResource::collection(Movement::select('value')->where('wallet_id', $id)->where('category_id', $categories[$i]->id)->where('type', 'i')->get());
             $countIncomesMoney = 0;
 
+            //outros -> quando é null (não tem categoria)
+            $outros[$i] = MovementResource::collection(Movement::where('wallet_id', $id)->where('type','i')->where('category_id', null)->get());
+
             for($j=1; $j < count($totalIncomes[$i]); $j++){
                 $countIncomesMoney += $totalIncomes[$i][0]->value;
+                $countAllIncomesMoney += $totalIncomes[$i][0]->value;
+                $countAllOutros += $outros[$i][0]->value;
             }
 
             $totalCategories[$i]['category'] = $categories[$i]->name;
@@ -483,9 +518,14 @@ class MovementControllerAPI extends Controller
             $labels[] = $totalCategories[$i]['category'];
             $rows[] = $totalCategories[$i]['total'];
         }
+
+        $totals[0] = number_format((float)$countAllOutros, 2, '.', '');
+        $totals[1] = number_format((float)$countAllIncomesMoney+$countAllOutros, 2, '.', '');
+
         $data = [
             'labels' => $labels,
-            'rows' => $rows
+            'rows' => $rows,
+            'totals' => $totals
         ];
 
         return $data;
@@ -493,13 +533,19 @@ class MovementControllerAPI extends Controller
 
     public function getCategoryExpenseMoney($id){
         $categories = DB::table('categories')->select('name', 'id')->where('type','e')->get();
-
+        
+        $countAllExpensesMoney = 0;
+        $countAllOutros = 0;
         for ($i=0; $i < sizeof($categories); $i++){
-            $totalExpenses[$i] = MovementResource::collection(Movement::where('wallet_id', $id)->where('category_id', $categories[$i]->id)->where('type', 'e')->get());
+            $totalExpenses[$i] = MovementResource::collection(Movement::select('value')->where('wallet_id', $id)->where('category_id', $categories[$i]->id)->where('type', 'e')->get());
             $countExpensesMoney = 0;
+            //outros -> quando é null (não tem categoria)
+            $outros[$i] = MovementResource::collection(Movement::where('wallet_id', $id)->where('type','e')->where('category_id', null)->get());
 
             for($j=1; $j < count($totalExpenses[$i]); $j++){
                 $countExpensesMoney += $totalExpenses[$i][0]->value;
+                $countAllExpensesMoney += $totalExpenses[$i][0]->value;
+                $countAllOutros += $outros[$i][0]->value;
             }
 
             $totalCategories[$i]['category'] = $categories[$i]->name;
@@ -510,26 +556,20 @@ class MovementControllerAPI extends Controller
             $labels[] = $totalCategories[$i]['category'];
             $rows[] = $totalCategories[$i]['total'];
         }
+
+        //$outros = number_format((float)$countAllOutros, 2, '.', '');
+        //$total = number_format((float)$countExpensesMoney+$countAllOutros, 2, '.', '');
+
+        $totals[0] = number_format((float)$countAllOutros, 2, '.', '');
+        $totals[1] = number_format((float)$countAllExpensesMoney+$countAllOutros, 2, '.', '');
+
         $data = [
             'labels' => $labels,
-            'rows' => $rows
+            'rows' => $rows,
+            'totals' => $totals
         ];
 
         return $data;
 
-    }
-
-    public function getAllMovements(){
-        $incomes = MovementResource::collection(Movement::where('type','i')->get());
-        $expenses = MovementResource::collection(Movement::where('type','e')->get());
-
-        $totalIncome = sizeof($incomes);
-        $totalExpense= sizeof($expenses);
-
-
-        $totals[0] = $totalIncome;
-        $totals[1] = $totalExpense;
-        
-        return $totals;
     }
 }

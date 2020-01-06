@@ -203,6 +203,7 @@ export default {
                 this.showDebit = false;
                 this.$toasted.show("Debit movement created with success!");
                 this.$socket.emit('updateMovements', response.data.data);
+                this.$socket.emit('updateMovementsUserThatTransfer', response.data.data);
                 //this.movements = response.data.data;
                 //console.log(response.data.data)  
             }).catch(error => {                        
@@ -354,17 +355,21 @@ export default {
         }*/
     },
     sockets:{
+        updateMovementsUserThatTransfer(data){ 
+            this.getResults(1);
+            this.getBalance();
+        },
         updateMovements(data){ 
-            console.log(data);
-            console.log(data.user);
+            //console.log(data);
+            //console.log(data.user);
             //this.movements = this.movements + data;
             this.getResults(1);
             this.getBalance();
         },
         updateIncome(data){ 
             //console.log(data.user.emailIncome)
-            console.log(data.auxiliar)
-            console.log(data.user)
+            //console.log(data.auxiliar)
+            //console.log(data.user)
             //this.movements = this.movements + data.user;
             this.getResults(1);
             this.getBalance();

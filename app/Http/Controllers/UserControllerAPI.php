@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Provider\Image;
-use Illuminate\Http\Request;
-use Illuminate\Contracts\Support\Jsonable;
-use Laravel\Passport\HasApiTokens;
-use App\Http\Resources\User as UserResource;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use function GuzzleHttp\Promise\all;
-use App\Http\Controllers\Controller;
-
+use Hash;
 use App\User;
 use App\Wallet;
+use App\Movement;
 use App\StoreUserRequest;
-use Hash;
+use Faker\Provider\Image;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Laravel\Passport\HasApiTokens;
+
+use App\Http\Controllers\Controller;
+use function GuzzleHttp\Promise\all;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\Support\Jsonable;
+use App\Http\Resources\User as UserResource;
 
 class UserControllerAPI extends Controller
 {
@@ -212,6 +213,16 @@ class UserControllerAPI extends Controller
         $user->save();
         //return response()->json($user->name,402);
         return new UserResource($user);
+    }
+
+    public function getAllMovements(){
+        $totalIncome = Movement::where('type','i')->count();
+        $totalExpense = Movement::where('type','e')->count();
+
+        $totals[0] = $totalIncome;
+        $totals[1] = $totalExpense;
+        
+        return $totals;
     }
 
 }

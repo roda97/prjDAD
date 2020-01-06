@@ -12,6 +12,9 @@ Vue.use(Toasted, {
     type: "info"
 }); 
 
+import VueApexCharts from 'vue-apexcharts'
+Vue.component('apexchart', VueApexCharts)
+
 import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
     debug: true,

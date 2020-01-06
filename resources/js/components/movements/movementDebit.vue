@@ -40,33 +40,35 @@
             </div>
         </div>   
 
-        <div v-if="this.currentMovement.type_payment == 'bt'" > 
-            <div class="form-group">
-                <label for="inputIBAN">IBAN:</label>
-                <input
-                    type="text" class="form-control" v-model="currentMovement.iban"
-                    name="iban" id="inputIban" 
-                    placeholder="Insert IBAN" required/>
-	        </div>
-        </div>
+        <div v-if="this. this.currentMovement.transfer == '0'">
+            <div v-if="this.currentMovement.type_payment == 'bt'" > 
+                <div class="form-group">
+                    <label for="inputIBAN">IBAN:</label>
+                    <input
+                        type="text" class="form-control" v-model="currentMovement.iban"
+                        name="iban" id="inputIban" 
+                        placeholder="Insert IBAN" required/>
+                </div>
+            </div>
 
-        <div v-if="this.currentMovement.type_payment == 'mb'" > 
-            <div class="form-group">
-                <label for="inputMbEntityCode">MB entity code:</label>
-                <input
-                    type="text" class="form-control" v-model="currentMovement.mb_entity_code"
-                    name="mbEntityCode" id="inputMbEntityCode" 
-                    placeholder="Insert MB entity code (5 digits)" required/>
-	        </div>
-            
-            <div class="form-group">
-                <label for="inputMbPaymentReference">MB payment reference:</label>
-                <input
-                    type="text" class="form-control" v-model="currentMovement.mb_payment_reference"
-                    name="mbPaymentReference" id="inputMbPaymentReference" 
-                    placeholder="Insert MB payment reference (9 digits)" required/>
-	        </div>
-        </div>
+            <div v-if="this.currentMovement.type_payment == 'mb'" > 
+                <div class="form-group">
+                    <label for="inputMbEntityCode">MB entity code:</label>
+                    <input
+                        type="text" class="form-control" v-model="currentMovement.mb_entity_code"
+                        name="mbEntityCode" id="inputMbEntityCode" 
+                        placeholder="Insert MB entity code (5 digits)" required/>
+                </div>
+                
+                <div class="form-group">
+                    <label for="inputMbPaymentReference">MB payment reference:</label>
+                    <input
+                        type="text" class="form-control" v-model="currentMovement.mb_payment_reference"
+                        name="mbPaymentReference" id="inputMbPaymentReference" 
+                        placeholder="Insert MB payment reference (9 digits)" required/>
+                </div>
+            </div>
+        </div> 
 
         <div class="form-group">
 	        <label for="inputValue">Value to Debit:</label>
@@ -92,17 +94,6 @@
             <option  v-for="movement in category_name" :key="movement" :value="movement">{{ movement }}</option>
             </select>
         </div>
-
-         <!--<select v-model="testVal">
-        <option v-for="item in test" :value="item">{{item}}</option>
-    </select>
-
-    data(){
-        return{
-          test: ['one', 'two', 'three'],
-          testVal: null
-        }
-    },-->
 
         <div class="form-group">
             <label for="inputDescription">Description:</label>
