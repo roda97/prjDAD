@@ -11,6 +11,7 @@
     <li><router-link to="/users/newAccount" v-show="!this.$store.state.user">Register </router-link></li>
     <li><router-link to="/users/OperadorAdmin" v-show="this.$store.state.user && this.$store.state.user.type == 'a'">Register Operator/Admin </router-link></li>
     <li><router-link to="/users/profile" v-show="this.$store.state.user">My profile </router-link> </li>
+    <li><router-link to="/users/statistics" v-show="this.$store.state.user && this.$store.state.user.type == 'a'">Statistics </router-link> </li>
     <li><router-link to="/movements" v-show="this.$store.state.user && this.$store.state.user.type == 'u'">My virtual wallet </router-link></li> 
     <li><router-link to="/movements/statistics" v-show="this.$store.state.user && this.$store.state.user.type == 'u'">Statistics </router-link></li> 
     <li><router-link to="/login" v-show="!this.$store.state.user">Login</router-link> </li>

@@ -56,6 +56,7 @@ Route::get('movements/stats/categoryIncome/{id}', 'MovementControllerAPI@getCate
 Route::get('movements/stats/categoryExpense/{id}', 'MovementControllerAPI@getCategoryExpense');
 Route::get('movements/stats/categoryIncomeMoney/{id}', 'MovementControllerAPI@getCategoryIncomeMoney');
 Route::get('movements/stats/categoryExpenseMoney/{id}', 'MovementControllerAPI@getCategoryExpenseMoney');
+Route::get('movements/stats/all', 'MovementControllerAPI@getAllMovements');
 
 
 //wallets
