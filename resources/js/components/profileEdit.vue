@@ -64,7 +64,6 @@
                 <button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
                 <strong>{{ successMessage }}</strong>
             </div>
-
             <div class="alert alert-danger" v-if="showFailure">
                 <button type="button" class="close-btn" v-on:click="showFailure=false">&times;</button>
                 <strong>{{ failMessage }}</strong>
@@ -79,6 +78,7 @@ export default {
         return{
             name:this.user.name,
             photo:"",
+            photoBase64: "",
             nif:this.user.nif,
             password:"",
             confirmpassword:"",
@@ -94,7 +94,7 @@ export default {
            if(this.password == ''){
                 axios.patch('api/users/ProfilewithoutPass', {
                     'name': this.name,
-                    'photo': this.photo,
+                    'photo': this.user.photo,
                     'nif':this.nif,
                     'userId': this.user.id,
                 }) 
@@ -137,11 +137,9 @@ export default {
                 }
             }  
         },
-
         cancelEdit: function(){
             this.$emit('cancel-edit')
         },
-
         onImageChange: function(event){
             let image = event.target.files[0];
             this.user.photo = image.name;
@@ -159,5 +157,4 @@ export default {
 }
 </script>
 <style>
-
 </style>
