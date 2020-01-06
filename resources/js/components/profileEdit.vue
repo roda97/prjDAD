@@ -11,12 +11,13 @@
                     placeholder="Fullname" value="" />
             </div>
 
-            <div class="form-group">
+         <div class="form-group">
                 <label for="inputPhoto">Photo</label>
                 <input
                 type="file"
                 class="form-control"
                 name="photo"
+                accept="image/x-png,image/gif,image/jpeg" 
                 id="inputPhoto"
                 placeholder="upload Photo"
                 v-on:change="onImageChange"
@@ -78,7 +79,7 @@ export default {
     data:function(){
         return{
             name:this.user.name,
-            photo:"",
+            photo:this.user.photo,
             nif:this.user.nif,
             password:"",
             confirmpassword:"",
@@ -86,24 +87,56 @@ export default {
             //showSuccess: false,
             //showFailure: false,
             successMessage: '',
-            failMessage: ''
+            failMessage: '',
+            photoBase64:'',
+            message:''
         }
     },
     methods:{
+
+        onImageChange: function(event){
+            let image = event.target.files[0];
+            this.photo = image.name;
+            this.createImage(image);
+            console.log(this.photo)
+        },
+        createImage: function(file){
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.photoBase64 = e.target.result;
+                console.log(this.photoBase64)
+            };
+            reader.readAsDataURL(file);
+            
+        },
+
+        
         saveProfile: function(){
+
            if(this.password == ''){
                 axios.patch('api/users/ProfilewithoutPass', {
                     'name': this.name,
                     'photo': this.photo,
                     'nif':this.nif,
-                    'userId': this.user.id,
+                    'base64':this.photoBase64,
+                    'userId': this.user.id
                 }) 
                 .then(response=>{	
                     this.$store.commit('setUser', response.data.data);
                     this.$emit('profile-modif');
                 })
                 .catch(error =>{
-                    console.log(error.response.data);
+                    console.error(error)
+                   if(error.response.data.errors.name){
+                        this.$emit('profile-invalide-name');
+                    }else if(error.response.data.errors.nif){
+                        this.$emit('profile-invalide-nif');
+                    }else if (error.response.data.errors.password){
+                        this.$emit('profile-invalide-password');
+                    }else if (error.response.data.errors.photo){
+                        this.$emit('profile-invalide-image');
+                }
+                    this.$emit('profile-erro');
                 })
            }else if(this.password == this.confirmpassword && this.password != this.oldpassword ){
                 axios.patch('api/users/ProfilewithPass', {
@@ -115,18 +148,24 @@ export default {
                     'userId': this.user.id,
                 }) 
                 .then(response=>{	
-                    if(response.data == "Old Password is incorrect !")
-                        {
-                            this.$emit('profile-erro-pass-equal');
-                        }
-                    else{
                     this.$store.commit('setUser', response.data.data);
-                    this.$emit('profile-modif');		  
-                        }            
-
+                    this.$emit('profile-modif');
                 })
                 .catch(error =>{
-                   // console.log(error.response.data); 
+                   if(error.response.data == "Old Password is incorrect !")
+                        {
+                            this.$emit('profile-erro-pass');
+                        }
+                    if(error.response.data.errors.name){
+                        this.$emit('profile-invalide-name');
+                    }else if(error.response.data.errors.nif){
+                        this.$emit('profile-invalide-nif');
+                    }else if (error.response.data.errors.password){
+                        this.$emit('profile-invalide-password');
+                    }else if (error.response.data.errors.image){
+                        this.$emit('profile-invalide-image');
+                }    
+                    this.$emit('profile-erro');
                 })
             }
             else {
@@ -141,20 +180,6 @@ export default {
         cancelEdit: function(){
             this.$emit('cancel-edit')
         },
-
-        onImageChange: function(event){
-            let image = event.target.files[0];
-            this.user.photo = image.name;
-            this.createImage(image);
-        },
-        createImage: function(file){
-            let reader = new FileReader();
-            reader.onload = (e) => {
-                this.user.photoBase64 = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-        
     }
 }
 </script>

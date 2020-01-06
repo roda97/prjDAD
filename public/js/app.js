@@ -3732,12 +3732,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['user'],
   data: function data() {
     return {
       name: this.user.name,
-      photo: "",
+      photo: this.user.photo,
       nif: this.user.nif,
       password: "",
       confirmpassword: "",
@@ -3745,25 +3746,58 @@ __webpack_require__.r(__webpack_exports__);
       //showSuccess: false,
       //showFailure: false,
       successMessage: '',
-      failMessage: ''
+      failMessage: '',
+      photoBase64: '',
+      message: ''
     };
   },
   methods: {
-    saveProfile: function saveProfile() {
+    onImageChange: function onImageChange(event) {
+      var image = event.target.files[0];
+      this.photo = image.name;
+      this.createImage(image);
+      console.log(this.photo);
+    },
+    createImage: function createImage(file) {
       var _this = this;
+
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        _this.photoBase64 = e.target.result;
+        console.log(_this.photoBase64);
+      };
+
+      reader.readAsDataURL(file);
+    },
+    saveProfile: function saveProfile() {
+      var _this2 = this;
 
       if (this.password == '') {
         axios.patch('api/users/ProfilewithoutPass', {
           'name': this.name,
           'photo': this.photo,
           'nif': this.nif,
+          'base64': this.photoBase64,
           'userId': this.user.id
         }).then(function (response) {
-          _this.$store.commit('setUser', response.data.data);
+          _this2.$store.commit('setUser', response.data.data);
 
-          _this.$emit('profile-modif');
+          _this2.$emit('profile-modif');
         })["catch"](function (error) {
-          console.log(error.response.data);
+          console.error(error);
+
+          if (error.response.data.errors.name) {
+            _this2.$emit('profile-invalide-name');
+          } else if (error.response.data.errors.nif) {
+            _this2.$emit('profile-invalide-nif');
+          } else if (error.response.data.errors.password) {
+            _this2.$emit('profile-invalide-password');
+          } else if (error.response.data.errors.photo) {
+            _this2.$emit('profile-invalide-image');
+          }
+
+          _this2.$emit('profile-erro');
         });
       } else if (this.password == this.confirmpassword && this.password != this.oldpassword) {
         axios.patch('api/users/ProfilewithPass', {
@@ -3774,14 +3808,25 @@ __webpack_require__.r(__webpack_exports__);
           'password': this.password,
           'userId': this.user.id
         }).then(function (response) {
-          if (response.data == "Old Password is incorrect !") {
-            _this.$emit('profile-erro-pass-equal');
-          } else {
-            _this.$store.commit('setUser', response.data.data);
+          _this2.$store.commit('setUser', response.data.data);
 
-            _this.$emit('profile-modif');
+          _this2.$emit('profile-modif');
+        })["catch"](function (error) {
+          if (error.response.data == "Old Password is incorrect !") {
+            _this2.$emit('profile-erro-pass');
           }
-        })["catch"](function (error) {// console.log(error.response.data); 
+
+          if (error.response.data.errors.name) {
+            _this2.$emit('profile-invalide-name');
+          } else if (error.response.data.errors.nif) {
+            _this2.$emit('profile-invalide-nif');
+          } else if (error.response.data.errors.password) {
+            _this2.$emit('profile-invalide-password');
+          } else if (error.response.data.errors.image) {
+            _this2.$emit('profile-invalide-image');
+          }
+
+          _this2.$emit('profile-erro');
         });
       } else {
         if (this.password != this.confirmpassword) {
@@ -3793,22 +3838,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     cancelEdit: function cancelEdit() {
       this.$emit('cancel-edit');
-    },
-    onImageChange: function onImageChange(event) {
-      var image = event.target.files[0];
-      this.user.photo = image.name;
-      this.createImage(image);
-    },
-    createImage: function createImage(file) {
-      var _this2 = this;
-
-      var reader = new FileReader();
-
-      reader.onload = function (e) {
-        _this2.user.photoBase64 = e.target.result;
-      };
-
-      reader.readAsDataURL(file);
     }
   }
 });
@@ -4023,6 +4052,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -4045,30 +4075,59 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     profileEdit: function profileEdit(user) {
-      this.currentUser = Object.assign({}, user);
       this.showFailure = false;
       this.showSuccess = false;
       this.editingProfile = true;
     },
     profileModif: function profileModif() {
       this.showSuccess = true;
+      this.showFailure = false;
       this.editingProfile = false;
       this.successMessage = 'User successfully modified';
+      this.user = this.$store.state.user;
     },
     profileErroPass: function profileErroPass() {
       this.showFailure = true;
+      this.showSuccess = false;
       this.failMessage = 'Wrong Old Password';
     },
     profileErroPassEqual: function profileErroPassEqual() {
       this.showFailure = true;
+      this.showSuccess = false;
       this.failMessage = 'New Password and Old Password are same';
     },
     profileErroPassDiff: function profileErroPassDiff() {
       this.showFailure = true;
+      this.showSuccess = false;
       this.failMessage = 'Password and confirm password are different';
     },
     cancelEdit: function cancelEdit() {
       this.editingProfile = false;
+<<<<<<< Updated upstream
+=======
+      this.showSuccess = false;
+      this.showFailure = false;
+    },
+    erroname: function erroname() {
+      this.showFailure = true;
+      this.showSuccess = false;
+      this.failMessage = "Invalide Name!";
+    },
+    erropass: function erropass() {
+      this.showFailure = true;
+      this.showSuccess = false;
+      this.failMessage = "Invalide Password! ";
+    },
+    erronif: function erronif() {
+      this.showFailure = true;
+      this.showSuccess = false;
+      this.failMessage = "Invalide Nif!";
+    },
+    erroimage: function erroimage() {
+      this.showFailure = true;
+      this.showSuccess = false;
+      this.failMessage = "Invalide Image!";
+>>>>>>> Stashed changes
     }
   },
   components: {
@@ -90547,6 +90606,7 @@ var render = function() {
           attrs: {
             type: "file",
             name: "photo",
+            accept: "image/x-png,image/gif,image/jpeg",
             id: "inputPhoto",
             placeholder: "upload Photo"
           },
@@ -91031,13 +91091,17 @@ var render = function() {
       _vm._v(" "),
       _vm.editingProfile
         ? _c("profile-edit", {
-            attrs: { user: _vm.user, currentUser: _vm.currentUser },
+            attrs: { user: _vm.user },
             on: {
               "cancel-edit": _vm.cancelEdit,
               "profile-modif": _vm.profileModif,
               "profile-erro-pass-equal": _vm.profileErroPassEqual,
               "profile-erro-pass-diff": _vm.profileErroPassDiff,
-              "profile-erro-pass": _vm.profileErroPass
+              "profile-erro-pass": _vm.profileErroPass,
+              "profile-invalide-name": _vm.erroname,
+              "profile-invalide-password": _vm.erropass,
+              "profile-invalide-nif": _vm.erronif,
+              "profile-invalide-image": _vm.erroimage
             }
           })
         : _vm._e()
