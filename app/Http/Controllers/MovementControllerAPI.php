@@ -517,7 +517,33 @@ class MovementControllerAPI extends Controller
         return $data;
 
     }
+    
+    public function getAllMovements(){
+        $incomes = MovementResource::collection(Movement::where('type','i')->get());
+        $expenses = MovementResource::collection(Movement::where('type','e')->get());
 
+    public function getTypePayment($id){
+        $cash = MovementResource::collection(Movement::where('wallet_id', $id)->where('type_payment','c')->get());
+        //mb -> MB Payment
+        $mb = MovementResource::collection(Movement::where('wallet_id', $id)->where('type_payment','mb')->get());
+        //bt -> brank transfer
+        $bt = MovementResource::collection(Movement::where('wallet_id', $id)->where('type_payment','bt')->get());
+        //outros -> quando é null (é porque é uma transferencia e portanto um transfer email)
+        $outros = MovementResource::collection(Movement::where('wallet_id', $id)->where('type_payment', null)->get());
+
+        $totalCash = sizeof($cash);
+        $totalMB = sizeof($mb);
+        $totalBt = sizeof($bt);
+        $totalOutros = sizeof($outros);
+
+        $totals[0] = $totalCash;
+        $totals[1] = $totalMB;
+        $totals[2] = $totalBt;
+        $totals[3] = $totalOutros;
+        
+        return $totals;
+    }
+    
 }
 
 

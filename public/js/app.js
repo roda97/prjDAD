@@ -3318,6 +3318,7 @@ __webpack_require__.r(__webpack_exports__);
       statsCategoryExpenseMoney: false,
       labels: null,
       labels2: null,
+      labels3: null,
       labels4: null,
       labels5: null,
       rows: null
