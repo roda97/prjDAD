@@ -26,12 +26,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //Route::post('register', 'AuthControllerAPI@register')->name('register');
 
 ///users
-Route::get('users', 'UserControllerAPI@index');
-Route::get('wallets', 'WalletControllerAPI@index');
+//Route::get('users', 'UserControllerAPI@index');
+//Route::get('wallets', 'WalletControllerAPI@index');
 
 #------ Users
 Route::middleware('auth:api')->get('users', 'UserControllerAPI@index');
-Route::post('users/register', 'UserControllerAPI@store');
+Route::post('users/newAccount', 'UserControllerAPI@store');
 Route::middleware('auth:api')->post('users/OperatorAdmin', 'UserControllerAPI@storeOperatorAdmin'); 
 Route::post('users/filter', 'UserControllerAPI@index'); 
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');  
@@ -51,6 +51,12 @@ Route::post('movements/debit', 'MovementControllerAPI@addDebit');
 Route::post('movements/filter', 'MovementControllerAPI@index');
 Route::get('movements/{id}/balance', 'MovementControllerAPI@getBalance');
 Route::get('movements/stats/totals/{id}', 'MovementControllerAPI@getTotalsMovements');
+Route::get('movements/stats/typePayment/{id}', 'MovementControllerAPI@getTypePayment');
+Route::get('movements/stats/categoryIncome/{id}', 'MovementControllerAPI@getCategoryIncome');
+Route::get('movements/stats/categoryExpense/{id}', 'MovementControllerAPI@getCategoryExpense');
+Route::get('movements/stats/categoryIncomeMoney/{id}', 'MovementControllerAPI@getCategoryIncomeMoney');
+Route::get('movements/stats/categoryExpenseMoney/{id}', 'MovementControllerAPI@getCategoryExpenseMoney');
+
 
 //wallets
 Route::get('wallets', 'WalletControllerAPI@index');

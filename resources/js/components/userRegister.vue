@@ -130,7 +130,7 @@ export default {
     },
 
     registerUser: function() {
-      axios.post("api/users/register", this.user)
+      axios.post("api/users/newAccount", this.user)
         .then(response => {
           Object.assign(this.user, response.data);
           this.$router.push('/');

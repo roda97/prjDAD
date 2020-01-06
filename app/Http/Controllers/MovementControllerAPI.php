@@ -63,22 +63,16 @@ class MovementControllerAPI extends Controller
             }
             //$movements = MovementResource::collection($movements->orderby('date','desc')->paginate(10));
             $movements = MovementResource::collection($movements->orderby('date','desc')->where(function($q) use($user){ //tenho que usar este "use($user)" para a funçao ter conhecimento do valor da mesma
-                $q->where('wallet_id', $user)
-                ->orWhere('transfer_wallet_id', $user);
+                $q->where('wallet_id', $user);
+                //->orWhere('transfer_wallet_id', $user);
                 })->paginate(10)); //este where function é o que me permite juntar as condiçoes do search e as condições daquilo a que o utilizador pode ver
         }
         else{    
-            $movements = MovementResource::collection(Movement::orderby('date','desc')->where('wallet_id', $user)->orWhere('transfer_wallet_id', $user)->paginate(10));
+            //$movements = MovementResource::collection(Movement::orderby('date','desc')->where('wallet_id', $user)->orWhere('transfer_wallet_id', $user)->paginate(10));
+            $movements = MovementResource::collection(Movement::orderby('date','desc')->where('wallet_id', $user)->paginate(10));
         }
 
         return $movements;
-        //return MovementResource::collection(Movement::orderby('date','desc')->paginate(10));
-
-        /*if ($request->has('page')) {
-            return MovementResource::collection(Movement::paginate(10));
-        } else {
-            return MovementResource::collection(Movement::all());
-        }*/
     }
 
     /**
@@ -371,12 +365,6 @@ class MovementControllerAPI extends Controller
             $message->from('dadproject24@gmail.com','Notification Email');
         });
         
-        /*
-        Mail::send('emails.mail', ['name' => 'dad'], function($m){
-            $m->from('dadproject24@gmail.com', 'Projeto');
-            $m->to('luis25mateus@gmail.com');
-            });
-        */
     }
 
     public function getBalance($id)
@@ -406,6 +394,128 @@ class MovementControllerAPI extends Controller
         $totals[1] = number_format((float)$totalExpense, 2, '.', '');
         
         return $totals;
+    }
+
+    public function getTypePayment($id){
+        $cash = MovementResource::collection(Movement::where('wallet_id', $id)->where('type_payment','c')->get());
+        //mb -> MB Payment
+        $mb = MovementResource::collection(Movement::where('wallet_id', $id)->where('type_payment','mb')->get());
+        //bt -> brank transfer
+        $bt = MovementResource::collection(Movement::where('wallet_id', $id)->where('type_payment','bt')->get());
+        //outros -> quando é null (é porque é uma transferencia e portanto um transfer email)
+        $outros = MovementResource::collection(Movement::where('wallet_id', $id)->where('type_payment', null)->get());
+
+        $totalCash = sizeof($cash);
+        $totalMB = sizeof($mb);
+        $totalBt = sizeof($bt);
+        $totalOutros = sizeof($outros);
+
+        $totals[0] = $totalCash;
+        $totals[1] = $totalMB;
+        $totals[2] = $totalBt;
+        $totals[3] = $totalOutros;
+        
+        return $totals;
+    }
+
+    public function getCategoryIncome($id){
+        $categories = DB::table('categories')->select('name', 'id')->where('type','i')->get();
+
+        for ($i=0; $i < sizeof($categories); $i++){
+            $totalIncomes[$i] = MovementResource::collection(Movement::where('wallet_id', $id)->where('category_id', $categories[$i]->id)->where('type', 'i')->get());
+            $countIncomes = sizeof($totalIncomes[$i]);
+            $totalCategories[$i]['category'] = $categories[$i]->name;
+            $totalCategories[$i]['total'] = $countIncomes;
+        }
+
+        for ($i=0; $i < sizeof($totalCategories); $i++){
+            $labels[] = $totalCategories[$i]['category'];
+            $rows[] = $totalCategories[$i]['total'];
+        }
+        $data = [
+            'labels' => $labels,
+            'rows' => $rows
+        ];
+
+        return $data;
+    }
+
+    public function getCategoryExpense($id){
+        $categories = DB::table('categories')->select('name', 'id')->where('type','e')->get();
+
+        for ($i=0; $i < sizeof($categories); $i++){
+            $totalExpenses[$i] = MovementResource::collection(Movement::where('wallet_id', $id)->where('category_id', $categories[$i]->id)->where('type', 'e')->get());
+            $countExpenses = sizeof($totalExpenses[$i]);
+            $totalCategories[$i]['category'] = $categories[$i]->name;
+            $totalCategories[$i]['total'] = $countExpenses;
+        }
+
+        for ($i=0; $i < sizeof($totalCategories); $i++){
+            $labels[] = $totalCategories[$i]['category'];
+            $rows[] = $totalCategories[$i]['total'];
+        }
+        $data = [
+            'labels' => $labels,
+            'rows' => $rows
+        ];
+
+        return $data;
+
+    }
+
+    public function getCategoryIncomeMoney($id){
+        $categories = DB::table('categories')->select('name', 'id')->where('type','i')->get();
+
+        for ($i=0; $i < sizeof($categories); $i++){
+            $totalIncomes[$i] = MovementResource::collection(Movement::select('value')->where('wallet_id', $id)->where('category_id', $categories[$i]->id)->where('type', 'i')->get());
+            $countIncomesMoney = 0;
+
+            for($j=1; $j < count($totalIncomes[$i]); $j++){
+                $countIncomesMoney += $totalIncomes[$i][0]->value;
+            }
+
+            $totalCategories[$i]['category'] = $categories[$i]->name;
+            $totalCategories[$i]['total'] = number_format((float)$countIncomesMoney, 2, '.', '');
+        }
+
+        for ($i=0; $i < sizeof($totalCategories); $i++){
+            $labels[] = $totalCategories[$i]['category'];
+            $rows[] = $totalCategories[$i]['total'];
+        }
+        $data = [
+            'labels' => $labels,
+            'rows' => $rows
+        ];
+
+        return $data;
+    }
+
+    public function getCategoryExpenseMoney($id){
+        $categories = DB::table('categories')->select('name', 'id')->where('type','e')->get();
+
+        for ($i=0; $i < sizeof($categories); $i++){
+            $totalExpenses[$i] = MovementResource::collection(Movement::select('value')->where('wallet_id', $id)->where('category_id', $categories[$i]->id)->where('type', 'e')->get());
+            $countExpensesMoney = 0;
+
+            for($j=1; $j < count($totalExpenses[$i]); $j++){
+                $countExpensesMoney += $totalExpenses[$i][0]->value;
+            }
+
+            $totalCategories[$i]['category'] = $categories[$i]->name;
+            $totalCategories[$i]['total'] = number_format((float)$countExpensesMoney, 2, '.', '');
+        }
+
+        for ($i=0; $i < sizeof($totalCategories); $i++){
+            $labels[] = $totalCategories[$i]['category'];
+            $rows[] = $totalCategories[$i]['total'];
+        }
+        $data = [
+            'labels' => $labels,
+            'rows' => $rows
+        ];
+
+        return $data;
+
     }
 
 }

@@ -3240,7 +3240,12 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _statsIncExpe_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./statsIncExpe.vue */ "./resources/js/components/movements/statsIncExpe.vue");
 /* harmony import */ var _statsLineChart_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./statsLineChart.vue */ "./resources/js/components/movements/statsLineChart.vue");
-/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+/* harmony import */ var _statsTypePayment_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./statsTypePayment.vue */ "./resources/js/components/movements/statsTypePayment.vue");
+/* harmony import */ var _statsCategoryIncome_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./statsCategoryIncome.vue */ "./resources/js/components/movements/statsCategoryIncome.vue");
+/* harmony import */ var _statsCategoryExpense_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./statsCategoryExpense.vue */ "./resources/js/components/movements/statsCategoryExpense.vue");
+/* harmony import */ var _statsCategoryIncomeMoney_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./statsCategoryIncomeMoney.vue */ "./resources/js/components/movements/statsCategoryIncomeMoney.vue");
+/* harmony import */ var _statsCategoryExpenseMoney_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./statsCategoryExpenseMoney.vue */ "./resources/js/components/movements/statsCategoryExpenseMoney.vue");
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
 //
 //
 //
@@ -3253,6 +3258,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
 
 
 
@@ -3261,7 +3305,22 @@ __webpack_require__.r(__webpack_exports__);
     return {
       userID: this.$store.state.user.id,
       chartData1: null,
-      statsIncExpe: false
+      chartData2: null,
+      chartData3: null,
+      chartData4: null,
+      chartData5: null,
+      chartData6: null,
+      statsIncExpe: false,
+      statsTypePayment: false,
+      statsCategoryIncome: false,
+      statsCategoryExpense: false,
+      statsCategoryIncomeMoney: false,
+      statsCategoryExpenseMoney: false,
+      labels: null,
+      labels2: null,
+      labels4: null,
+      labels5: null,
+      rows: null
     };
   },
   methods: {
@@ -3273,14 +3332,205 @@ __webpack_require__.r(__webpack_exports__);
         _this.chartData1 = response.data;
         _this.statsIncExpe = true;
       });
+    },
+    getTypePayment: function getTypePayment() {
+      var _this2 = this;
+
+      axios.get('api/movements/stats/typePayment/' + this.userID).then(function (response) {
+        console.log(response.data);
+        _this2.chartData2 = response.data;
+        _this2.statsTypePayment = true;
+      });
+    },
+    getCategoryIncome: function getCategoryIncome() {
+      var _this3 = this;
+
+      axios.get('api/movements/stats/categoryIncome/' + this.userID).then(function (response) {
+        console.log(response.data);
+        _this3.chartData3 = response.data.rows;
+        _this3.labels = response.data.labels;
+        _this3.statsCategoryIncome = true;
+      });
+    },
+    getCategoryExpense: function getCategoryExpense() {
+      var _this4 = this;
+
+      axios.get('api/movements/stats/categoryExpense/' + this.userID).then(function (response) {
+        console.log(response.data);
+        _this4.chartData4 = response.data.rows;
+        _this4.labels2 = response.data.labels;
+        _this4.statsCategoryExpense = true;
+      });
+    },
+    getCategoryIncomeMoney: function getCategoryIncomeMoney() {
+      var _this5 = this;
+
+      axios.get('api/movements/stats/categoryIncomeMoney/' + this.userID).then(function (response) {
+        console.log(response.data);
+        _this5.chartData5 = response.data.rows;
+        _this5.labels3 = response.data.labels;
+        _this5.statsCategoryIncomeMoney = true;
+      });
+    },
+    getCategoryExpenseMoney: function getCategoryExpenseMoney() {
+      var _this6 = this;
+
+      axios.get('api/movements/stats/categoryExpenseMoney/' + this.userID).then(function (response) {
+        console.log(response.data);
+        _this6.chartData6 = response.data.rows;
+        _this6.labels4 = response.data.labels;
+        _this6.statsCategoryExpenseMoney = true;
+      });
     }
   },
   mounted: function mounted() {
     this.getTotalsMovements();
+    this.getTypePayment();
+    this.getCategoryIncome();
+    this.getCategoryExpense();
+    this.getCategoryIncomeMoney();
+    this.getCategoryExpenseMoney();
   },
   components: {
     'totals-income-expense': _statsIncExpe_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    'stats-line-chart': _statsLineChart_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+    'stats-line-chart': _statsLineChart_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    'stats-type-payment': _statsTypePayment_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    'stats-category-income': _statsCategoryIncome_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    'stats-category-expense': _statsCategoryExpense_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
+    'stats-category-income-money': _statsCategoryIncomeMoney_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    'stats-category-expense-money': _statsCategoryExpenseMoney_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsCategoryExpense.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/movements/statsCategoryExpense.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  "extends": vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Bar"],
+  props: ['chartData', 'labels'],
+  mounted: function mounted() {
+    this.renderChart({
+      labels: this.labels,
+      datasets: [{
+        backgroundColor: '#483D8B',
+        data: this.chartData
+      }]
+    }, {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        display: false
+      }
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsCategoryExpenseMoney.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/movements/statsCategoryExpenseMoney.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  "extends": vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Bar"],
+  props: ['chartData', 'labels'],
+  mounted: function mounted() {
+    this.renderChart({
+      labels: this.labels,
+      datasets: [{
+        backgroundColor: '#483D8B',
+        data: this.chartData
+      }]
+    }, {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        display: false
+      }
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsCategoryIncome.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/movements/statsCategoryIncome.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  "extends": vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Bar"],
+  props: ['chartData', 'labels'],
+  mounted: function mounted() {
+    this.renderChart({
+      labels: this.labels,
+      datasets: [{
+        backgroundColor: '#483D8B',
+        data: this.chartData
+      }]
+    }, {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        display: false
+      }
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsCategoryIncomeMoney.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/movements/statsCategoryIncomeMoney.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  "extends": vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Bar"],
+  props: ['chartData', 'labels'],
+  mounted: function mounted() {
+    this.renderChart({
+      labels: this.labels,
+      datasets: [{
+        backgroundColor: '#483D8B',
+        data: this.chartData
+      }]
+    }, {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        display: false
+      }
+    });
   }
 });
 
@@ -3301,9 +3551,6 @@ __webpack_require__.r(__webpack_exports__);
   "extends": vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Bar"],
   props: ['chartData'],
   mounted: function mounted() {
-    console.log(this.chartData);
-    console.log(this.chartData[0]);
-    console.log(this.chartData[1]);
     this.renderChart({
       labels: ['Total Expenses/Incomes (€)'],
       datasets: [{
@@ -3352,6 +3599,49 @@ __webpack_require__.r(__webpack_exports__);
       legend: {
         display: false
       }
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsTypePayment.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/movements/statsTypePayment.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  "extends": vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Bar"],
+  props: ['chartData'],
+  mounted: function mounted() {
+    this.renderChart({
+      labels: ['Type of Payment'],
+      datasets: [{
+        label: 'Cash',
+        backgroundColor: '#483D8B',
+        data: [this.chartData[0]]
+      }, {
+        label: 'MB Payment',
+        backgroundColor: '#6A5ACD',
+        data: [this.chartData[1]]
+      }, {
+        label: 'Bank Transfer',
+        backgroundColor: '#4169E1',
+        data: [this.chartData[2]]
+      }, {
+        label: 'Transfer Email',
+        backgroundColor: '#87CEEB',
+        data: [this.chartData[3]]
+      }]
+    }, {
+      responsive: true,
+      maintainAspectRatio: false
     });
   }
 });
@@ -3869,7 +4159,7 @@ __webpack_require__.r(__webpack_exports__);
     registerUser: function registerUser() {
       var _this2 = this;
 
-      axios.post("api/users/register", this.user).then(function (response) {
+      axios.post("api/users/newAccount", this.user).then(function (response) {
         Object.assign(_this2.user, response.data);
 
         _this2.$router.push('/');
@@ -89970,12 +90260,91 @@ var render = function() {
           [
             _c("h4", [_vm._v("Total Income/Expenses (€):")]),
             _vm._v(" "),
-            _c("canvas", {
-              attrs: { id: "myChart", width: "600", height: "400" }
-            }),
-            _vm._v(" "),
             _c("totals-income-expense", {
               attrs: { chartData: _vm.chartData1 }
+            })
+          ],
+          1
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm.statsTypePayment
+      ? _c(
+          "div",
+          { staticClass: "container" },
+          [
+            _c("h4", [_vm._v("Type of Payment:")]),
+            _vm._v(" "),
+            _c("stats-type-payment", { attrs: { chartData: _vm.chartData2 } })
+          ],
+          1
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm.statsCategoryIncome
+      ? _c(
+          "div",
+          { staticClass: "container" },
+          [
+            _c("h4", [_vm._v("Total Number of Incomes By Category:")]),
+            _vm._v(" "),
+            _c("stats-category-income", {
+              attrs: { chartData: _vm.chartData3, labels: _vm.labels }
+            })
+          ],
+          1
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm.statsCategoryExpense
+      ? _c(
+          "div",
+          { staticClass: "container" },
+          [
+            _c("h4", [_vm._v("Total Number of Expenses By Category:")]),
+            _vm._v(" "),
+            _c("stats-category-expense", {
+              attrs: { chartData: _vm.chartData4, labels: _vm.labels2 }
+            })
+          ],
+          1
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm.statsCategoryIncome
+      ? _c(
+          "div",
+          { staticClass: "container" },
+          [
+            _c("h4", [_vm._v("Total Income By Category (€):")]),
+            _vm._v(" "),
+            _c("stats-category-income-money", {
+              attrs: { chartData: _vm.chartData5, labels: _vm.labels3 }
+            })
+          ],
+          1
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm.statsCategoryExpense
+      ? _c(
+          "div",
+          { staticClass: "container" },
+          [
+            _c("h4", [_vm._v("Total Expenses By Category (€):")]),
+            _vm._v(" "),
+            _c("stats-category-expense-money", {
+              attrs: { chartData: _vm.chartData6, labels: _vm.labels4 }
             })
           ],
           1
@@ -107336,11 +107705,11 @@ var routes = [{
   name: "users"
 }, //{ path: "/users/:id/edit", component: UserEdit, name: "usersEdit" }, 
 {
-  path: "/users/register",
+  path: "/users/newAccount",
   component: _components_userRegister__WEBPACK_IMPORTED_MODULE_7__["default"],
   name: "usersRegister"
 }, {
-  path: "/users/opAdminRegister",
+  path: "/users/OperadorAdmin",
   component: _components_OpAdminRegister__WEBPACK_IMPORTED_MODULE_8__["default"],
   name: "opAdminRegister"
 }, {
@@ -107360,7 +107729,7 @@ var routes = [{
   component: _components_movements_movements__WEBPACK_IMPORTED_MODULE_12__["default"],
   name: "movements"
 }, {
-  path: "/movementsStatistics",
+  path: "/movements/statistics",
   component: _components_movements_movementsStatistics__WEBPACK_IMPORTED_MODULE_13__["default"],
   name: "movementsStatistics"
 }];
@@ -107423,6 +107792,13 @@ router.beforeEach(function (to, from, next) {
     }
   }
 
+  if (to.name == "users") {
+    if (app.$store.state.user.type != 'a') {
+      next("/");
+      return;
+    }
+  }
+
   if (to.name == "usersEdit") {
     if (!app.$store.state.user) {
       next("/login");
@@ -107446,6 +107822,13 @@ router.beforeEach(function (to, from, next) {
     }
   }
 
+  if (to.name == "movementsStatistics") {
+    if (app.$store.state.user.type != 'u') {
+      next("/");
+      return;
+    }
+  }
+
   if (to.name == "userProfile") {
     if (!app.$store.state.user) {
       next("/login");
@@ -107456,6 +107839,13 @@ router.beforeEach(function (to, from, next) {
   if (to.name == "opAdminRegister") {
     if (!app.$store.state.user) {
       next("/login");
+      return;
+    }
+  }
+
+  if (to.name == "opAdminRegister") {
+    if (app.$store.state.user.type != 'a') {
+      next("/");
       return;
     }
   }
@@ -108263,6 +108653,206 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/movements/statsCategoryExpense.vue":
+/*!********************************************************************!*\
+  !*** ./resources/js/components/movements/statsCategoryExpense.vue ***!
+  \********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _statsCategoryExpense_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./statsCategoryExpense.vue?vue&type=script&lang=js& */ "./resources/js/components/movements/statsCategoryExpense.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+var render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
+  _statsCategoryExpense_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"],
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/movements/statsCategoryExpense.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/movements/statsCategoryExpense.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/movements/statsCategoryExpense.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsCategoryExpense_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./statsCategoryExpense.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsCategoryExpense.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsCategoryExpense_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/movements/statsCategoryExpenseMoney.vue":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/movements/statsCategoryExpenseMoney.vue ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _statsCategoryExpenseMoney_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./statsCategoryExpenseMoney.vue?vue&type=script&lang=js& */ "./resources/js/components/movements/statsCategoryExpenseMoney.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+var render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
+  _statsCategoryExpenseMoney_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"],
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/movements/statsCategoryExpenseMoney.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/movements/statsCategoryExpenseMoney.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************!*\
+  !*** ./resources/js/components/movements/statsCategoryExpenseMoney.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsCategoryExpenseMoney_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./statsCategoryExpenseMoney.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsCategoryExpenseMoney.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsCategoryExpenseMoney_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/movements/statsCategoryIncome.vue":
+/*!*******************************************************************!*\
+  !*** ./resources/js/components/movements/statsCategoryIncome.vue ***!
+  \*******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _statsCategoryIncome_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./statsCategoryIncome.vue?vue&type=script&lang=js& */ "./resources/js/components/movements/statsCategoryIncome.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+var render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
+  _statsCategoryIncome_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"],
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/movements/statsCategoryIncome.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/movements/statsCategoryIncome.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************!*\
+  !*** ./resources/js/components/movements/statsCategoryIncome.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsCategoryIncome_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./statsCategoryIncome.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsCategoryIncome.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsCategoryIncome_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/movements/statsCategoryIncomeMoney.vue":
+/*!************************************************************************!*\
+  !*** ./resources/js/components/movements/statsCategoryIncomeMoney.vue ***!
+  \************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _statsCategoryIncomeMoney_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./statsCategoryIncomeMoney.vue?vue&type=script&lang=js& */ "./resources/js/components/movements/statsCategoryIncomeMoney.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+var render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
+  _statsCategoryIncomeMoney_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"],
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/movements/statsCategoryIncomeMoney.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/movements/statsCategoryIncomeMoney.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************!*\
+  !*** ./resources/js/components/movements/statsCategoryIncomeMoney.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsCategoryIncomeMoney_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./statsCategoryIncomeMoney.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsCategoryIncomeMoney.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsCategoryIncomeMoney_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/movements/statsIncExpe.vue":
 /*!************************************************************!*\
   !*** ./resources/js/components/movements/statsIncExpe.vue ***!
@@ -108360,6 +108950,56 @@ component.options.__file = "resources/js/components/movements/statsLineChart.vue
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsLineChart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./statsLineChart.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsLineChart.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsLineChart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/movements/statsTypePayment.vue":
+/*!****************************************************************!*\
+  !*** ./resources/js/components/movements/statsTypePayment.vue ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _statsTypePayment_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./statsTypePayment.vue?vue&type=script&lang=js& */ "./resources/js/components/movements/statsTypePayment.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+var render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
+  _statsTypePayment_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"],
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/movements/statsTypePayment.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/movements/statsTypePayment.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/movements/statsTypePayment.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsTypePayment_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./statsTypePayment.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/movements/statsTypePayment.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_statsTypePayment_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 

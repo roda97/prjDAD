@@ -7,9 +7,6 @@ export default {
   props:['chartData'],
 
     mounted () {
-        console.log(this.chartData)
-        console.log(this.chartData[0])
-        console.log(this.chartData[1])
         this.renderChart({
             labels: ['Total Expenses/Incomes (€)'],
             datasets: [
