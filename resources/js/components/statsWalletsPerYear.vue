@@ -22,6 +22,7 @@ export default {
             nWallets:[],
             chartOptions: {
                 xaxis: {
+                    categories: []
                 },
             },
             series: [{
@@ -63,7 +64,7 @@ export default {
                     this.chartOptions = {
                         colors: [colors[Math.floor(Math.random()*colors.length)]],
                         xaxis: {
-
+                            categories: this.years
                         },
                     };
                     

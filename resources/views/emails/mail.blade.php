@@ -2,8 +2,7 @@
 <br><br>
 {{ $body }}
 <br>
-<!-- VERIFICAR COM QUE ENDEREÇO VAI FICAR E ALTERAR:
-Check it on: http://prjdad.test/#/-->
+Check it on: http://178.62.59.40/#/
 <br><br>
 With regreds, <br>
 Group24 DAD

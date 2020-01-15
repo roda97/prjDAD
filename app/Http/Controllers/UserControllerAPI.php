@@ -97,14 +97,15 @@ class UserControllerAPI extends Controller
             'type' => 'required|in:a,o,u'
         ]);
 
-        $photo = $request->photo;
-        $base64_string = explode(',', $photo['base64']);
-        $imageBin = base64_decode($base64_string[1]);
+        if($request->photo['base64']) {
+            $photo = $request->photo;
+            $base64_string = explode(',', $photo['base64']);
+            $imageBin = base64_decode($base64_string[1]);
 
-        if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
-            Storage::disk('public')->put('fotos/' . $photo['name'], $imageBin);
-        }    
-
+            if (!Storage::disk('public')->exists('fotos/' . $photo['name'])) {
+                Storage::disk('public')->put('fotos/' . $photo['name'], $imageBin);
+            }    
+        }
         $user = new User();
         $user->fill($request->all());
         $user->photo = $request->photo['base64'] ? $request->photo['name'] : null;

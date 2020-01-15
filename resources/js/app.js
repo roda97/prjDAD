@@ -18,7 +18,7 @@ Vue.component('apexchart', VueApexCharts)
 import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
     debug: true,
-    connection: 'http://prjdad.test:8080'
+    connection: 'http://178.62.59.40:8080'
 }))
 
 import { BPagination } from 'bootstrap-vue'
