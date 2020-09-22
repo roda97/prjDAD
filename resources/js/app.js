@@ -96,6 +96,13 @@ const app = new Vue({
                 axios.put('api/movements/email/' + data.user.email);
             }
         },
+
+        updateValorMaximo(data){ 
+            if(data.aux == 0){
+                this.$toasted.show("Movement > 3000€ !");
+            }
+        },
+
         updateIncome(data){ 
             //console.log(data.user.emailIncome)
             //console.log(data.aux)

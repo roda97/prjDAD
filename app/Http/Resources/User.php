@@ -17,6 +17,7 @@ class User extends Resource
         
         if ($this->wallet)
             $balance=$this->wallet->balance;
+            $idwallet=$this->wallet->id;
         else
             $balance=null;
         return [
@@ -27,7 +28,8 @@ class User extends Resource
             'photo' => $this->photo,
             'nif' => $this->nif,
             'active' => $this->active,
-            'balance' => $balance
+            'balance' => $balance,
+            'wallet_id' => $idwallet
                 
         ];
     }

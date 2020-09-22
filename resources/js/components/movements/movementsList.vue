@@ -10,8 +10,7 @@
                         <th>Type of Payment</th>
                         <th>Category</th>
                         <th>Date</th>
-                        <th>Start Balance</th>
-                        <th>End Balance</th>
+                        <th>Start Balance -> End Balance</th>
                         <th>Value</th>
                         <!--<th>Photo</th>-->
                         <th>Action</th>
@@ -28,8 +27,7 @@
                             <td v-if="movement.category_id">{{ movement.category_name }}</td>
                             <td v-if="!movement.category_id"> - </td>
                         <td>{{ movement.date }}</td>
-                        <td>{{ movement.start_balance }}</td>
-                        <td>{{ movement.end_balance }}</td>
+                        <td>{{ movement.start_balance }} => {{ movement.end_balance }}</td>
                         <td>{{ movement.value }}</td>
                         <!--ESTAS DUAS LINHAS A BAIXO DA FOTO SÃO PARA DESAPARECER, ESTÃO AQUI PARA DEBUG
                         <td v-if="movement.user_photo == null"> - </td>

@@ -373,6 +373,10 @@ export default {
             //this.movements = this.movements + data.user;
             this.getResults(1);
             this.getBalance();
+        },
+        updateValorMaximo(data){ 
+            this.getResults(1);
+            this.getBalance();
         }
     },
     components: {

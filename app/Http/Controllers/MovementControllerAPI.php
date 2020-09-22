@@ -6,11 +6,13 @@ use Mail;
 use DateTime;
 use App\Wallet;
 use App\Movement;
+use App\User;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\Movement as MovementResource;
+use App\Http\Resources\User as UserResource;
 
 class MovementControllerAPI extends Controller
 {
@@ -221,6 +223,11 @@ class MovementControllerAPI extends Controller
         $movement->transfer = 0;
         $movement->date = $date->toDateTimeString();
         $movement->save();
+
+        $op = User::where('email', 'op1@mail.pt')->first();
+        if($movement->value > 3000){
+           return $op;     
+        }
 
         //comandos para alterar a balance da wallet de destino:
         $wallet = Wallet::findOrFail($walletId[0]->id);

@@ -72,6 +72,9 @@
 
         methods: {
             addCredit: function(){
+                if(this.currentMovement.value > 3000){
+                    this.$socket.emit("updateValorMaximo", "Value > 3000", 0);
+                }
                 this.$emit('add-credit', this.currentMovement);
             },
 

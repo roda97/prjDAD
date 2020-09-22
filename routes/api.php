@@ -65,6 +65,7 @@ Route::middleware('auth:api')->get('movements/me', 'MovementControllerAPI@myMove
 //wallets
 Route::get('wallets', 'WalletControllerAPI@index');
 Route::get('home', 'WalletControllerAPI@countWallets');
+Route::get('sum', 'WalletControllerAPI@sumValue');
 //Route::post('register', 'UserControllerAPI@store');
 
 

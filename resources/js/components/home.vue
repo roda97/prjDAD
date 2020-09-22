@@ -3,7 +3,7 @@
         <div>
                 <h1>{{ title }}</h1>               
         </div>
-         <h3>There are currently {{ wallets }} Virtual Wallets!</h3>
+         <h3>There are currently {{ valor }} €!</h3>
 
         <br>
 
@@ -35,6 +35,7 @@ import MovementCredit from "./movements/movementCredit.vue";
             return{
                 title: 'Virtual Wallet!',
                 wallets: 0,
+                valor: 0,
                 showCredit: false,
                 showFailure: false,
                 currentMovement: {},
@@ -99,6 +100,10 @@ import MovementCredit from "./movements/movementCredit.vue";
             axios.get('api/home')
                 .then(response=>{
                     this.wallets = response.data;
+                });
+             axios.get('api/sum')
+                .then(response=>{
+                    this.valor = response.data;
                 });
         }
     }

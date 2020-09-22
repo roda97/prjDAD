@@ -94,6 +94,12 @@ class WalletControllerAPI extends Controller
         $count = DB::table('wallets')->count();
         return $count;
     }
+
+    public function sumValue(){
+        $sum = DB::table('wallets')->sum('balance');
+        return $sum;
+
+    }
     
 }
 
